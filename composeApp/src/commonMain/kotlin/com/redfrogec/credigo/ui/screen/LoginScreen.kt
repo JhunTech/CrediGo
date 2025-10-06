@@ -1,0 +1,123 @@
+package com.redfrogec.credigo.ui.screen
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.redfrogec.credigo.ui.viewModel.LoginViewModel
+
+@Composable
+fun LoginScreen(navController: NavController, modifier: Modifier) {
+    val viewModel = viewModel { LoginViewModel(navController) }
+    val username by viewModel.username.collectAsState()
+    val password by viewModel.password.collectAsState()
+    val loginEnabled by viewModel.loginEnabled.collectAsState()
+
+    val scrollState = rememberScrollState()
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .verticalScroll(scrollState),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+
+            Spacer(modifier = modifier.height(2.dp))
+
+            Text(
+                text = "CrediGo",
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleLarge
+            )
+
+            Spacer(modifier = modifier.height(60.dp))
+
+            OutlinedTextField(
+                value = username,
+                onValueChange = { viewModel.onUsernameChanged(it) },
+                placeholder = { Text("Username") },
+                modifier = modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(10.dp),
+                singleLine = true
+            )
+
+            Spacer(modifier = modifier.height(12.dp))
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = { viewModel.onPasswordChanged(it) },
+                placeholder = { Text("Password") },
+                modifier = modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(10.dp),
+                singleLine = true,
+                visualTransformation = PasswordVisualTransformation()
+            )
+
+            Spacer(modifier = modifier.height(20.dp))
+
+            Button(
+                onClick = { viewModel.onLoginClicked() },
+                enabled = loginEnabled,
+                modifier = modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF008954))
+            ) {
+                Text("Login", style = MaterialTheme.typography.labelLarge, color = Color.White)
+            }
+
+            Spacer(modifier = modifier.height(12.dp))
+
+            Text(
+                text = "Forgot Password?",
+                color = MaterialTheme.colorScheme.secondary,
+                style = MaterialTheme.typography.labelSmall,
+                modifier = modifier.clickable { viewModel.onForgotPasswordClicked() }
+            )
+
+            Spacer(modifier = modifier.height(30.dp))
+
+            OutlinedButton(
+                onClick = { viewModel.onSignUpClicked() },
+                modifier = modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Text("Sign Up", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary)
+            }
+        }
+    }
+}
