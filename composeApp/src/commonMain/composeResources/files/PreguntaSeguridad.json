@@ -1,0 +1,62 @@
+[
+  {
+    "Id": 1,
+    "Descripcion": "¿Cuál es el nombre de tu primera mascota?",
+    "FechaCreacion": "2025-10-06T00:00:00",
+    "Activo": true
+  },
+  {
+    "Id": 2,
+    "Descripcion": "¿Cuál es tu comida favorita?",
+    "FechaCreacion": "2025-10-06T00:00:00",
+    "Activo": true
+  },
+  {
+    "Id": 3,
+    "Descripcion": "¿En qué ciudad naciste?",
+    "FechaCreacion": "2025-10-06T00:00:00",
+    "Activo": true
+  },
+  {
+    "Id": 4,
+    "Descripcion": "¿Cuál fue el nombre de tu primera escuela?",
+    "FechaCreacion": "2025-10-06T00:00:00",
+    "Activo": true
+  },
+  {
+    "Id": 5,
+    "Descripcion": "¿Cuál es el segundo nombre de tu madre?",
+    "FechaCreacion": "2025-10-06T00:00:00",
+    "Activo": true
+  },
+  {
+    "Id": 6,
+    "Descripcion": "¿Cuál fue la marca de tu primer vehículo?",
+    "FechaCreacion": "2025-10-06T00:00:00",
+    "Activo": true
+  },
+  {
+    "Id": 7,
+    "Descripcion": "¿Cuál es el nombre de tu mejor amigo de la infancia?",
+    "FechaCreacion": "2025-10-06T00:00:00",
+    "Activo": true
+  },
+  {
+    "Id": 8,
+    "Descripcion": "¿Cuál es tu película favorita?",
+    "FechaCreacion": "2025-10-06T00:00:00",
+    "Activo": true
+  },
+  {
+    "Id": 9,
+    "Descripcion": "¿Cuál fue el nombre de tu profesor favorito?",
+    "FechaCreacion": "2025-10-06T00:00:00",
+    "Activo": true
+  },
+  {
+    "Id": 10,
+    "Descripcion": "¿En qué calle creciste?",
+    "FechaCreacion": "2025-10-06T00:00:00",
+    "Activo": true
+  }
+]

@@ -109,7 +109,7 @@ dependencies {
 
 sqldelight {
     databases {
-        create("CrediDatabase") {
+        create("CrediDataBase") {
             packageName.set("com.redfrogec")
         }
     }
