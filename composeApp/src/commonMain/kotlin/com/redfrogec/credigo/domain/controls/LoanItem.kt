@@ -51,9 +51,9 @@ fun LoanItem(loan: Loan) {
 
         Column(modifier = Modifier.weight(1f)) {
             Text(loan.id, fontSize = 16.sp, color = Color.Black)
-            Text("${loan.amount} · ${loan.duration}", fontSize = 14.sp, color = Color(0xFF3BA776))
+            Text("${loan.value} · ${loan.creationDate}", fontSize = 14.sp, color = Color(0xFF3BA776))
         }
 
-        Text(loan.due, fontSize = 14.sp, color = Color.Black)
+        Text("Cuotas: ${loan.quotaNumbers}", fontSize = 14.sp, color = Color.Black)
     }
 }

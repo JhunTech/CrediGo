@@ -16,17 +16,17 @@ class LoansViewModel(navController: NavController) : ViewModel() {
 
     var activeLoans by mutableStateOf(
         listOf(
-            Loan("#12345", "$2,500", "12 months", "Due in 3 days"),
-            Loan("#67890", "$1,800", "6 months", "Due in 10 days"),
-            Loan("#11223", "$3,200", "18 months", "Due in 15 days"),
+            Loan("#12345", "$2,500", "12 months", 100.00, 0, 0, 10, true, "2023-08-01", "2023-09-01"),
+            Loan("#67890", "$1,800", "6 months", 100.00, 0, 0, 10, true, "2023-08-01", "2023-09-01"),
+            Loan("#11223", "$3,200", "18 months", 100.00, 0, 0, 10, true, "2023-08-01", "2023-09-01")
         )
     )
         private set
 
     var paidLoans by mutableStateOf(
         listOf(
-            Loan("#44556", "$900", "6 months", "Paid"),
-            Loan("#77889", "$1,500", "12 months", "Paid")
+            Loan("#44556", "$900", "6 months", 100.00, 0, 0, 10, true, "2023-08-01", "2023-09-01"),
+            Loan("#77889", "$1,500", "12 months", 100.00, 0, 0, 10, true, "2023-08-01", "2023-09-01")
         )
     )
         private set

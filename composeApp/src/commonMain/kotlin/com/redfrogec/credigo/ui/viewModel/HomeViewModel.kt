@@ -8,6 +8,7 @@ import com.redfrogec.credigo.data.model.ClientStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.datetime.LocalDateTime
 
 class HomeViewModel(navController: NavController) : ViewModel() {
 
@@ -20,18 +21,11 @@ class HomeViewModel(navController: NavController) : ViewModel() {
     val totalAmountLent: StateFlow<String> = _totalAmountLent.asStateFlow()
 
     var clients = mutableStateListOf(
-        Client(
-            1, "Ethan Carter", "$15,000",
-            status = ClientStatus.Active
-        ),
-        Client(
-            2, "Olivia Bennett", "$12,000",
-            status = ClientStatus.Active
-        ),
-        Client(
-            3, "Noah Thompson", "$10,000",
-            status = ClientStatus.Active
-        )
+        Client(1, 0, "", "123456789", "Ethan Carter", "", "", "", false, LocalDateTime.parse("2025-10-25T12:03:04.524")),
+        Client(2, 0,"", "987654321", "Olivia Bennett", "", "", "", false, LocalDateTime.parse("2025-10-25T12:03:04.524")),
+        Client(3, 0,"", "555555555", "Noah Thompson", "", "", "", false, LocalDateTime.parse("2025-10-25T12:03:04.524")),
+        Client(4, 0,"", "111111111", "Ava Harper", "", "", "", false, LocalDateTime.parse("2025-10-25T12:03:04.524")),
+        Client(5, 0,"", "999999999", "Liam Foster", "", "", "", false, LocalDateTime.parse("2025-10-25T12:03:04.524"))
     )
         private set
 

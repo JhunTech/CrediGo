@@ -2,7 +2,13 @@ package com.redfrogec.credigo.data.model
 
 data class Loan(
     val id: String,
-    val amount: String,
-    val duration: String,
-    val due: String
+    val clientId: String,
+    val clientName: String,
+    val value: Double,
+    val paymentTypeId: Int,
+    val interestId: Int,
+    val quotaNumbers: Int,
+    val active: Boolean,
+    val creationDate: String,
+    val deliveryDate: String
 )

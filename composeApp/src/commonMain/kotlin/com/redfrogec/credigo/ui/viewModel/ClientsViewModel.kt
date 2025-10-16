@@ -3,10 +3,10 @@ package com.redfrogec.credigo.ui.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.redfrogec.credigo.data.model.Client
-import com.redfrogec.credigo.data.model.ClientStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.datetime.LocalDateTime
 
 class ClientsViewModel (navController: NavController): ViewModel(){
 
@@ -14,11 +14,11 @@ class ClientsViewModel (navController: NavController): ViewModel(){
 
     private val _clients = MutableStateFlow(
         listOf(
-            Client(1, "Ethan Carter","", ClientStatus.Active),
-            Client(2, "Olivia Bennett", "",ClientStatus.Active),
-            Client(3, "Noah Thompson", "",ClientStatus.Blocked),
-            Client(4, "Ava Harper", "",ClientStatus.Active),
-            Client(5, "Liam Foster", "",ClientStatus.Blocked)
+            Client(1, 0, "", "123456789", "Ethan Carter", "", "", "", false, LocalDateTime.parse("2025-10-25T12:03:04.524")),
+            Client(2, 0,"", "987654321", "Olivia Bennett", "", "", "", false, LocalDateTime.parse("2025-10-25T12:03:04.524")),
+            Client(3, 0,"", "555555555", "Noah Thompson", "", "", "", false, LocalDateTime.parse("2025-10-25T12:03:04.524")),
+            Client(4, 0,"", "111111111", "Ava Harper", "", "", "", false, LocalDateTime.parse("2025-10-25T12:03:04.524")),
+            Client(5, 0,"", "999999999", "Liam Foster", "", "", "", false, LocalDateTime.parse("2025-10-25T12:03:04.524"))
         )
     )
     val clients: StateFlow<List<Client>> = _clients
@@ -35,10 +35,10 @@ class ClientsViewModel (navController: NavController): ViewModel(){
     }
 
     private fun defaultClients() = listOf(
-        Client(1, "Ethan Carter","", ClientStatus.Active),
-        Client(2, "Olivia Bennett","", ClientStatus.Active),
-        Client(3, "Noah Thompson","", ClientStatus.Blocked),
-        Client(4, "Ava Harper","", ClientStatus.Active),
-        Client(5, "Liam Foster","", ClientStatus.Blocked)
+        Client(1, 0, "", "123456789", "Ethan Carter", "", "", "", false, LocalDateTime.parse("2025-10-25T12:03:04.524")),
+        Client(2, 0,"", "987654321", "Olivia Bennett", "", "", "", false, LocalDateTime.parse("2025-10-25T12:03:04.524")),
+        Client(3, 0,"", "555555555", "Noah Thompson", "", "", "", false, LocalDateTime.parse("2025-10-25T12:03:04.524")),
+        Client(4, 0,"", "111111111", "Ava Harper", "", "", "", false, LocalDateTime.parse("2025-10-25T12:03:04.524")),
+        Client(5, 0,"", "999999999", "Liam Foster", "", "", "", false, LocalDateTime.parse("2025-10-25T12:03:04.524"))
     )
 }

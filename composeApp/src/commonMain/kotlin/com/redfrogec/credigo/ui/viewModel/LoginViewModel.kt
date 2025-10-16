@@ -2,6 +2,9 @@ package com.redfrogec.credigo.ui.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import com.redfrogec.credigo.data.local.LocalDatabase
+import com.redfrogec.credigo.domain.utils.isValidEmail
+import com.redfrogec.credigo.domain.utils.isValidPassword
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,6 +22,9 @@ class LoginViewModel(navController: NavController) : ViewModel() {
     private val _loginEnabled = MutableStateFlow(false)
     val loginEnabled: StateFlow<Boolean> = _loginEnabled.asStateFlow()
 
+    private val _errorMessage = MutableStateFlow("")
+    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
+
     fun onUsernameChanged(newValue: String) {
         _username.value = newValue
         validateLogin()
@@ -30,7 +36,17 @@ class LoginViewModel(navController: NavController) : ViewModel() {
     }
 
     private fun validateLogin() {
-        _loginEnabled.value = _username.value.isNotBlank() && _password.value.isNotBlank()
+        _loginEnabled.value = false
+        when {
+            !isValidEmail(_username.value) -> _errorMessage.value = "Invalid email"
+            !isValidPassword(_password.value) -> _errorMessage.value = "Invalid password"
+            else -> {
+
+                _loginEnabled.value = true
+                _errorMessage.value = ""
+                println("Login successful for ${username.value}")
+            }
+        }
     }
 
     fun onLoginClicked() {

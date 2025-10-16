@@ -49,7 +49,7 @@ fun ClientRow(client: Client) {
 
         Column {
             Text("Client ${client.id}: ${client.name}", fontWeight = FontWeight.Medium)
-            Text(client.debt, color = Color(0xFF2E7D32))
+            Text(client.identification, color = Color(0xFF2E7D32))
         }
     }
 }

@@ -37,6 +37,7 @@ fun LoginScreen(navController: NavController, modifier: Modifier) {
     val username by viewModel.username.collectAsState()
     val password by viewModel.password.collectAsState()
     val loginEnabled by viewModel.loginEnabled.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
 
     val scrollState = rememberScrollState()
 
@@ -117,6 +118,15 @@ fun LoginScreen(navController: NavController, modifier: Modifier) {
                 shape = RoundedCornerShape(10.dp)
             ) {
                 Text("Sign Up", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary)
+            }
+
+            // Error message
+            errorMessage?.let { error ->
+                Spacer(modifier = modifier.height(12.dp))
+                Text(
+                    text = error,
+                    color = MaterialTheme.colorScheme.error
+                )
             }
         }
     }

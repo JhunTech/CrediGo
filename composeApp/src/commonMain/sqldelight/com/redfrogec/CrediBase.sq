@@ -1,169 +1,172 @@
-CREATE TABLE  Usuario(
+CREATE TABLE  UserTbl(
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
-    Imagen TEXT,
+    Image TEXT,
     Email TEXT NOT NULL UNIQUE,
-    Nombre TEXT NOT NULL,
+    Name TEXT NOT NULL,
     PasswordHash TEXT NOT NULL,
-    PreguntaId INTEGER NOT NULL,
-    Respuesta TEXT NOT NULL,
-    FechaRegistro TEXT NOT NULL,
-    FechaModificacion TEXT,
+    QuestionId INTEGER NOT NULL,
+    Response TEXT NOT NULL,
+    RegisterDate TEXT NOT NULL,
+    UpdateDate TEXT,
     TokenId INTEGER,
     Token TEXT,
-    TokenExpira TEXT
+    TokenExpire TEXT
 );
 
-CREATE TABLE LLave(
+CREATE TABLE KeyTbl(
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
-    LLavePublica TEXT NOT NULL
+    PublicKey TEXT NOT NULL
 );
 
-CREATE TABLE Cliente (
+CREATE TABLE ClientTbl (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
-    UsuarioId INTEGER NOT NULL,
-    Imagen TEXT,
-    Identificacion TEXT NOT NULL UNIQUE,
-    Nombre TEXT NOT NULL,
+    UserId INTEGER NOT NULL,
+    Image TEXT,
+    Identification TEXT NOT NULL UNIQUE,
+    Name TEXT NOT NULL,
     Email TEXT,
-    Telefono TEXT,
-    Direccion TEXT,
-    Bloqueado INTEGER NOT NULL DEFAULT 0,
-    FechaCreacion TEXT,
-    FOREIGN KEY(UsuarioId) REFERENCES Usuario(Id)
+    Phone TEXT,
+    Address TEXT,
+    Blocked INTEGER NOT NULL DEFAULT 0,
+    RegisterDate TEXT,
+    FOREIGN KEY(UserId) REFERENCES UserTbl(Id)
 );
 
-CREATE TABLE Prestamo (
+CREATE TABLE LoanTbl (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
-    ClienteId INTEGER NOT NULL,
-    Valor REAL NOT NULL,
-    TipoPagoId INTEGER NOT NULL,
-    InteresId INTEGER NOT NULL,
-    NumeroCuotas INTEGER NOT NULL,
-    Activo INTEGER NOT NULL DEFAULT 1,
-    FechaCreacion TEXT NOT NULL,
-    FechaEntrega TEXT NOT NULL,
-    FOREIGN KEY(ClienteId) REFERENCES Cliente(Id)
+    ClientId INTEGER NOT NULL,
+    Value REAL NOT NULL,
+    PaymentTypeId INTEGER NOT NULL,
+    InterestId INTEGER NOT NULL,
+    QuotaNumbers INTEGER NOT NULL,
+    Active INTEGER NOT NULL DEFAULT 1,
+    CreationDate TEXT NOT NULL,
+    DeliveryDate TEXT NOT NULL,
+    FOREIGN KEY(ClientId) REFERENCES ClientTbl(Id)
 );
 
-CREATE TABLE Cobro (
+CREATE TABLE ChargeTbl (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
-    PrestamoId INTEGER NOT NULL,
-    NumeroCuota INTEGER NOT NULL,
-    FechaCobro TEXT NOT NULL,
-    FechaPagoCliente TEXT,
-    ValorCuota REAL NOT NULL,
-    ValorCobrado REAL NOT NULL,
-    ValorRestante REAL NOT NULL,
-    Pagado INTEGER NOT NULL DEFAULT 0,
-    FOREIGN KEY(PrestamoId) REFERENCES Prestamo(Id)
+    LoanId INTEGER NOT NULL,
+    QuotaNumber INTEGER NOT NULL,
+    ChargeDate TEXT NOT NULL,
+    CustomerPaymentDate TEXT,
+    QuotaValue REAL NOT NULL,
+    ChargeValue REAL NOT NULL,
+    RemainingValue REAL NOT NULL,
+    FOREIGN KEY(LoanId) REFERENCES LoanTbl(Id)
 );
 
 --Usuario--
-selectAllUser:
-SELECT * FROM Usuario;
-
-findUserByEmail:
-SELECT * FROM Usuario WHERE Email = ?;
+findUserByEmailAndPassword:
+SELECT * FROM UserTbl WHERE Email = ? AND PasswordHash = ?;
 
 insertUser:
-INSERT INTO Usuario(Imagen, Email, Nombre, PasswordHash, PreguntaId, Respuesta, FechaRegistro, FechaModificacion, TokenId, Token, TokenExpira)
+INSERT INTO UserTbl(Image, Email, Name, PasswordHash, QuestionId, Response, RegisterDate, UpdateDate, TokenId, Token, TokenExpire)
 VALUES ?;
 
-updateDataUser:
-UPDATE Usuario SET
-    Imagen = ?, Email = ?, Nombre = ?, PasswordHash = ?, PreguntaId = ?,
-    Respuesta = ?, FechaRegistro = ?, FechaModificacion = ?, TokenId = ?,
-    Token = ?, TokenExpira = ?
+updateUser:
+UPDATE UserTbl SET
+    Image = ?, Email = ?, Name = ?, PasswordHash = ?, QuestionId = ?,
+    Response = ?, RegisterDate = ?, UpdateDate = ?, TokenId = ?,
+    Token = ?, TokenExpire = ?
 WHERE Id = ?;
 
 deleteUser:
-DELETE FROM Usuario WHERE Id = ?;
+DELETE FROM UserTbl WHERE Id = ?;
 
 --lLaves--
 selectAllKey:
-SELECT *
-FROM LLave;
+SELECT * FROM KeyTbl;
 
 insertKey:
-INSERT INTO LLave(LLavePublica)
+INSERT INTO KeyTbl(PublicKey)
 VALUES ?;
 
 deleteKey:
-DELETE FROM LLave;
+DELETE FROM KeyTbl;
 
 --Clientes--
 selectAllClients:
-SELECT * FROM Cliente WHERE UsuarioId = ?;
-
-findClientByName:
-SELECT * FROM Cliente WHERE Nombre = ? AND UsuarioId = ?;
+SELECT * FROM ClientTbl WHERE UserId = ?;
 
 insertClient:
-INSERT INTO Cliente(Imagen, UsuarioId, Identificacion, Nombre, Email, Telefono, Direccion, Bloqueado, FechaCreacion)
+INSERT INTO ClientTbl(Image, UserId, Identification, Name, Email, Phone, Address, Blocked, RegisterDate)
 VALUES ?;
 
 updateDataClient:
-UPDATE Cliente SET
-    Imagen = ?, UsuarioId = ?,Identificacion = ?,Nombre = ?, Email = ?,
-    Telefono = ?, Direccion = ?, Bloqueado = ?, FechaCreacion = ?
+UPDATE ClientTbl SET
+    Image = ?, UserId = ?, Identification = ?, Name = ?, Email = ?,
+    Phone = ?, Address = ?, Blocked = ?, RegisterDate = ?
 WHERE Id = ?;
 
 deleteClient:
-DELETE FROM Cliente WHERE Id = ?;
+DELETE FROM ClientTbl WHERE Id = ?;
 
 --Prestamos--
-selectAllLoansById:
-SELECT * FROM Prestamo WHERE Id = ?;
+selectAllLoansByClientId:
+SELECT * FROM LoanTbl WHERE ClientId = ?;
 
 selectAllLoansByUserId:
 SELECT
-    p.Id,
-    c.Nombre,
-    p.ClienteId,
-    p.Valor,
-    p.TipoPagoId,
-    p.InteresId,
-    p.NumeroCuotas,
-    p.Activo,
-    p.FechaCreacion,
-    p.FechaEntrega
+    l.Id,
+    l.ClientId,
+    c.Name AS ClientName,
+    l.Value,
+    l.PaymentTypeId,
+    l.InterestId,
+    l.QuotaNumbers,
+    l.Active,
+    l.CreationDate,
+    l.DeliveryDate
 FROM
-  Prestamo AS p
+  LoanTbl AS l
 INNER JOIN
-  Cliente AS c ON p.ClienteId = c.Id
+  ClientTbl AS c ON l.ClientId = c.Id
 INNER JOIN
-  Usuario AS u ON c.UsuarioId = u.Id
+  UserTbl AS u ON c.UserId = u.Id
 WHERE u.Id = ?;
 
 insertLoan:
-INSERT INTO Prestamo(ClienteId, Valor, TipoPagoId, InteresId, NumeroCuotas, Activo, FechaCreacion, FechaEntrega)
+INSERT INTO LoanTbl(ClientId, Value, PaymentTypeId, InterestId, QuotaNumbers, Active, CreationDate, DeliveryDate)
 VALUES ?;
 
 updateDataLoan:
-UPDATE Prestamo SET
-    ClienteId = ?, Valor = ?,TipoPagoId = ?,InteresId = ?, NumeroCuotas = ?,
-    Activo = ?, FechaCreacion = ?, FechaCreacion = ?
+UPDATE LoanTbl SET
+    ClientId = ?, Value = ?, PaymentTypeId = ?, InterestId = ?, QuotaNumbers = ?,
+    Active = ?, CreationDate = ?, DeliveryDate = ?
 WHERE Id = ?;
 
 deleteLoan:
-DELETE FROM Prestamo WHERE Id = ?;
+DELETE FROM LoanTbl WHERE Id = ?;
 
 --Cobros--
-selectAllCollectionById:
-SELECT * FROM Cobro WHERE Id = ?;
+selectAllChargeByLoanId:
+SELECT * FROM ChargeTbl WHERE LoanId = ?;
 
-insertCollection:
-INSERT INTO Cobro(PrestamoId, NumeroCuota, FechaCobro, FechaPagoCliente, ValorCuota, ValorCobrado, ValorRestante, Pagado)
+selectChargePaid:
+SELECT
+    LoanId,
+    COUNT(QuotaNumber) AS TotalFeesPaid,
+    SUM(ChargeValue) AS TotalAmountCharged
+FROM
+    ChargeTbl
+WHERE
+    QuotaValue = ChargeValue AND
+    RemainingValue = 0 AND
+    LoanId = ?
+GROUP BY
+    LoanId;
+
+insertCharge:
+INSERT INTO ChargeTbl(LoanId, QuotaNumber, ChargeDate, CustomerPaymentDate, QuotaValue, ChargeValue, RemainingValue)
 VALUES ?;
 
 updateDataCollection:
-UPDATE Cobro SET
-    PrestamoId = ?, NumeroCuota = ?,FechaCobro = ?,FechaPagoCliente = ?, ValorCuota = ?,
-    ValorCobrado = ?, ValorRestante = ?, Pagado = ?
+UPDATE ChargeTbl SET
+    LoanId = ?, QuotaNumber = ?,ChargeDate = ?,CustomerPaymentDate = ?, QuotaValue = ?,
+    ChargeValue = ?, RemainingValue = ?
 WHERE Id = ?;
 
-deleteCollection:
-DELETE FROM Cobro WHERE Id = ?;
-
-
-
+deleteCharge:
+DELETE FROM ChargeTbl WHERE Id = ?;

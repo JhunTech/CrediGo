@@ -1,11 +1,20 @@
 package com.redfrogec.credigo.data.model
 
+import kotlinx.datetime.LocalDateTime
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Client(
     val id: Int,
+    val userId: Int,
+    val image: String,
+    val identification: String,
     val name: String,
-    val debt: String,
-    val status: ClientStatus,
-    val avatarUrl: String? = null // si quieres cargar imágenes reales
+    val email: String,
+    val phone: String,
+    val address: String,
+    val blocked: Boolean,
+    val registerDate: LocalDateTime,
 )
 
-enum class ClientStatus { Active, Blocked }
+enum class ClientStatus { Activo, Bloqueado }

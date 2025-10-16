@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.redfrogec.credigo.data.model.ClientStatus
-import com.redfrogec.credigo.domain.controls.LoanItem
 import com.redfrogec.credigo.ui.viewModel.ClientsViewModel
 import credigo.composeapp.generated.resources.Res
 import credigo.composeapp.generated.resources.ic_user
@@ -123,8 +122,8 @@ fun ClientsScreen(navController: NavController, modifier: Modifier = Modifier) {
                     Column {
                         Text(client.name, fontSize = 16.sp, fontWeight = FontWeight.Medium)
                         Text(
-                            text = client.status.name,
-                            color = if (client.status == ClientStatus.Active) Color(0xFF2E7D32) else Color.Red,
+                            text = if (!client.blocked) ClientStatus.Activo.toString() else ClientStatus.Bloqueado.toString(),
+                            color = if (!client.blocked) Color(0xFF2E7D32) else Color.Red,
                             fontSize = 14.sp
                         )
                     }
