@@ -16,5 +16,5 @@ data class User(
     val updateDate: LocalDateTime?,
     val tokenId: Int?,
     val token: String?,
-    val tokenExpire: LocalDateTime?
+    val tokenExpire: LocalDateTime?,
 )

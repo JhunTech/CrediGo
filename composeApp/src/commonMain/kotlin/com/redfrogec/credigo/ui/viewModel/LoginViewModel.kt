@@ -3,15 +3,16 @@ package com.redfrogec.credigo.ui.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.redfrogec.credigo.data.local.LocalDatabase
+import com.redfrogec.credigo.domain.sdk.UserSDK
 import com.redfrogec.credigo.domain.utils.isValidEmail
 import com.redfrogec.credigo.domain.utils.isValidPassword
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class LoginViewModel(navController: NavController) : ViewModel() {
+class LoginViewModel(private val sdk: UserSDK) : ViewModel() {
 
-    private val _navigation = navController
+    lateinit var navigation: NavController
 
     private val _username = MutableStateFlow("")
     val username: StateFlow<String> = _username.asStateFlow()
@@ -51,14 +52,14 @@ class LoginViewModel(navController: NavController) : ViewModel() {
 
     fun onLoginClicked() {
         // Aquí iría la lógica para llamar al backend (API REST)
-        _navigation.navigate("dashboard")
+        navigation.navigate("dashboard")
     }
 
     fun onForgotPasswordClicked() {
-        _navigation.navigate("passwordrecovery")
+        navigation.navigate("passwordrecovery")
     }
 
     fun onSignUpClicked() {
-        _navigation.navigate("signup")
+        navigation.navigate("signup")
     }
 }

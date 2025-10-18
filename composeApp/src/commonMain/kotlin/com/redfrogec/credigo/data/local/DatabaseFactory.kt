@@ -225,8 +225,8 @@ class LocalDatabase(
         query.insertCharge(charge)
     }
 
-    fun updateDataCollection(id: Long, loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double){
-        query.updateDataCollection(loanId, quotaNumber, chargeDate, customerPaymentDate, quotaValue, chargeValue, remainingValue, id)
+    fun updateDataCharge(id: Long, loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double){
+        query.updateDataCharge(loanId, quotaNumber, chargeDate, customerPaymentDate, quotaValue, chargeValue, remainingValue, id)
     }
 
     fun deleteCharge(id: Long){

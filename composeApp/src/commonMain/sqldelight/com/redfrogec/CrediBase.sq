@@ -162,7 +162,7 @@ insertCharge:
 INSERT INTO ChargeTbl(LoanId, QuotaNumber, ChargeDate, CustomerPaymentDate, QuotaValue, ChargeValue, RemainingValue)
 VALUES ?;
 
-updateDataCollection:
+updateDataCharge:
 UPDATE ChargeTbl SET
     LoanId = ?, QuotaNumber = ?,ChargeDate = ?,CustomerPaymentDate = ?, QuotaValue = ?,
     ChargeValue = ?, RemainingValue = ?

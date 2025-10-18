@@ -1,9 +1,16 @@
 package com.redfrogec.credigo.di
 
 import com.redfrogec.credigo.data.local.LocalDatabase
+import com.redfrogec.credigo.domain.sdk.ChargeSDK
+import com.redfrogec.credigo.domain.sdk.ClientSDK
+import com.redfrogec.credigo.domain.sdk.KeySDK
+import com.redfrogec.credigo.domain.sdk.LoanSDK
+import com.redfrogec.credigo.domain.sdk.UserSDK
+import com.redfrogec.credigo.ui.viewModel.LoginViewModel
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 expect val targetModule: Module
@@ -11,6 +18,33 @@ expect val targetModule: Module
 
 val sharedModule = module {
     single<LocalDatabase> { LocalDatabase(get()) }
+    single<UserSDK> {
+        UserSDK(
+            database = get()
+        )
+    }
+    single<LoanSDK> {
+        LoanSDK(
+            database = get()
+        )
+    }
+    single<ClientSDK> {
+        ClientSDK(
+            database = get()
+        )
+    }
+    single<KeySDK> {
+        KeySDK(
+            database = get()
+        )
+    }
+    single<ChargeSDK> {
+        ChargeSDK(
+            database = get()
+        )
+    }
+
+    viewModel { LoginViewModel(sdk = get()) }
 }
 
 fun initializeKoin(config: (KoinApplication.() -> Unit)? = null) {

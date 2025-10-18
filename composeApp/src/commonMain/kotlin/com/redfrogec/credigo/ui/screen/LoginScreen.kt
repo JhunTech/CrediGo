@@ -30,14 +30,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.redfrogec.credigo.ui.viewModel.LoginViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LoginScreen(navController: NavController, modifier: Modifier) {
-    val viewModel = viewModel { LoginViewModel(navController) }
+    val viewModel = koinViewModel<LoginViewModel>()
     val username by viewModel.username.collectAsState()
     val password by viewModel.password.collectAsState()
     val loginEnabled by viewModel.loginEnabled.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
+    viewModel.navigation = navController
+
 
     val scrollState = rememberScrollState()
 
