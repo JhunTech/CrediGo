@@ -3,7 +3,7 @@ package com.redfrogec.credigo.data.local
 import app.cash.sqldelight.db.SqlDriver
 import com.redfrogec.ChargeTbl
 import com.redfrogec.ClientTbl
-import com.redfrogec.CrediDataBase
+import com.redfrogec.CrediBase
 import com.redfrogec.KeyTbl
 import com.redfrogec.LoanTbl
 import com.redfrogec.UserTbl
@@ -21,7 +21,7 @@ interface DatabaseDriverFactory{
 class LocalDatabase(
     databaseDriverFactory: DatabaseDriverFactory
 ) {
-    private val database = CrediDataBase(
+    private val database = CrediBase(
         databaseDriverFactory.createDriver()
     )
     private val query = database.crediBaseQueries

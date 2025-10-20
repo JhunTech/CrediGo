@@ -6,9 +6,13 @@ import com.redfrogec.credigo.data.local.LocalDatabase
 import com.redfrogec.credigo.domain.sdk.UserSDK
 import com.redfrogec.credigo.domain.utils.isValidEmail
 import com.redfrogec.credigo.domain.utils.isValidPassword
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.runBlocking
 
 class LoginViewModel(private val sdk: UserSDK) : ViewModel() {
 
@@ -39,13 +43,27 @@ class LoginViewModel(private val sdk: UserSDK) : ViewModel() {
     private fun validateLogin() {
         _loginEnabled.value = false
         when {
-            !isValidEmail(_username.value) -> _errorMessage.value = "Invalid email"
-            !isValidPassword(_password.value) -> _errorMessage.value = "Invalid password"
+            !isValidEmail(_username.value) -> _errorMessage.value = "Formato incorrecto de email"
+            !isValidPassword(_password.value) -> _errorMessage.value = "Formato incorrecto de password"
             else -> {
-
-                _loginEnabled.value = true
-                _errorMessage.value = ""
-                println("Login successful for ${username.value}")
+                /*val user = GlobalScope.async { // async necesita un CoroutineScope
+                    sdk.findUserByEmailAndPassword(_username.value, _password.value)
+                }*/
+                val user = runBlocking {
+                    sdk.findUserByEmailAndPassword(_username.value, _password.value)
+                }
+                if(user != null)
+                {
+                    _loginEnabled.value = true
+                    _errorMessage.value = ""
+                    println("Login successful for ${username.value}")
+                }
+                else
+                {
+                    _loginEnabled.value = false
+                    _errorMessage.value = "Usuario o contraseña incorrectos"
+                    println("Login failed for ${username.value}")
+                }
             }
         }
     }

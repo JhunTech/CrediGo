@@ -17,6 +17,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -35,9 +38,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.redfrogec.credigo.domain.controls.LoadingPopup
 import com.redfrogec.credigo.ui.viewModel.SignUpViewModel
+import credigo.composeapp.generated.resources.Res
+import credigo.composeapp.generated.resources.ic_arrow_left
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
+@Preview
 @Composable
 fun SignUpScreen(navController: NavController) {
     val viewModel = viewModel { SignUpViewModel(navController) }
@@ -48,33 +57,53 @@ fun SignUpScreen(navController: NavController) {
     val securityQuestion by viewModel.securityQuestion.collectAsState()
     val answer by viewModel.answer.collectAsState()
     val signUpEnabled by viewModel.signUpEnabled.collectAsState()
+    val showLoading by viewModel.showLoading.collectAsState()
 
     val questions = viewModel.getQuestions()
     var expanded by remember { mutableStateOf(false) }
 
     val scrollState = rememberScrollState()
 
+    //LoadingPopup(showDialog = showLoading)
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .verticalScroll(scrollState),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.TopStart
     ) {
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Text(
-                text = "Registrate",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+            ) {
+                IconButton(
+                    onClick = {viewModel.onSignInClicked()},
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_arrow_left),
+                        contentDescription = "Atrás",
+                        tint = MaterialTheme.colorScheme.primary,
+                    )
+                }
+                Text(
+                    text = "Crea tu usuario",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -136,18 +165,22 @@ fun SignUpScreen(navController: NavController) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .menuAnchor(),
-                    shape = RoundedCornerShape(10.dp)
+                    shape = RoundedCornerShape(10.dp),
+                    singleLine = true,
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                    }
                 )
 
                 ExposedDropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
                 ) {
-                    questions.forEach { question ->
+                    questions.forEach {question ->
                         DropdownMenuItem(
-                            text = { Text(question) },
+                            text = { Text(question.Descripcion) },
                             onClick = {
-                                viewModel.onSecurityQuestionChanged(question)
+                                viewModel.onSecurityQuestionChanged(question.Id, question.Descripcion)
                                 expanded = false
                             }
                         )
@@ -177,13 +210,13 @@ fun SignUpScreen(navController: NavController) {
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF008954))
             ) {
-                Text("Sign Up", fontSize = 18.sp, color = Color.White)
+                Text("Registrar", fontSize = 18.sp, color = Color.White)
             }
 
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = "Already have an account? Sign In",
+                text = "Ya tienes una cuenta? ir a Login",
                 color = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.clickable { viewModel.onSignInClicked() }
             )

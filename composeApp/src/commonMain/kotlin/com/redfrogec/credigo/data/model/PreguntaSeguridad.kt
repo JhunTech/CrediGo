@@ -1,7 +1,9 @@
 package com.redfrogec.credigo.data.model
 
 import kotlinx.datetime.LocalDateTime
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class PreguntaSeguridad(
     val Id: Int,
     val Descripcion: String = "",
