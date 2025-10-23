@@ -27,7 +27,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.navigation.NavController
+import com.redfrogec.credigo.domain.controls.LoadingPopup
+import com.redfrogec.credigo.domain.controls.SimpleDialog
 import com.redfrogec.credigo.ui.viewModel.LoginViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -38,10 +42,16 @@ fun LoginScreen(navController: NavController, modifier: Modifier) {
     val password by viewModel.password.collectAsState()
     val loginEnabled by viewModel.loginEnabled.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
+    val loginFail by viewModel.loginFail.collectAsState()
+    val showLoading by viewModel.showLoading.collectAsState()
     viewModel.navigation = navController
-
-
     val scrollState = rememberScrollState()
+
+    if(loginFail) {
+        SimpleDialog("Alerta", "Usuario o contraseña incorrectos")
+    }
+
+    LoadingPopup(showLoading)
 
     Box(
         modifier = modifier
@@ -103,10 +113,10 @@ fun LoginScreen(navController: NavController, modifier: Modifier) {
                 Text("Login", style = MaterialTheme.typography.labelLarge, color = Color.White)
             }
 
-            Spacer(modifier = modifier.height(12.dp))
+            Spacer(modifier = modifier.height(20.dp))
 
             Text(
-                text = "Forgot Password?",
+                text = "Perdiste tu contraseña?",
                 color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.labelSmall,
                 modifier = modifier.clickable { viewModel.onForgotPasswordClicked() }
@@ -119,7 +129,7 @@ fun LoginScreen(navController: NavController, modifier: Modifier) {
                 modifier = modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp)
             ) {
-                Text("Sign Up", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary)
+                Text("Login", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary)
             }
 
             // Error message

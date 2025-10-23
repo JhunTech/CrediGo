@@ -46,10 +46,10 @@ class ChargeSDK(
         }
     }
 
-    suspend fun updateDataCharge(id: Long, loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double){
+    suspend fun updateDataCharge(loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double, id: Long){
         cleanErrorData()
         try {
-            database.updateDataCharge(id, loanId, quotaNumber, chargeDate, customerPaymentDate, quotaValue, chargeValue, remainingValue)
+            database.updateDataCharge(loanId, quotaNumber, chargeDate, customerPaymentDate, quotaValue, chargeValue, remainingValue, id)
         }catch (e: Exception){
             settings.putString(Constants.ERROR_CODE, "CH005")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())

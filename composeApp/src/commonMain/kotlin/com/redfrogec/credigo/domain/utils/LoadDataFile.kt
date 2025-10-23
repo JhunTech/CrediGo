@@ -6,20 +6,20 @@ import com.redfrogec.credigo.data.model.TipoPago
 import credigo.composeapp.generated.resources.Res
 import kotlinx.serialization.json.Json
 
-suspend fun cargarListaInteres(): List<Interes>{
-    val readBytes = Res.readBytes("files/Interes.json")
+suspend fun loadInterests(): List<Interes>{
+    val readBytes = Res.readBytes("files/Interest.json")
     val jsonString = readBytes.toString()
     return Json.decodeFromString(jsonString)
 }
 
-suspend fun cargarPreguntaSeguridad(): List<PreguntaSeguridad>{
+suspend fun loadSecurityQuestions(): List<PreguntaSeguridad>{
     val readBytes = Res.readBytes("files/SecurityQuestions.json")
     val jsonString = readBytes.decodeToString()
     return Json.decodeFromString(jsonString)
 }
 
-suspend fun cargarTiposPago(): List<TipoPago>{
-    val readBytes = Res.readBytes("files/TipoPago.json")
+suspend fun loadPaymentTypes(): List<TipoPago>{
+    val readBytes = Res.readBytes("files/PaymentType.json")
     val jsonString = readBytes.toString()
     return Json.decodeFromString(jsonString)
 }

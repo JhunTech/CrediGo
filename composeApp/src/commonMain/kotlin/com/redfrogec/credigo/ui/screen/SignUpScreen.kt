@@ -2,13 +2,16 @@ package com.redfrogec.credigo.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -39,17 +42,21 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.redfrogec.credigo.domain.controls.LoadingPopup
+import com.redfrogec.credigo.domain.controls.SimpleDialog
 import com.redfrogec.credigo.ui.viewModel.SignUpViewModel
 import credigo.composeapp.generated.resources.Res
 import credigo.composeapp.generated.resources.ic_arrow_left
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun SignUpScreen(navController: NavController) {
-    val viewModel = viewModel { SignUpViewModel(navController) }
+fun SignUpScreen(navController: NavController, modifier: Modifier) {
+    val viewModel = koinViewModel<SignUpViewModel>()
+    viewModel.navigation = navController
+
     val email by viewModel.email.collectAsState()
     val name by viewModel.name.collectAsState()
     val password by viewModel.password.collectAsState()
@@ -57,169 +64,195 @@ fun SignUpScreen(navController: NavController) {
     val securityQuestion by viewModel.securityQuestion.collectAsState()
     val answer by viewModel.answer.collectAsState()
     val signUpEnabled by viewModel.signUpEnabled.collectAsState()
+    val signUpOk by viewModel.signUpOk.collectAsState()
     val showLoading by viewModel.showLoading.collectAsState()
-
+    val errorMessage by viewModel.errorMessage.collectAsState()
     val questions = viewModel.getQuestions()
     var expanded by remember { mutableStateOf(false) }
-
     val scrollState = rememberScrollState()
 
-    //LoadingPopup(showDialog = showLoading)
+    if(signUpOk)
+    {
+        if(SimpleDialog("Alerta", "Registro exitoso"))
+        {
+            viewModel.goDashBoard()
+        }
+    }
+
+    LoadingPopup(showLoading)
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(scrollState),
-        contentAlignment = Alignment.TopStart
     ) {
-
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(16.dp)
+                .verticalScroll(scrollState)
         ) {
-            Box(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp)
+                    .height(40.dp)
+                    .padding(top = 5.dp),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(
-                    onClick = {viewModel.onSignInClicked()},
+                Icon(
                     modifier = Modifier
-                        .align(Alignment.CenterStart)
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.ic_arrow_left),
-                        contentDescription = "Atrás",
-                        tint = MaterialTheme.colorScheme.primary,
-                    )
-                }
+                        .size(30.dp)
+                        .padding(0.dp)
+                        .clickable{ viewModel.onSignInClicked()},
+                    painter = painterResource(Res.drawable.ic_arrow_left),
+                    contentDescription = "Atrás",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+
                 Text(
                     text = "Crea tu usuario",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.align(Alignment.Center)
+                    color = MaterialTheme.colorScheme.primary
                 )
-            }
 
-            Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-            OutlinedTextField(
-                value = email,
-                onValueChange = { viewModel.onEmailChanged(it) },
-                placeholder = { Text("Email") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                shape = RoundedCornerShape(10.dp)
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            OutlinedTextField(
-                value = name,
-                onValueChange = { viewModel.onNameChanged(it) },
-                placeholder = { Text("Name") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                shape = RoundedCornerShape(10.dp)
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            OutlinedTextField(
-                value = password,
-                onValueChange = { viewModel.onPasswordChanged(it) },
-                placeholder = { Text("Password") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                shape = RoundedCornerShape(10.dp),
-                visualTransformation = PasswordVisualTransformation()
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            OutlinedTextField(
-                value = repeatPassword,
-                onValueChange = { viewModel.onRepeatPasswordChanged(it) },
-                placeholder = { Text("Repeat Password") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                shape = RoundedCornerShape(10.dp),
-                visualTransformation = PasswordVisualTransformation()
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { expanded = !expanded }
-            ) {
                 OutlinedTextField(
-                    value = securityQuestion,
-                    onValueChange = {},
-                    readOnly = true,
-                    placeholder = { Text("Security Question") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor(),
-                    shape = RoundedCornerShape(10.dp),
+                    value = email,
+                    onValueChange = { viewModel.onEmailChanged(it) },
+                    placeholder = { Text("Email") },
+                    modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                    }
+                    shape = RoundedCornerShape(10.dp)
                 )
 
-                ExposedDropdownMenu(
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { viewModel.onNameChanged(it) },
+                    placeholder = { Text("Nombre") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp)
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { viewModel.onPasswordChanged(it) },
+                    placeholder = { Text("Password") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp),
+                    visualTransformation = PasswordVisualTransformation()
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedTextField(
+                    value = repeatPassword,
+                    onValueChange = { viewModel.onRepeatPasswordChanged(it) },
+                    placeholder = { Text("Repetir Password") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp),
+                    visualTransformation = PasswordVisualTransformation()
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                ExposedDropdownMenuBox(
                     expanded = expanded,
-                    onDismissRequest = { expanded = false }
+                    onExpandedChange = { expanded = !expanded }
                 ) {
-                    questions.forEach {question ->
-                        DropdownMenuItem(
-                            text = { Text(question.Descripcion) },
-                            onClick = {
-                                viewModel.onSecurityQuestionChanged(question.Id, question.Descripcion)
-                                expanded = false
-                            }
-                        )
+                    OutlinedTextField(
+                        value = securityQuestion,
+                        onValueChange = {},
+                        readOnly = true,
+                        placeholder = { Text("Selecciona la pregunta de seguridad") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(),
+                        shape = RoundedCornerShape(10.dp),
+                        singleLine = true,
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                        }
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        questions.forEach { question ->
+                            DropdownMenuItem(
+                                text = { Text(question.Descripcion) },
+                                onClick = {
+                                    viewModel.onSecurityQuestionChanged(
+                                        question.Id,
+                                        question.Descripcion
+                                    )
+                                    expanded = false
+                                }
+                            )
+                        }
                     }
                 }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedTextField(
+                    value = answer,
+                    onValueChange = { viewModel.onAnswerChanged(it) },
+                    placeholder = { Text("Respuesta de seguridad") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp)
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Button(
+                    onClick = { viewModel.onSignUpClicked() },
+                    enabled = signUpEnabled,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF008954))
+                ) {
+                    Text("Registrar", fontSize = 18.sp, color = Color.White)
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(
+                    text = "Ya tienes una cuenta? ir a Login",
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.clickable { viewModel.onSignInClicked() }
+                )
+
+                // Error message
+                errorMessage?.let { error ->
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
             }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            OutlinedTextField(
-                value = answer,
-                onValueChange = { viewModel.onAnswerChanged(it) },
-                placeholder = { Text("Answer") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                shape = RoundedCornerShape(10.dp)
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Button(
-                onClick = { viewModel.onSignUpClicked() },
-                enabled = signUpEnabled,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF008954))
-            ) {
-                Text("Registrar", fontSize = 18.sp, color = Color.White)
-            }
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Text(
-                text = "Ya tienes una cuenta? ir a Login",
-                color = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.clickable { viewModel.onSignInClicked() }
-            )
         }
     }
 }

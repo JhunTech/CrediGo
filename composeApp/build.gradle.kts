@@ -27,6 +27,7 @@ kotlin {
             isStatic = true
         }
     }
+
     
     sourceSets {
         iosMain.dependencies {

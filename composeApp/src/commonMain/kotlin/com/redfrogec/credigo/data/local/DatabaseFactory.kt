@@ -66,7 +66,7 @@ class LocalDatabase(
         query.insertUser(user)
     }
 
-    fun updateUser(id: Long, image: String?, email: String, name: String, passwordHash: String, questionId: Long, response: String, registerDate: LocalDateTime, updateDate: LocalDateTime?, tokenId: Long?, token: String?, tokenExpire: LocalDateTime?) {
+    fun updateUser(image: String?, email: String, name: String, passwordHash: String, questionId: Long, response: String, registerDate: LocalDateTime, updateDate: LocalDateTime?, tokenId: Long?, token: String?, tokenExpire: LocalDateTime?, id: Long) {
         query.updateUser(image, email, name, passwordHash, questionId, response, registerDate.toString(), updateDate.toString(), tokenId, token, tokenExpire.toString(), id)
     }
 
@@ -104,7 +104,7 @@ class LocalDatabase(
         }
     }
 
-    fun insertClient(image: String?, userId: Long, identification: String, name: String, email: String?, phone: String?, address: String?, blocked: Boolean, registerDate: LocalDateTime) {
+    fun insertClient(userId: Long, image: String?, identification: String, name: String, email: String?, phone: String?, address: String?, blocked: Boolean, registerDate: LocalDateTime) {
         val client = ClientTbl(
             0,
             userId,
@@ -120,8 +120,8 @@ class LocalDatabase(
         query.insertClient(client)
     }
 
-    fun updateDataClient(id: Long, image: String?, userId: Long, identification: String, name: String, email: String?, phone: String?, address: String?, blocked: Boolean, registerDate: LocalDateTime) {
-        query.updateDataClient(image, userId, identification, name, email, phone, address, if (blocked) 1 else 0, registerDate.toString(), id)
+    fun updateDataClient(userId: Long, image: String?, identification: String, name: String, email: String?, phone: String?, address: String?, blocked: Boolean, registerDate: LocalDateTime, id: Long) {
+        query.updateDataClient(userId, image, identification, name, email, phone, address, if (blocked) 1 else 0, registerDate.toString(), id)
     }
 
     fun deleteClient(id: Long) {
@@ -179,7 +179,7 @@ class LocalDatabase(
         query.insertLoan(loan)
     }
 
-    fun updateDataLoan(id: Long, clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String){
+    fun updateDataLoan(clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String, id: Long){
         query.updateDataLoan(clientId, value, paymentTypeId, interestId, quotaNumbers, if (active) 1 else 0, creationDate, deliveryDate, id)
     }
 
@@ -225,7 +225,7 @@ class LocalDatabase(
         query.insertCharge(charge)
     }
 
-    fun updateDataCharge(id: Long, loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double){
+    fun updateDataCharge(loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double, id: Long){
         query.updateDataCharge(loanId, quotaNumber, chargeDate, customerPaymentDate, quotaValue, chargeValue, remainingValue, id)
     }
 

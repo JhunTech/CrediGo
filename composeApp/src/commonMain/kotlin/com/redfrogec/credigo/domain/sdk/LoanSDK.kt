@@ -44,10 +44,10 @@ class LoanSDK(
         }
     }
 
-    suspend fun updateDataLoan(id: Long, clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String) {
+    suspend fun updateDataLoan(clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String, id: Long) {
         cleanErrorData()
         try {
-            database.updateDataLoan(id, clientId, value, paymentTypeId, interestId, quotaNumbers, active, creationDate, deliveryDate)
+            database.updateDataLoan(clientId, value, paymentTypeId, interestId, quotaNumbers, active, creationDate, deliveryDate, id)
         }catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "L004")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())

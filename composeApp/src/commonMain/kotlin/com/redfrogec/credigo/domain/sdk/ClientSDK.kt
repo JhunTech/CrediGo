@@ -24,30 +24,30 @@ class ClientSDK(
         }
     }
 
-    suspend fun insertClient(image: String?, userId: Long, identification: String, name: String, email: String?, phone: String?, address: String?, blocked: Boolean, registerDate: LocalDateTime){
+    suspend fun insertClient(userId: Long, image: String?, identification: String, name: String, email: String?, phone: String?, address: String?, blocked: Boolean, registerDate: LocalDateTime){
         cleanErrorData()
         try {
-            database.insertClient(image, userId, identification, name, email, phone, address, blocked, registerDate)
+            database.insertClient(userId, image, identification, name, email, phone, address, blocked, registerDate)
         }catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "C002")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
         }
     }
 
-    suspend fun updateDataClient(id: Long, image: String?, userId: Long, identification: String, name: String, email: String?, phone: String?, address: String?, blocked: Boolean, registerDate: LocalDateTime){
+    suspend fun updateDataClient( userId: Long, image: String?, identification: String, name: String, email: String?, phone: String?, address: String?, blocked: Boolean, registerDate: LocalDateTime, id: Long){
         cleanErrorData()
         try {
             database.updateDataClient(
-                id,
-                image,
                 userId,
+                image,
                 identification,
                 name,
                 email,
                 phone,
                 address,
                 blocked,
-                registerDate
+                registerDate,
+                id
             )
         }catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "C003")

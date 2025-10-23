@@ -30,6 +30,12 @@ class LoginViewModel(private val sdk: UserSDK) : ViewModel() {
     private val _errorMessage = MutableStateFlow("")
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
+    private val _loginFail = MutableStateFlow(false)
+    val loginFail: StateFlow<Boolean> = _loginFail.asStateFlow()
+
+    private val _showLoading = MutableStateFlow(false)
+    val showLoading: StateFlow<Boolean> = _showLoading.asStateFlow()
+
     fun onUsernameChanged(newValue: String) {
         _username.value = newValue
         validateLogin()
@@ -44,33 +50,34 @@ class LoginViewModel(private val sdk: UserSDK) : ViewModel() {
         _loginEnabled.value = false
         when {
             !isValidEmail(_username.value) -> _errorMessage.value = "Formato incorrecto de email"
-            !isValidPassword(_password.value) -> _errorMessage.value = "Formato incorrecto de password"
+            !isValidPassword(_password.value) -> _errorMessage.value =
+                "Formato incorrecto de password"
             else -> {
-                /*val user = GlobalScope.async { // async necesita un CoroutineScope
-                    sdk.findUserByEmailAndPassword(_username.value, _password.value)
-                }*/
-                val user = runBlocking {
-                    sdk.findUserByEmailAndPassword(_username.value, _password.value)
-                }
-                if(user != null)
-                {
-                    _loginEnabled.value = true
-                    _errorMessage.value = ""
-                    println("Login successful for ${username.value}")
-                }
-                else
-                {
-                    _loginEnabled.value = false
-                    _errorMessage.value = "Usuario o contraseña incorrectos"
-                    println("Login failed for ${username.value}")
-                }
+                _loginEnabled.value = true
+                _errorMessage.value = ""
             }
         }
     }
 
     fun onLoginClicked() {
         // Aquí iría la lógica para llamar al backend (API REST)
-        navigation.navigate("dashboard")
+        _showLoading.value = true
+        val user = sdk.findUserByEmailAndPassword(_username.value, _password.value)
+        _showLoading.value = false
+        clearControls()
+
+        if(user != null)
+        {
+            println("Login successful for ${username.value}")
+            _errorMessage.value = ""
+            _loginFail.value=false
+            navigation.navigate("dashboard")
+        }
+        else
+        {
+            println("Login failed for ${username.value}")
+            _loginFail.value=true
+        }
     }
 
     fun onForgotPasswordClicked() {
@@ -79,5 +86,13 @@ class LoginViewModel(private val sdk: UserSDK) : ViewModel() {
 
     fun onSignUpClicked() {
         navigation.navigate("signup")
+    }
+
+    fun clearControls(){
+        _username.value = ""
+        _password.value = ""
+        _errorMessage.value = ""
+        _loginEnabled.value = false
+        _loginFail.value=false
     }
 }

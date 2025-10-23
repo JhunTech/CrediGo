@@ -1,23 +1,30 @@
 package com.redfrogec.credigo.ui.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -29,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -37,16 +45,24 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.redfrogec.credigo.ui.viewModel.PasswordRecoveryViewModel
+import com.redfrogec.credigo.ui.viewModel.SignUpViewModel
+import credigo.composeapp.generated.resources.Res
+import credigo.composeapp.generated.resources.ic_arrow_left
+import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PasswordRecoveryScreen(navController: NavController, modifier: Modifier) {
-    val viewModel = viewModel { PasswordRecoveryViewModel(navController) }
+    val viewModel = koinViewModel< PasswordRecoveryViewModel>()
+    viewModel.navigation = navController
+
     val email by viewModel.email.collectAsState()
     val securityQuestion by viewModel.securityQuestion.collectAsState()
     val answer by viewModel.answer.collectAsState()
     val newPassword by viewModel.newPassword.collectAsState()
     val confirmPassword by viewModel.confirmPassword.collectAsState()
+    val resetEnabled by viewModel.resetEnabled.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
 
     val questions = viewModel.getQuestions()
@@ -57,115 +73,159 @@ fun PasswordRecoveryScreen(navController: NavController, modifier: Modifier) {
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(scrollState),
-        contentAlignment = Alignment.Center
     ) {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .padding(16.dp)
+                .verticalScroll(scrollState)
         ) {
-            Text(
-                text = "Recuperar contraseña",
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleLarge
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            // Email
-            OutlinedTextField(
-                value = email,
-                onValueChange = { viewModel.onEmailChange(it) },
-                placeholder = { Text("Email") },
-                modifier = modifier.fillMaxWidth(),
-                singleLine = true,
-                shape = RoundedCornerShape(10.dp)
-            )
-
-            Spacer(modifier = modifier.height(16.dp))
-
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { expanded = !expanded }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp)
+                    .padding(top = 5.dp),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                OutlinedTextField(
-                    value = securityQuestion,
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("Select Security Question") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-                    modifier = modifier.fillMaxWidth().menuAnchor()
+                Icon(
+                    modifier = Modifier
+                        .size(30.dp)
+                        .padding(0.dp)
+                        .clickable{ viewModel.onBackClicked()},
+                    painter = painterResource(Res.drawable.ic_arrow_left),
+                    contentDescription = "Atrás",
+                    tint = MaterialTheme.colorScheme.primary
                 )
-                ExposedDropdownMenu(
+            }
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Recuperar contraseña",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // Email
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { viewModel.onEmailChange(it) },
+                    placeholder = { Text("Email") },
+                    modifier = modifier.fillMaxWidth(),
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp)
+                )
+
+                Spacer(modifier = modifier.height(16.dp))
+
+                ExposedDropdownMenuBox(
                     expanded = expanded,
-                    onDismissRequest = { expanded = false }
+                    onExpandedChange = { expanded = !expanded }
                 ) {
-                    questions.forEach { question ->
-                        DropdownMenuItem(
-                            text = { Text(question) },
-                            onClick = {
-                                viewModel.onSecurityQuestionChange(question)
-                                expanded = false
-                            }
-                        )
+                    OutlinedTextField(
+                        value = securityQuestion,
+                        onValueChange = {},
+                        readOnly = true,
+                        placeholder = { Text("Selecciona la pregunta de seguridad") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(),
+                        shape = RoundedCornerShape(10.dp),
+                        singleLine = true,
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                        }
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        questions.forEach { question ->
+                            DropdownMenuItem(
+                                text = { Text(question.Descripcion) },
+                                onClick = {
+                                    viewModel.onSecurityQuestionChange(
+                                        question.Id,
+                                        question.Descripcion
+                                    )
+                                    expanded = false
+                                }
+                            )
+                        }
                     }
+                }
+
+                Spacer(modifier = modifier.height(16.dp))
+
+                // Answer
+                OutlinedTextField(
+                    value = answer,
+                    onValueChange = { viewModel.onAnswerChange(it) },
+                    placeholder = { Text("Respuesta de seguridad") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp)
+                )
+
+                Spacer(modifier = modifier.height(16.dp))
+
+                // New Password
+                OutlinedTextField(
+                    value = newPassword,
+                    onValueChange = { viewModel.onNewPasswordChange(it) },
+                    placeholder = { Text("Password") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp),
+                    visualTransformation = PasswordVisualTransformation()
+                )
+
+                Spacer(modifier = modifier.height(16.dp))
+
+                // Confirm Password
+                OutlinedTextField(
+                    value = confirmPassword,
+                    onValueChange = { viewModel.onConfirmPasswordChange(it) },
+                    placeholder = { Text("Repetir Password") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp),
+                    visualTransformation = PasswordVisualTransformation()
+                )
+
+                Spacer(modifier = modifier.height(24.dp))
+
+                Button(
+                    onClick = { viewModel.resetPassword() },
+                    enabled = resetEnabled,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF008954))
+                ) {
+                    Text("Registrar", fontSize = 18.sp, color = Color.White)
+                }
+
+                // Error message
+                errorMessage?.let { error ->
+                    Spacer(modifier = modifier.height(12.dp))
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             }
 
-            Spacer(modifier = modifier.height(16.dp))
-
-            // Answer
-            OutlinedTextField(
-                value = answer,
-                onValueChange = { viewModel.onAnswerChange(it) },
-                label = { Text("Answer") },
-                modifier = modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = modifier.height(16.dp))
-
-            // New Password
-            OutlinedTextField(
-                value = newPassword,
-                onValueChange = { viewModel.onNewPasswordChange(it) },
-                label = { Text("New Password") },
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                modifier = modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = modifier.height(16.dp))
-
-            // Confirm Password
-            OutlinedTextField(
-                value = confirmPassword,
-                onValueChange = { viewModel.onConfirmPasswordChange(it) },
-                label = { Text("Confirm New Password") },
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                modifier = modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = modifier.height(24.dp))
-
-            Button(
-                onClick = { viewModel.resetPassword() },
-                modifier = modifier.fillMaxWidth()
-            ) {
-                Text("Reset Password")
-            }
-
-            // Error message
-            errorMessage?.let { error ->
-                Spacer(modifier = modifier.height(12.dp))
-                Text(
-                    text = error,
-                    color = MaterialTheme.colorScheme.error
-                )
-            }
         }
     }
 }

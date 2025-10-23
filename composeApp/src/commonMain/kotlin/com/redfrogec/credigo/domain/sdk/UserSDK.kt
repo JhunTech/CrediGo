@@ -12,8 +12,7 @@ class UserSDK(
 ){
     private val settings: Settings = Settings()
     @Throws(Exception::class)
-
-    suspend fun findUserByEmailAndPassword(email: String, password: String): User? {
+    fun findUserByEmailAndPassword(email: String, password: String): User? {
         cleanErrorData()
         return try{
             database.findUserByEmailAndPassword(email, password)
@@ -24,21 +23,22 @@ class UserSDK(
         }
     }
 
-    suspend fun insertUser(image: String?, email: String, name: String, passwordHash: String, questionId: Long, response: String, registerDate: LocalDateTime, updateDate: LocalDateTime?, tokenId: Long?, token: String?, tokenExpire: LocalDateTime?) {
+    fun insertUser(image: String?, email: String, name: String, passwordHash: String, questionId: Long, response: String, registerDate: LocalDateTime, updateDate: LocalDateTime?, tokenId: Long?, token: String?, tokenExpire: LocalDateTime?): Boolean {
         cleanErrorData()
         try{
             database.insertUser(image, email, name, passwordHash, questionId, response, registerDate, updateDate, tokenId, token, tokenExpire)
+            return true
         } catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "U002")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            return false
         }
     }
 
-    suspend fun updateUser(id: Long, image: String?, email: String, name: String, passwordHash: String, questionId: Long, response: String, registerDate: LocalDateTime, updateDate: LocalDateTime?, tokenId: Long?, token: String?, tokenExpire: LocalDateTime?) {
+    fun updateUser(image: String?, email: String, name: String, passwordHash: String, questionId: Long, response: String, registerDate: LocalDateTime, updateDate: LocalDateTime?, tokenId: Long?, token: String?, tokenExpire: LocalDateTime?, id: Long) {
         cleanErrorData()
         try {
             database.updateUser(
-                id,
                 image,
                 email,
                 name,
@@ -49,7 +49,8 @@ class UserSDK(
                 updateDate,
                 tokenId,
                 token,
-                tokenExpire
+                tokenExpire,
+                id
             )
         } catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "U003")
@@ -57,7 +58,7 @@ class UserSDK(
         }
     }
 
-    suspend fun deleteUser(id: Long) {
+    fun deleteUser(id: Long) {
         cleanErrorData()
         try {
             database.deleteUser(id)

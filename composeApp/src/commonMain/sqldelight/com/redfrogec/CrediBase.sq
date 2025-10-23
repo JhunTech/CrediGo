@@ -91,12 +91,12 @@ selectAllClients:
 SELECT * FROM ClientTbl WHERE UserId = ?;
 
 insertClient:
-INSERT INTO ClientTbl(Image, UserId, Identification, Name, Email, Phone, Address, Blocked, RegisterDate)
+INSERT INTO ClientTbl(UserId, Image , Identification, Name, Email, Phone, Address, Blocked, RegisterDate)
 VALUES ?;
 
 updateDataClient:
 UPDATE ClientTbl SET
-    Image = ?, UserId = ?, Identification = ?, Name = ?, Email = ?,
+    UserId = ?, Image = ?, Identification = ?, Name = ?, Email = ?,
     Phone = ?, Address = ?, Blocked = ?, RegisterDate = ?
 WHERE Id = ?;
 

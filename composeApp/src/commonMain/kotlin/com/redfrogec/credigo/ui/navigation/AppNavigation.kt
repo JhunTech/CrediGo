@@ -25,7 +25,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         }
 
         composable(Screens.SignUp.route) {
-            SignUpScreen(navController)
+            SignUpScreen(navController, modifier)
         }
 
         composable(Screens.PasswordRecovery.route) {

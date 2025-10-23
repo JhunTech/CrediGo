@@ -10,7 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 
 @Composable
-fun ShowCustomAlertDialog(title: String, message: String): Boolean{
+fun ShowAlertDialog(title: String, message: String): Boolean{
     var showAlertDialog by remember { mutableStateOf(true) }
     var returnConfirm by remember { mutableStateOf(false) }
     if (showAlertDialog) {

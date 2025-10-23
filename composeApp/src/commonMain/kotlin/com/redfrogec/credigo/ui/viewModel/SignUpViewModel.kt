@@ -1,36 +1,40 @@
 package com.redfrogec.credigo.ui.viewModel
 
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.redfrogec.credigo.data.model.Constants
 import com.redfrogec.credigo.data.model.PreguntaSeguridad
-import com.redfrogec.credigo.domain.controls.LoadingPopup
-import com.redfrogec.credigo.domain.utils.cargarPreguntaSeguridad
+import com.redfrogec.credigo.domain.sdk.UserSDK
+import com.redfrogec.credigo.domain.utils.CurrentDateDisplay
+import com.redfrogec.credigo.domain.utils.isValidEmail
+import com.redfrogec.credigo.domain.utils.isValidPassword
+import com.redfrogec.credigo.domain.utils.loadSecurityQuestions
+import com.russhwolf.settings.Settings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
-class SignUpViewModel(navController: NavController) : ViewModel() {
+class SignUpViewModel(private val sdk: UserSDK) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            securityQuestions = cargarPreguntaSeguridad()
+            securityQuestions = loadSecurityQuestions()
         }
     }
     /*val securityQuestions : List<PreguntaSeguridad> = runBlocking {
         cargarPreguntaSeguridad()
     }*/
 
+    lateinit var navigation: NavController
+
     lateinit var securityQuestions : List<PreguntaSeguridad>
+
+    private val settings: Settings = Settings()
 
     private var _showLoading = MutableStateFlow(false)
     var showLoading: StateFlow<Boolean> = _showLoading.asStateFlow()
-
-    private val _navigation = navController
 
     private val _email = MutableStateFlow("")
     val email: StateFlow<String> = _email.asStateFlow()
@@ -55,6 +59,12 @@ class SignUpViewModel(navController: NavController) : ViewModel() {
 
     private val _signUpEnabled = MutableStateFlow(false)
     val signUpEnabled: StateFlow<Boolean> = _signUpEnabled.asStateFlow()
+
+    private val _errorMessage = MutableStateFlow("")
+    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
+
+    private val _signUpOk = MutableStateFlow(false)
+    val signUpOk: StateFlow<Boolean> = _signUpOk.asStateFlow()
 
     fun getQuestions(): List<PreguntaSeguridad> = securityQuestions
 
@@ -90,21 +100,55 @@ class SignUpViewModel(navController: NavController) : ViewModel() {
     }
 
     private fun validateForm() {
-        _signUpEnabled.value =
-            _email.value.isNotBlank() &&
-            _name.value.isNotBlank() &&
-            _password.value.isNotBlank() &&
-            _repeatPassword.value == _password.value &&
-            _securityQuestion.value.isNotBlank() &&
-            _answer.value.isNotBlank()
+        _signUpEnabled.value = false
+        when {
+            !isValidEmail(_email.value) -> _errorMessage.value = "Formato incorrecto de email"
+            !isValidPassword(_password.value) -> _errorMessage.value = "Formato incorrecto de password"
+            !_name.value.isNotBlank() -> _errorMessage.value = "Ingresar un nombre valido"
+            _repeatPassword.value != _password.value -> _errorMessage.value = "Repetir el password correctamente"
+            !_securityQuestion.value.isNotBlank() -> _errorMessage.value = "Selecciona una pregunta de seguridad"
+            !_answer.value.isNotBlank() -> _errorMessage.value = "Ingresa la respuesta de seguridad"
+            else -> {
+                _errorMessage.value = ""
+                _signUpEnabled.value = true
+            }
+        }
     }
 
     fun onSignUpClicked() {
         println("Registrando usuario con email: ${_email.value}")
+        _showLoading.value = true
+        val insertUser = sdk.insertUser(
+            "",
+            _email.value,
+            _name.value,
+            _password.value,
+            _idSecurityQuestion.value.toLong(),
+            _answer.value,
+            CurrentDateDisplay(),
+            CurrentDateDisplay(),
+            0,
+            "",
+            CurrentDateDisplay())
+        _showLoading.value = false
+
+        if(insertUser){
+            _errorMessage.value = ""
+            _signUpOk.value=true
+        }
+        else{
+            _errorMessage.value = settings.getString(Constants.ERROR_MESSAGE, "")
+            _signUpOk.value=false
+        }
     }
 
     fun onSignInClicked() {
         println("Navegar a pantalla de Login")
-        _navigation.popBackStack("login", inclusive = false)
+        navigation.popBackStack("login", inclusive = false)
+    }
+
+    fun goDashBoard()
+    {
+        navigation.navigate("dashboard")
     }
 }
