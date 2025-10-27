@@ -66,6 +66,9 @@ class SignUpViewModel(private val sdk: UserSDK) : ViewModel() {
     private val _signUpOk = MutableStateFlow(false)
     val signUpOk: StateFlow<Boolean> = _signUpOk.asStateFlow()
 
+    private val _signUpFail = MutableStateFlow(false)
+    val signUpFail: StateFlow<Boolean> = _signUpFail.asStateFlow()
+
     fun getQuestions(): List<PreguntaSeguridad> = securityQuestions
 
     fun onEmailChanged(newValue: String) {
@@ -116,7 +119,9 @@ class SignUpViewModel(private val sdk: UserSDK) : ViewModel() {
     }
 
     fun onSignUpClicked() {
-        println("Registrando usuario con email: ${_email.value}")
+        _signUpOk.value=false
+        _signUpFail.value=false
+
         _showLoading.value = true
         val insertUser = sdk.insertUser(
             "",
@@ -132,13 +137,17 @@ class SignUpViewModel(private val sdk: UserSDK) : ViewModel() {
             CurrentDateDisplay())
         _showLoading.value = false
 
-        if(insertUser){
+        if(insertUser.toInt() > 0) {
+            println("Registrando usuario con email: ${_email.value}")
             _errorMessage.value = ""
             _signUpOk.value=true
+            _signUpFail.value=false
         }
         else{
+            println("Error de registro de usuario con email: ${_email.value}")
             _errorMessage.value = settings.getString(Constants.ERROR_MESSAGE, "")
             _signUpOk.value=false
+            _signUpFail.value=true
         }
     }
 

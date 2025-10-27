@@ -27,11 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.navigation.NavController
 import com.redfrogec.credigo.domain.controls.LoadingPopup
-import com.redfrogec.credigo.domain.controls.SimpleDialog
+import com.redfrogec.credigo.domain.controls.simpleDialog
 import com.redfrogec.credigo.ui.viewModel.LoginViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -48,7 +46,9 @@ fun LoginScreen(navController: NavController, modifier: Modifier) {
     val scrollState = rememberScrollState()
 
     if(loginFail) {
-        SimpleDialog("Alerta", "Usuario o contraseña incorrectos")
+        if(simpleDialog("Alerta", "Usuario o contraseña incorrectos")){
+            viewModel.clearControls()
+        }
     }
 
     LoadingPopup(showLoading)
@@ -67,9 +67,6 @@ fun LoginScreen(navController: NavController, modifier: Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-
-            Spacer(modifier = modifier.height(2.dp))
-
             Text(
                 text = "CrediGo",
                 color = MaterialTheme.colorScheme.primary,
@@ -129,7 +126,7 @@ fun LoginScreen(navController: NavController, modifier: Modifier) {
                 modifier = modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp)
             ) {
-                Text("Login", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary)
+                Text("Registrate", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary)
             }
 
             // Error message

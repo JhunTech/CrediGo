@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -24,7 +22,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -38,20 +35,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.redfrogec.credigo.domain.controls.LoadingPopup
+import com.redfrogec.credigo.domain.controls.simpleDialog
 import com.redfrogec.credigo.ui.viewModel.PasswordRecoveryViewModel
-import com.redfrogec.credigo.ui.viewModel.SignUpViewModel
 import credigo.composeapp.generated.resources.Res
 import credigo.composeapp.generated.resources.ic_arrow_left
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
+@Preview
 @Composable
 fun PasswordRecoveryScreen(navController: NavController, modifier: Modifier) {
     val viewModel = koinViewModel< PasswordRecoveryViewModel>()
@@ -64,11 +62,26 @@ fun PasswordRecoveryScreen(navController: NavController, modifier: Modifier) {
     val confirmPassword by viewModel.confirmPassword.collectAsState()
     val resetEnabled by viewModel.resetEnabled.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
-
     val questions = viewModel.getQuestions()
     var expanded by remember { mutableStateOf(false) }
+    val recoveryFail by viewModel.recoveryFail.collectAsState()
+    val recoveryOk by viewModel.recoveryOk.collectAsState()
+    val showLoading by viewModel.showLoading.collectAsState()
 
     val scrollState = rememberScrollState()
+
+    if(recoveryFail) {
+        simpleDialog("Error", "No se pudo recuperar tu contraseña, revisa los datos ingresados.")
+    }
+
+    if(recoveryOk) {
+        if(simpleDialog("Alerta", "Contraseña recuperada exitosamente.")) {
+            viewModel.onBackClicked()
+        }
+    }
+
+    LoadingPopup(showLoading)
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -105,6 +118,14 @@ fun PasswordRecoveryScreen(navController: NavController, modifier: Modifier) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
+                // Error message
+                errorMessage?.let { error ->
+                    Spacer(modifier = modifier.height(12.dp))
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
                 Text(
                     text = "Recuperar contraseña",
                     fontSize = 22.sp,
@@ -205,7 +226,7 @@ fun PasswordRecoveryScreen(navController: NavController, modifier: Modifier) {
                 Spacer(modifier = modifier.height(24.dp))
 
                 Button(
-                    onClick = { viewModel.resetPassword() },
+                    onClick = { viewModel.resetPasswordClicked() },
                     enabled = resetEnabled,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -213,7 +234,7 @@ fun PasswordRecoveryScreen(navController: NavController, modifier: Modifier) {
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF008954))
                 ) {
-                    Text("Registrar", fontSize = 18.sp, color = Color.White)
+                    Text("Recuperar", fontSize = 18.sp, color = Color.White)
                 }
 
                 // Error message

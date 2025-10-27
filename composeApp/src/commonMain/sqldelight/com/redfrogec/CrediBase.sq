@@ -72,6 +72,11 @@ UPDATE UserTbl SET
     Token = ?, TokenExpire = ?
 WHERE Id = ?;
 
+recoveryPasswordUserByEmailAndQuestion:
+UPDATE UserTbl SET
+    PasswordHash = ?
+WHERE Email = ? AND QuestionId = ? AND Response = ?;
+
 deleteUser:
 DELETE FROM UserTbl WHERE Id = ?;
 

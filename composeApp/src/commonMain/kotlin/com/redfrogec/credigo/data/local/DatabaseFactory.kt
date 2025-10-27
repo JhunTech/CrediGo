@@ -1,5 +1,6 @@
 package com.redfrogec.credigo.data.local
 
+import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import com.redfrogec.ChargeTbl
 import com.redfrogec.ClientTbl
@@ -48,7 +49,7 @@ class LocalDatabase(
         return null
     }
 
-    fun insertUser(image: String?, email: String, name: String, passwordHash: String, questionId: Long, response: String, registerDate: LocalDateTime, updateDate: LocalDateTime?, tokenId: Long?, token: String?, tokenExpire: LocalDateTime?) {
+    fun insertUser(image: String?, email: String, name: String, passwordHash: String, questionId: Long, response: String, registerDate: LocalDateTime, updateDate: LocalDateTime?, tokenId: Long?, token: String?, tokenExpire: LocalDateTime?): QueryResult<Long> {
         val user = UserTbl(
             0,
             image,
@@ -63,15 +64,19 @@ class LocalDatabase(
             token,
             tokenExpire.toString()
         )
-        query.insertUser(user)
+        return query.insertUser(user)
     }
 
-    fun updateUser(image: String?, email: String, name: String, passwordHash: String, questionId: Long, response: String, registerDate: LocalDateTime, updateDate: LocalDateTime?, tokenId: Long?, token: String?, tokenExpire: LocalDateTime?, id: Long) {
-        query.updateUser(image, email, name, passwordHash, questionId, response, registerDate.toString(), updateDate.toString(), tokenId, token, tokenExpire.toString(), id)
+    fun updateUser(image: String?, email: String, name: String, passwordHash: String, questionId: Long, response: String, registerDate: LocalDateTime, updateDate: LocalDateTime?, tokenId: Long?, token: String?, tokenExpire: LocalDateTime?, id: Long): QueryResult<Long>  {
+        return query.updateUser(image, email, name, passwordHash, questionId, response, registerDate.toString(), updateDate.toString(), tokenId, token, tokenExpire.toString(), id)
     }
 
-    fun deleteUser(id: Long) {
-        query.deleteUser(id)
+    fun recoveryPasswordUserByEmailAndQuestion(passwordHash: String, email: String, questionId: Long, response: String): QueryResult<Long>  {
+        return query.recoveryPasswordUserByEmailAndQuestion(passwordHash, email, questionId, response)
+    }
+
+    fun deleteUser(id: Long): QueryResult<Long>  {
+        return query.deleteUser(id)
     }
 
     fun selectAllKey(): String{

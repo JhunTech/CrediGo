@@ -23,19 +23,18 @@ class UserSDK(
         }
     }
 
-    fun insertUser(image: String?, email: String, name: String, passwordHash: String, questionId: Long, response: String, registerDate: LocalDateTime, updateDate: LocalDateTime?, tokenId: Long?, token: String?, tokenExpire: LocalDateTime?): Boolean {
+    fun insertUser(image: String?, email: String, name: String, passwordHash: String, questionId: Long, response: String, registerDate: LocalDateTime, updateDate: LocalDateTime?, tokenId: Long?, token: String?, tokenExpire: LocalDateTime?): Long {
         cleanErrorData()
-        try{
-            database.insertUser(image, email, name, passwordHash, questionId, response, registerDate, updateDate, tokenId, token, tokenExpire)
-            return true
+        return try{
+            database.insertUser(image, email, name, passwordHash, questionId, response, registerDate, updateDate, tokenId, token, tokenExpire).value
         } catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "U002")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
-            return false
+            0
         }
     }
 
-    fun updateUser(image: String?, email: String, name: String, passwordHash: String, questionId: Long, response: String, registerDate: LocalDateTime, updateDate: LocalDateTime?, tokenId: Long?, token: String?, tokenExpire: LocalDateTime?, id: Long) {
+    fun updateUser(image: String?, email: String, name: String, passwordHash: String, questionId: Long, response: String, registerDate: LocalDateTime, updateDate: LocalDateTime?, tokenId: Long?, token: String?, tokenExpire: LocalDateTime?, id: Long): Boolean {
         cleanErrorData()
         try {
             database.updateUser(
@@ -52,19 +51,39 @@ class UserSDK(
                 tokenExpire,
                 id
             )
+            return true
         } catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "U003")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            return false
         }
     }
 
-    fun deleteUser(id: Long) {
+    fun recoveryPasswordUserByEmailAndQuestion(passwordHash: String, email: String, questionId: Long, response: String): Long {
         cleanErrorData()
-        try {
-            database.deleteUser(id)
+        return try {
+            database.recoveryPasswordUserByEmailAndQuestion(
+                passwordHash,
+                email,
+                questionId,
+                response
+            ).value
         } catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "U004")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            0
+        }
+    }
+
+    fun deleteUser(id: Long): Boolean {
+        cleanErrorData()
+        try {
+            database.deleteUser(id)
+            return true
+        } catch (e: Exception) {
+            settings.putString(Constants.ERROR_CODE, "U005")
+            settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            return false
         }
     }
 }

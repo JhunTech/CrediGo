@@ -50,8 +50,7 @@ class LoginViewModel(private val sdk: UserSDK) : ViewModel() {
         _loginEnabled.value = false
         when {
             !isValidEmail(_username.value) -> _errorMessage.value = "Formato incorrecto de email"
-            !isValidPassword(_password.value) -> _errorMessage.value =
-                "Formato incorrecto de password"
+            !isValidPassword(_password.value) -> _errorMessage.value = "Formato incorrecto de password"
             else -> {
                 _loginEnabled.value = true
                 _errorMessage.value = ""
@@ -69,8 +68,6 @@ class LoginViewModel(private val sdk: UserSDK) : ViewModel() {
         if(user != null)
         {
             println("Login successful for ${username.value}")
-            _errorMessage.value = ""
-            _loginFail.value=false
             navigation.navigate("dashboard")
         }
         else

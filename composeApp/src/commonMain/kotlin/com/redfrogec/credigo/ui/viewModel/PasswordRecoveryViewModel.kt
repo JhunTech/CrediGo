@@ -3,11 +3,14 @@ package com.redfrogec.credigo.ui.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.redfrogec.credigo.data.model.Constants
 import com.redfrogec.credigo.data.model.PreguntaSeguridad
 import com.redfrogec.credigo.domain.sdk.UserSDK
+import com.redfrogec.credigo.domain.utils.CurrentDateDisplay
 import com.redfrogec.credigo.domain.utils.isValidEmail
 import com.redfrogec.credigo.domain.utils.isValidPassword
 import com.redfrogec.credigo.domain.utils.loadSecurityQuestions
+import com.russhwolf.settings.Settings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,6 +27,8 @@ class PasswordRecoveryViewModel(private val sdk: UserSDK) : ViewModel() {
     lateinit var navigation: NavController
 
     lateinit var securityQuestions : List<PreguntaSeguridad>
+
+    private val settings: Settings = Settings()
 
     private val _email = MutableStateFlow("")
     val email: StateFlow<String> = _email.asStateFlow()
@@ -49,35 +54,44 @@ class PasswordRecoveryViewModel(private val sdk: UserSDK) : ViewModel() {
     private val _resetEnabled = MutableStateFlow(false)
     val resetEnabled: StateFlow<Boolean> = _resetEnabled.asStateFlow()
 
+    private var _showLoading = MutableStateFlow(false)
+    var showLoading: StateFlow<Boolean> = _showLoading.asStateFlow()
+
+    private var _recoveryFail = MutableStateFlow(false)
+    var recoveryFail: StateFlow<Boolean> = _recoveryFail.asStateFlow()
+
+    private var _recoveryOk = MutableStateFlow(false)
+    var recoveryOk: StateFlow<Boolean> = _recoveryOk.asStateFlow()
+
     fun getQuestions(): List<PreguntaSeguridad> = securityQuestions
 
     fun onEmailChange(value: String) {
         _email.value = value
-        resetPassword()
+        validateForm()
     }
 
     fun onSecurityQuestionChange(id: Int, question: String) {
         _idSecurityQuestion.value = id
         _securityQuestion.value = question
-        resetPassword()
+        validateForm()
     }
 
     fun onAnswerChange(value: String) {
         _answer.value = value
-        resetPassword()
+        validateForm()
     }
 
     fun onNewPasswordChange(value: String) {
         _newPassword.value = value
-        resetPassword()
+        validateForm()
     }
 
     fun onConfirmPasswordChange(value: String) {
         _confirmPassword.value = value
-        resetPassword()
+        validateForm()
     }
 
-    fun resetPassword() {
+    fun validateForm(){
         _resetEnabled.value = false
         when {
             !isValidEmail(_email.value) -> _errorMessage.value = "Formato incorrecto de email"
@@ -86,16 +100,41 @@ class PasswordRecoveryViewModel(private val sdk: UserSDK) : ViewModel() {
             !_answer.value.isNotBlank() -> _errorMessage.value = "Ingresa la respuesta de seguridad"
             _confirmPassword.value != _newPassword.value -> _errorMessage.value = "Repetir el password correctamente"
             else -> {
-                // Aquí llamarías a tu API o lógica de recuperación de contraseña
                 _errorMessage.value = ""
                 _resetEnabled.value = true
-                println("Password reset successful for ${email.value}")
             }
         }
     }
 
     fun onBackClicked() {
-        println("Retornar a pantalla de Login")
+        println("Return login screen")
         navigation.popBackStack("login", inclusive = false)
+    }
+
+    fun resetPasswordClicked(){
+        _recoveryFail.value=false
+        _recoveryOk.value=false
+
+        _showLoading.value = true
+        val recoveryPassword = sdk.recoveryPasswordUserByEmailAndQuestion(
+            _newPassword.value,
+            _email.value,
+            _idSecurityQuestion.value.toLong(),
+            _answer.value
+        )
+        _showLoading.value = false
+
+        if(recoveryPassword.toInt() > 0){
+            println("Password reset successful for ${email.value}")
+            _errorMessage.value = ""
+            _recoveryFail.value=false
+            _recoveryOk.value=true
+        }
+        else{
+            println("Password reset error for ${email.value}")
+            _errorMessage.value = settings.getString(Constants.ERROR_MESSAGE, "")
+            _recoveryFail.value=true
+            _recoveryOk.value=false
+        }
     }
 }

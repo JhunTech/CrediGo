@@ -10,7 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 
 @Composable
-fun SimpleDialog(title: String, message: String): Boolean {
+fun simpleDialog(title: String, message: String): Boolean {
     var showDialog by remember { mutableStateOf(true) }
     var returnDialog by remember { mutableStateOf(false) }
 
@@ -18,14 +18,14 @@ fun SimpleDialog(title: String, message: String): Boolean {
         AlertDialog(
             onDismissRequest = {
                 showDialog = false
-                returnDialog = false
+                returnDialog = true
             },
             title = { Text(title)},
             text = { Text(message) },
             confirmButton = {
                 Button(onClick = {
                     showDialog = false
-                    returnDialog = false
+                    returnDialog = true
                 }) {
                     Text("OK")
                 }
