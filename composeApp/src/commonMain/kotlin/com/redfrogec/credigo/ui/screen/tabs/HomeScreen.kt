@@ -4,25 +4,24 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.redfrogec.credigo.domain.controls.Bar
 import com.redfrogec.credigo.domain.controls.BarChart
 import com.redfrogec.credigo.domain.controls.ClientRow
 import com.redfrogec.credigo.ui.viewModel.HomeViewModel
@@ -53,7 +52,21 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
             )
             Spacer(modifier = Modifier.height(24.dp))
 
-            ChartScreen()
+            val monthlyBars = listOf(
+                Bar(10f, Color.Red, "Jan"),
+                Bar(20f, Color.Green, "Feb"),
+                Bar(15f, Color.Blue, "Mar"),
+                Bar(30f, Color.Yellow, "Apr"),
+                Bar(25f, Color.Cyan, "May"),
+                /*Bar(35f, Color.Magenta, "Jun"),
+                Bar(40f, Color.Gray, "Jul"),
+                Bar(38f, Color.Red, "Aug"),
+                Bar(28f, Color.Green, "Sep"),
+                Bar(18f, Color.Blue, "Oct"),
+                Bar(22f, Color.Yellow, "Nov"),
+                Bar(16f, Color.Cyan, "Dec"),*/
+            )
+            BarChart(monthlyBars, modifier.fillMaxSize().height(250.dp))
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -72,7 +85,7 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
     }
 }
 
-@Composable
+/*@Composable
 fun ChartScreen() {
     val values = listOf(10f, 25f, 18f, 40f, 30f)
     val labels = listOf("Ene", "Feb", "Mar", "Abr", "May")
@@ -82,4 +95,4 @@ fun ChartScreen() {
         labels = labels,
         modifier = Modifier.fillMaxWidth()
     )
-}
+}*/

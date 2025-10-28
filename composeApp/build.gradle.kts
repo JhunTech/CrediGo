@@ -1,4 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -55,8 +54,6 @@ kotlin {
 
             //NAVIGATION3
             implementation(libs.navigation.compose)
-            //CHARTS
-            implementation(libs.cmpcharts)
             //SQLDELIGHT
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
