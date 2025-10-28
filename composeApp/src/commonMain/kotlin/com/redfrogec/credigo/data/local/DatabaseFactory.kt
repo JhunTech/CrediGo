@@ -33,7 +33,7 @@ class LocalDatabase(
         if (userTbl != null) {
             return User(
                 id = userTbl.Id.toInt(),
-                imagen = userTbl.Image,
+                image = userTbl.Image,
                 email = userTbl.Email,
                 name = userTbl.Name,
                 passwordHash = userTbl.PasswordHash,
@@ -169,7 +169,7 @@ class LocalDatabase(
         }
     }
 
-    fun insertLoan(clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String){
+    fun insertLoan(clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String, loanTypeId: Long){
         val loan = LoanTbl(
             0,
             clientId,
@@ -179,13 +179,14 @@ class LocalDatabase(
             quotaNumbers,
             if (active) 1 else 0,
             creationDate,
-            deliveryDate
+            deliveryDate,
+            loanTypeId
         )
         query.insertLoan(loan)
     }
 
-    fun updateDataLoan(clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String, id: Long){
-        query.updateDataLoan(clientId, value, paymentTypeId, interestId, quotaNumbers, if (active) 1 else 0, creationDate, deliveryDate, id)
+    fun updateDataLoan(clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String, loanTypeId: Long, id: Long){
+        query.updateDataLoan(clientId, value, paymentTypeId, interestId, quotaNumbers, if (active) 1 else 0, creationDate, deliveryDate,loanTypeId, id)
     }
 
     fun deleteLoan(id: Long){
@@ -216,7 +217,7 @@ class LocalDatabase(
         )
     }
 
-    fun insertCharge(loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double){
+    fun insertCharge(loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double, chargeTypeId: Long){
         val charge = ChargeTbl(
             0,
             loanId,
@@ -225,13 +226,14 @@ class LocalDatabase(
             customerPaymentDate,
             quotaValue,
             chargeValue,
-            remainingValue
+            remainingValue,
+            chargeTypeId
         )
         query.insertCharge(charge)
     }
 
-    fun updateDataCharge(loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double, id: Long){
-        query.updateDataCharge(loanId, quotaNumber, chargeDate, customerPaymentDate, quotaValue, chargeValue, remainingValue, id)
+    fun updateDataCharge(loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double, chargeTypeId: Long, id: Long){
+        query.updateDataCharge(loanId, quotaNumber, chargeDate, customerPaymentDate, quotaValue, chargeValue, remainingValue,chargeTypeId, id)
     }
 
     fun deleteCharge(id: Long){

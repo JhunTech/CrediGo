@@ -34,20 +34,20 @@ class LoanSDK(
         }
     }
 
-    suspend fun insertLoan (clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String) {
+    suspend fun insertLoan (clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String, loanTypeId: Long) {
         cleanErrorData()
         try {
-            database.insertLoan(clientId, value, paymentTypeId, interestId, quotaNumbers, active, creationDate, deliveryDate)
+            database.insertLoan(clientId, value, paymentTypeId, interestId, quotaNumbers, active, creationDate, deliveryDate, loanTypeId)
         }catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "L003")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
         }
     }
 
-    suspend fun updateDataLoan(clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String, id: Long) {
+    suspend fun updateDataLoan(clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String,loanTypeId: Long,  id: Long) {
         cleanErrorData()
         try {
-            database.updateDataLoan(clientId, value, paymentTypeId, interestId, quotaNumbers, active, creationDate, deliveryDate, id)
+            database.updateDataLoan(clientId, value, paymentTypeId, interestId, quotaNumbers, active, creationDate, deliveryDate ,loanTypeId , id)
         }catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "L004")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())

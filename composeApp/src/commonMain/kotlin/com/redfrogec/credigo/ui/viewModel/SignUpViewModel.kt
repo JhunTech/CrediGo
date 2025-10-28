@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.redfrogec.credigo.data.model.Constants
-import com.redfrogec.credigo.data.model.PreguntaSeguridad
+import com.redfrogec.credigo.data.model.SecurityQuestion
 import com.redfrogec.credigo.domain.sdk.UserSDK
 import com.redfrogec.credigo.domain.utils.CurrentDateDisplay
 import com.redfrogec.credigo.domain.utils.isValidEmail
@@ -29,7 +29,7 @@ class SignUpViewModel(private val sdk: UserSDK) : ViewModel() {
 
     lateinit var navigation: NavController
 
-    lateinit var securityQuestions : List<PreguntaSeguridad>
+    lateinit var securityQuestions : List<SecurityQuestion>
 
     private val settings: Settings = Settings()
 
@@ -69,7 +69,7 @@ class SignUpViewModel(private val sdk: UserSDK) : ViewModel() {
     private val _signUpFail = MutableStateFlow(false)
     val signUpFail: StateFlow<Boolean> = _signUpFail.asStateFlow()
 
-    fun getQuestions(): List<PreguntaSeguridad> = securityQuestions
+    fun getQuestions(): List<SecurityQuestion> = securityQuestions
 
     fun onEmailChanged(newValue: String) {
         _email.value = newValue

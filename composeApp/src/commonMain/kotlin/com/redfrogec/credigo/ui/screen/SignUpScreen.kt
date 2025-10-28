@@ -201,11 +201,11 @@ fun SignUpScreen(navController: NavController, modifier: Modifier) {
                     ) {
                         questions.forEach { question ->
                             DropdownMenuItem(
-                                text = { Text(question.Descripcion) },
+                                text = { Text(question.description) },
                                 onClick = {
                                     viewModel.onSecurityQuestionChanged(
-                                        question.Id,
-                                        question.Descripcion
+                                        question.id,
+                                        question.description
                                     )
                                     expanded = false
                                 }

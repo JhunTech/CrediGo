@@ -1,0 +1,12 @@
+[
+  {
+    "Id": 1,
+    "Description": "Cobro normal.",
+    "CreationDate": "2025-10-06T00:00:00"
+  },
+  {
+    "Id": 2,
+    "Description": "Cobro con gracia.",
+    "CreationDate": "2025-10-06T00:00:00"
+  }
+]

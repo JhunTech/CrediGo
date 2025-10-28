@@ -36,20 +36,20 @@ class ChargeSDK(
         }
     }
 
-    suspend fun insertCharge(loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double){
+    suspend fun insertCharge(loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double, chargeTypeId: Long){
         cleanErrorData()
         try {
-            database.insertCharge(loanId, quotaNumber, chargeDate, customerPaymentDate, quotaValue, chargeValue, remainingValue)
+            database.insertCharge(loanId, quotaNumber, chargeDate, customerPaymentDate, quotaValue, chargeValue, remainingValue, chargeTypeId)
         } catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "CH004")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
         }
     }
 
-    suspend fun updateDataCharge(loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double, id: Long){
+    suspend fun updateDataCharge(loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double, chargeTypeId: Long, id: Long){
         cleanErrorData()
         try {
-            database.updateDataCharge(loanId, quotaNumber, chargeDate, customerPaymentDate, quotaValue, chargeValue, remainingValue, id)
+            database.updateDataCharge(loanId, quotaNumber, chargeDate, customerPaymentDate, quotaValue, chargeValue, remainingValue, chargeTypeId, id)
         }catch (e: Exception){
             settings.putString(Constants.ERROR_CODE, "CH005")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())

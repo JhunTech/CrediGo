@@ -4,9 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.redfrogec.credigo.data.model.Constants
-import com.redfrogec.credigo.data.model.PreguntaSeguridad
+import com.redfrogec.credigo.data.model.SecurityQuestion
 import com.redfrogec.credigo.domain.sdk.UserSDK
-import com.redfrogec.credigo.domain.utils.CurrentDateDisplay
 import com.redfrogec.credigo.domain.utils.isValidEmail
 import com.redfrogec.credigo.domain.utils.isValidPassword
 import com.redfrogec.credigo.domain.utils.loadSecurityQuestions
@@ -26,7 +25,7 @@ class PasswordRecoveryViewModel(private val sdk: UserSDK) : ViewModel() {
 
     lateinit var navigation: NavController
 
-    lateinit var securityQuestions : List<PreguntaSeguridad>
+    lateinit var securityQuestions : List<SecurityQuestion>
 
     private val settings: Settings = Settings()
 
@@ -63,7 +62,7 @@ class PasswordRecoveryViewModel(private val sdk: UserSDK) : ViewModel() {
     private var _recoveryOk = MutableStateFlow(false)
     var recoveryOk: StateFlow<Boolean> = _recoveryOk.asStateFlow()
 
-    fun getQuestions(): List<PreguntaSeguridad> = securityQuestions
+    fun getQuestions(): List<SecurityQuestion> = securityQuestions
 
     fun onEmailChange(value: String) {
         _email.value = value
