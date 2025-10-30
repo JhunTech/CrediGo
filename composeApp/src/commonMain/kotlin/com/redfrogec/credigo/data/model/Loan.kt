@@ -10,5 +10,6 @@ data class Loan(
     val quotaNumbers: Int,
     val active: Boolean,
     val creationDate: String,
-    val deliveryDate: String
+    val deliveryDate: String,
+    val loanTypeId: Int
 )

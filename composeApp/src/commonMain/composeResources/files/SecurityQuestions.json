@@ -1,62 +1,62 @@
 [
   {
-    "Id": 1,
-    "Description": "¿Cuál es el nombre de tu primera mascota?",
-    "CreationDate": "2025-10-06T00:00:00",
-    "Active": true
+    "id": 1,
+    "description": "¿Cuál es el nombre de tu primera mascota?",
+    "creationDate": "2025-10-06T00:00:00",
+    "active": true
   },
   {
-    "Id": 2,
-    "Description": "¿Cuál es tu comida favorita?",
-    "CreationDate": "2025-10-06T00:00:00",
-    "Active": true
+    "id": 2,
+    "description": "¿Cuál es tu comida favorita?",
+    "creationDate": "2025-10-06T00:00:00",
+    "active": true
   },
   {
-    "Id": 3,
-    "Description": "¿En qué ciudad naciste?",
-    "CreationDate": "2025-10-06T00:00:00",
-    "Active": true
+    "id": 3,
+    "description": "¿En qué ciudad naciste?",
+    "creationDate": "2025-10-06T00:00:00",
+    "active": true
   },
   {
-    "Id": 4,
-    "Description": "¿Cuál fue el nombre de tu primera escuela?",
-    "CreationDate": "2025-10-06T00:00:00",
-    "Active": true
+    "id": 4,
+    "description": "¿Cuál fue el nombre de tu primera escuela?",
+    "creationDate": "2025-10-06T00:00:00",
+    "active": true
   },
   {
-    "Id": 5,
-    "Description": "¿Cuál es el segundo nombre de tu madre?",
-    "CreationDate": "2025-10-06T00:00:00",
-    "Active": true
+    "id": 5,
+    "description": "¿Cuál es el segundo nombre de tu madre?",
+    "creationDate": "2025-10-06T00:00:00",
+    "active": true
   },
   {
-    "Id": 6,
-    "Description": "¿Cuál fue la marca de tu primer vehículo?",
-    "CreationDate": "2025-10-06T00:00:00",
-    "Active": true
+    "id": 6,
+    "description": "¿Cuál fue la marca de tu primer vehículo?",
+    "creationDate": "2025-10-06T00:00:00",
+    "active": true
   },
   {
-    "Id": 7,
-    "Description": "¿Cuál es el nombre de tu mejor amigo de la infancia?",
-    "CreationDate": "2025-10-06T00:00:00",
-    "Active": true
+    "id": 7,
+    "description": "¿Cuál es el nombre de tu mejor amigo de la infancia?",
+    "creationDate": "2025-10-06T00:00:00",
+    "active": true
   },
   {
-    "Id": 8,
-    "Description": "¿Cuál es tu película favorita?",
-    "CreationDate": "2025-10-06T00:00:00",
-    "Active": true
+    "id": 8,
+    "description": "¿Cuál es tu película favorita?",
+    "creationDate": "2025-10-06T00:00:00",
+    "active": true
   },
   {
-    "Id": 9,
-    "Description": "¿Cuál fue el nombre de tu profesor favorito?",
-    "CreationDate": "2025-10-06T00:00:00",
-    "Active": true
+    "id": 9,
+    "description": "¿Cuál fue el nombre de tu profesor favorito?",
+    "creationDate": "2025-10-06T00:00:00",
+    "active": true
   },
   {
-    "Id": 10,
-    "Description": "¿En qué calle creciste?",
-    "CreationDate": "2025-10-06T00:00:00",
-    "Active": true
+    "id": 10,
+    "description": "¿En qué calle creciste?",
+    "creationDate": "2025-10-06T00:00:00",
+    "active": true
   }
 ]

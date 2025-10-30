@@ -1,5 +1,6 @@
 package com.redfrogec.credigo.ui.screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,11 +11,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -31,6 +34,11 @@ import androidx.navigation.NavController
 import com.redfrogec.credigo.domain.controls.LoadingPopup
 import com.redfrogec.credigo.domain.controls.simpleDialog
 import com.redfrogec.credigo.ui.viewModel.LoginViewModel
+import credigo.composeapp.generated.resources.Res
+import credigo.composeapp.generated.resources.ic_credigo
+import credigo.composeapp.generated.resources.ic_credigologo
+import credigo.composeapp.generated.resources.ic_plus
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -67,18 +75,26 @@ fun LoginScreen(navController: NavController, modifier: Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(
+            /*Text(
                 text = "CrediGo",
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.titleLarge
+            )*/
+
+            Image(
+                painter = painterResource(Res.drawable.ic_credigologo),
+                contentDescription = "CrediGo",
+                modifier = modifier
+                    .width(300.dp)
+                    .height(80.dp)
             )
 
-            Spacer(modifier = modifier.height(60.dp))
+            Spacer(modifier = modifier.height(40.dp))
 
             OutlinedTextField(
                 value = username,
                 onValueChange = { viewModel.onUsernameChanged(it) },
-                placeholder = { Text("Username") },
+                    placeholder = { Text("Email") },
                 modifier = modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),
                 singleLine = true
@@ -89,7 +105,7 @@ fun LoginScreen(navController: NavController, modifier: Modifier) {
             OutlinedTextField(
                 value = password,
                 onValueChange = { viewModel.onPasswordChanged(it) },
-                placeholder = { Text("Password") },
+                placeholder = { Text("Contraseña") },
                 modifier = modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),
                 singleLine = true,

@@ -133,9 +133,10 @@ class LocalDatabase(
         query.deleteClient(id)
     }
 
-    fun selectAllLoansByClientId(clientId: Long): List<Loan> {
-        val active: Long = 1
-        return query.selectAllLoansByClientId(clientId).executeAsList().map {
+    fun selectAllLoansByClientId(clientId: Long, active: Boolean): List<Loan> {
+        val activeRequest: Long = if (active) 1 else 0
+        val activeResponse: Long = 1
+        return query.selectAllLoansByClientId(clientId, activeRequest).executeAsList().map {
             Loan(
                 id = it.Id.toString(),
                 clientId = it.ClientId.toString(),
@@ -144,16 +145,18 @@ class LocalDatabase(
                 paymentTypeId = it.PaymentTypeId.toInt(),
                 interestId = it.InterestId.toInt(),
                 quotaNumbers = it.QuotaNumbers.toInt(),
-                active = it.Active == active,
+                active = it.Active == activeResponse,
                 creationDate = it.CreationDate,
-                deliveryDate = it.DeliveryDate
+                deliveryDate = it.DeliveryDate,
+                loanTypeId = it.LoanTypeId.toInt()
             )
         }
     }
 
-    fun selectAllLoansByUserId(userId: Long): List<Loan> {
-        val active: Long = 1
-        return query.selectAllLoansByUserId(userId).executeAsList().map {
+    fun selectAllLoansByUserId(userId: Long, active: Boolean): List<Loan> {
+        val activeRequest: Long = if (active) 1 else 0
+        val activeResponse: Long = 1
+        return query.selectAllLoansByUserId(userId, activeRequest).executeAsList().map {
             Loan(
                 id = it.Id.toString(),
                 clientId = it.ClientId.toString(),
@@ -162,9 +165,10 @@ class LocalDatabase(
                 paymentTypeId = it.PaymentTypeId.toInt(),
                 interestId = it.InterestId.toInt(),
                 quotaNumbers = it.QuotaNumbers.toInt(),
-                active = it.Active == active,
+                active = it.Active == activeResponse,
                 creationDate = it.CreationDate,
-                deliveryDate = it.DeliveryDate
+                deliveryDate = it.DeliveryDate,
+                loanTypeId = it.LoanTypeId.toInt()
             )
         }
     }
@@ -203,7 +207,8 @@ class LocalDatabase(
                 customerPaymentDate = it.CustomerPaymentDate,
                 quotaValue = it.QuotaValue.toDouble(),
                 chargeValue = it.ChargeValue.toDouble(),
-                remainingValue = it.RemainingValue.toDouble()
+                remainingValue = it.RemainingValue.toDouble(),
+                chargeTypeId = it.ChargeTypeId.toInt()
             )
         }
     }

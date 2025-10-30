@@ -112,7 +112,7 @@ DELETE FROM ClientTbl WHERE Id = ?;
 
 --Prestamos--
 selectAllLoansByClientId:
-SELECT * FROM LoanTbl WHERE ClientId = ?;
+SELECT * FROM LoanTbl WHERE ClientId = ? AND Active = ?;
 
 selectAllLoansByUserId:
 SELECT
@@ -133,7 +133,7 @@ INNER JOIN
   ClientTbl AS c ON l.ClientId = c.Id
 INNER JOIN
   UserTbl AS u ON c.UserId = u.Id
-WHERE u.Id = ?;
+WHERE u.Id = ? AND l.Active = ?;
 
 insertLoan:
 INSERT INTO LoanTbl(ClientId, Value, PaymentTypeId, InterestId, QuotaNumbers, Active, CreationDate, DeliveryDate, LoanTypeId)

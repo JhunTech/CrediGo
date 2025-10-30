@@ -8,7 +8,8 @@ data class Charge (
     val customerPaymentDate: String?,
     val quotaValue: Double,
     val chargeValue: Double,
-    val remainingValue: Double
+    val remainingValue: Double,
+    val chargeTypeId: Int
 )
 
 data class ChargePaid(

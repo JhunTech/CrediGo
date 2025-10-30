@@ -12,10 +12,10 @@ class LoanSDK(
     private val settings: Settings = Settings()
     @Throws(Exception::class)
 
-    suspend fun selectAllLoansByClientId(clientId: Long): List<Loan>?{
+    suspend fun selectAllLoansByClientId(clientId: Long, active: Boolean): List<Loan>?{
         cleanErrorData()
         return try{
-            database.selectAllLoansByClientId(clientId)
+            database.selectAllLoansByClientId(clientId, active)
         } catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "L001")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
@@ -23,10 +23,10 @@ class LoanSDK(
         }
     }
 
-    suspend fun selectAllLoansByUserId(userId: Long): List<Loan> {
+    suspend fun selectAllLoansByUserId(userId: Long, active: Boolean): List<Loan> {
         cleanErrorData()
         return try{
-            database.selectAllLoansByUserId(userId)
+            database.selectAllLoansByUserId(userId, active)
         } catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "L002")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())

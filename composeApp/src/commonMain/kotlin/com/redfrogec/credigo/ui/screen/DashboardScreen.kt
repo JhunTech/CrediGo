@@ -33,7 +33,6 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun DashboardScreen(navControllerInitial: NavController, modifier: Modifier) {
 
-
     val navController = rememberNavController()
 
     Scaffold(modifier = Modifier.fillMaxSize(),
@@ -47,7 +46,7 @@ fun DashboardScreen(navControllerInitial: NavController, modifier: Modifier) {
                     HomeScreen(navController)
                 }
                 composable(route = Screens.Loans.route) {
-                    LoansScreen(navController)
+                    LoansScreen(navController, modifier)
                 }
                 composable(route = Screens.Clients.route) {
                     ClientsScreen(navController)

@@ -123,9 +123,8 @@ fun SignUpScreen(navController: NavController, modifier: Modifier) {
 
                 Text(
                     text = "Crea tu usuario",
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.titleMedium
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
