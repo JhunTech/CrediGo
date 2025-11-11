@@ -154,7 +154,7 @@ class NewClientViewModel(private val sdk: ClientSDK): ViewModel() {
         }
     }
 
-    private fun onNewClientClicked() {
+    fun onNewClientClicked() {
         _clientOk.value=false
         _clientFail.value=false
 

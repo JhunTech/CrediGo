@@ -19,6 +19,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -41,10 +43,12 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.navigation.NavController
 import com.redfrogec.credigo.data.model.Client
 import com.redfrogec.credigo.domain.controls.LoadingPopup
+import com.redfrogec.credigo.domain.controls.dateTimeDialog
 import com.redfrogec.credigo.domain.controls.simpleDialog
 import com.redfrogec.credigo.ui.viewModel.NewClientViewModel
 import credigo.composeapp.generated.resources.Res
@@ -88,10 +92,6 @@ fun NewClientScreen(navController: NavController, clientData: Client, modifier: 
 
     val scrollState = rememberScrollState()
     var showDatePicker by remember { mutableStateOf(false) }
-    val datePickerState = rememberDatePickerState()
-    val selectedDate = datePickerState.selectedDateMillis?.let {
-        convertMillisToLocalDate(it)
-    } ?: ""
 
     if(clientOk)
     {
@@ -105,13 +105,19 @@ fun NewClientScreen(navController: NavController, clientData: Client, modifier: 
         simpleDialog("Error", clientMessage)
     }
 
+    if(showDatePicker)
+    {
+        val newDate = dateTimeDialog()
+        if(newDate.isNotBlank())
+            viewModel.onRegisterChanged(newDate)
+    }
+
     LoadingPopup(showLoading)
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(scrollState)
     ) {
         Column(
             modifier = modifier
@@ -150,113 +156,116 @@ fun NewClientScreen(navController: NavController, clientData: Client, modifier: 
                 // Espaciador flexible después del título (mantiene el centro visual)
                 Spacer(modifier = Modifier.weight(1f))
             }
-
-            Box(
-                modifier = Modifier
-                    .size(70.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFFF0EAE2)),
-                contentAlignment = Alignment.Center
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
             ) {
-                // Imagen de perfil
-                Image(
-                    painter = painterResource(Res.drawable.ic_user), // Imagen local
-                    contentDescription = "Profile Picture",
-                    modifier = modifier
+                Box(
+                    modifier = Modifier
+                        .size(70.dp)
                         .clip(CircleShape)
-                        .fillMaxSize(0.7f)
-                )
-            }
+                        .background(Color(0xFFF0EAE2)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // Imagen de perfil
+                    Image(
+                        painter = painterResource(Res.drawable.ic_user), // Imagen local
+                        contentDescription = "Profile Picture",
+                        modifier = modifier
+                            .clip(CircleShape)
+                            .fillMaxSize(0.7f)
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-            Text(
-                text = if (clientId < 0) "ID: New" else "ID: $clientId",
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            OutlinedTextField(
-                value = identification,
-                onValueChange = { viewModel.onIdentificationChanged(it) },
-                placeholder = { Text("Identificación") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                shape = RoundedCornerShape(10.dp)
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            OutlinedTextField(
-                value = name,
-                onValueChange = { viewModel.onNameChanged(it) },
-                placeholder = { Text("Nombre y Apellido") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                shape = RoundedCornerShape(10.dp)
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            OutlinedTextField(
-                value = email,
-                onValueChange = { viewModel.onEmailChanged(it) },
-                placeholder = { Text("Email") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                shape = RoundedCornerShape(10.dp)
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            OutlinedTextField(
-                value = phone,
-                onValueChange = { viewModel.onPhoneChanged(it) },
-                placeholder = { Text("Teléfono") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                shape = RoundedCornerShape(10.dp)
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            OutlinedTextField(
-                value = address,
-                onValueChange = { viewModel.onAddressChanged(it) },
-                placeholder = { Text("Dirección") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                shape = RoundedCornerShape(10.dp)
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
                 Text(
-                    text = "Cliente bloqueado?",
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(1f) // Ocupa el espacio restante a la izquierda
+                    text = if (clientId < 0) "ID: New" else "ID: $clientId",
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.bodyLarge
                 )
 
-                Switch(
-                    checked = blocked,
-                    onCheckedChange = { viewModel.onBlockedChanged(it) }
-                )
-            }
+                Spacer(modifier = Modifier.height(12.dp))
 
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Box(
-                modifier = Modifier.fillMaxWidth()
-            ) {
                 OutlinedTextField(
-                    value = selectedDate.toString(),
+                    value = identification,
+                    onValueChange = { viewModel.onIdentificationChanged(it) },
+                    placeholder = { Text("Identificación") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp)
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { viewModel.onNameChanged(it) },
+                    placeholder = { Text("Nombre y Apellido") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp)
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { viewModel.onEmailChanged(it) },
+                    placeholder = { Text("Email") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp)
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedTextField(
+                    value = phone,
+                    onValueChange = { viewModel.onPhoneChanged(it) },
+                    placeholder = { Text("Teléfono") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp)
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedTextField(
+                    value = address,
+                    onValueChange = { viewModel.onAddressChanged(it) },
+                    placeholder = { Text("Dirección") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp)
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Cliente bloqueado?",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.weight(1f) // Ocupa el espacio restante a la izquierda
+                    )
+
+                    Switch(
+                        checked = blocked,
+                        onCheckedChange = { viewModel.onBlockedChanged(it) }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedTextField(
+                    value = registerDate,
                     onValueChange = { viewModel.onRegisterChanged(it) },
                     placeholder = { Text("Fecha de Registro") },
                     readOnly = true,
@@ -273,33 +282,33 @@ fun NewClientScreen(navController: NavController, clientData: Client, modifier: 
                     }
                 )
 
-                if (showDatePicker) {
-                    Popup(
-                        onDismissRequest = { showDatePicker = false },
-                        alignment = Alignment.Center
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                /*.offset(y = 64.dp)
-                                .shadow(elevation = 4.dp)*/
-                                .background(MaterialTheme.colorScheme.surface)
-                                .padding(16.dp)
-                        ) {
-                            DatePicker(
-                                state = datePickerState,
-                                showModeToggle = false
-                            )
-                        }
-                    }
+                Spacer(modifier = modifier.height(24.dp))
+
+                Button(
+                    onClick = { viewModel.onNewClientClicked() },
+                    enabled = newClientEnabled,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF008954))
+                ) {
+                    Text(
+                        text = if (clientId < 0) "Registrar" else "Actualizar",
+                        fontSize = 18.sp,
+                        color = Color.White
+                    )
+                }
+
+                // Error message
+                errorMessage?.let { error ->
+                    Spacer(modifier = modifier.height(12.dp))
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             }
         }
     }
-}
-
-@OptIn(ExperimentalTime::class)
-fun convertMillisToLocalDate(millis: Long): LocalDateTime {
-    val instant = Instant.fromEpochMilliseconds(millis)
-    return instant.toLocalDateTime(TimeZone.currentSystemDefault())
 }

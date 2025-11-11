@@ -109,7 +109,7 @@ fun SignUpScreen(navController: NavController, modifier: Modifier) {
                         .padding(0.dp)
                         .clickable{ viewModel.onSignInClicked()},
                     painter = painterResource(Res.drawable.ic_arrow_left),
-                    contentDescription = "Atrás",
+                    contentDescription = "Back",
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
