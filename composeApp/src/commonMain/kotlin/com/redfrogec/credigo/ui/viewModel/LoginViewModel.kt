@@ -3,9 +3,11 @@ package com.redfrogec.credigo.ui.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.redfrogec.credigo.data.local.LocalDatabase
+import com.redfrogec.credigo.data.model.Constants
 import com.redfrogec.credigo.domain.sdk.UserSDK
 import com.redfrogec.credigo.domain.utils.isValidEmail
 import com.redfrogec.credigo.domain.utils.isValidPassword
+import com.russhwolf.settings.Settings
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -17,6 +19,8 @@ import kotlinx.coroutines.runBlocking
 class LoginViewModel(private val sdk: UserSDK) : ViewModel() {
 
     lateinit var navigation: NavController
+
+    private val settings: Settings = Settings()
 
     private val _username = MutableStateFlow("")
     val username: StateFlow<String> = _username.asStateFlow()
@@ -68,6 +72,7 @@ class LoginViewModel(private val sdk: UserSDK) : ViewModel() {
         if(user != null)
         {
             println("Login successful for ${username.value}")
+            settings.putInt(Constants.USER_ID, user.id)
             navigation.navigate("dashboard")
         }
         else

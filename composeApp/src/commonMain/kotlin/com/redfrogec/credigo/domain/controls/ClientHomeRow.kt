@@ -25,7 +25,7 @@ import credigo.composeapp.generated.resources.ic_client_3
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun ClientRow(client: Client) {
+fun ClientHomeRow(client: Client) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

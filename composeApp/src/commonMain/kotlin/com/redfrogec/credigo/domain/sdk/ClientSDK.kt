@@ -13,7 +13,7 @@ class ClientSDK(
     private val settings: Settings = Settings()
     @Throws(Exception::class)
 
-    suspend fun selectAllClients(userId: Long): List<Client>? {
+    fun selectAllClients(userId: Long): List<Client>? {
         cleanErrorData()
         return try{
             database.selectAllClients(userId)
@@ -24,19 +24,31 @@ class ClientSDK(
         }
     }
 
-    suspend fun insertClient(userId: Long, image: String?, identification: String, name: String, email: String?, phone: String?, address: String?, blocked: Boolean, registerDate: LocalDateTime){
+    fun selectClientById(id: Long): Client? {
         cleanErrorData()
-        try {
-            database.insertClient(userId, image, identification, name, email, phone, address, blocked, registerDate)
-        }catch (e: Exception) {
+        return try{
+            database.selectClientById(id)
+        } catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "C002")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            null
         }
     }
 
-    suspend fun updateDataClient( userId: Long, image: String?, identification: String, name: String, email: String?, phone: String?, address: String?, blocked: Boolean, registerDate: LocalDateTime, id: Long){
+    fun insertClient(userId: Long, image: String?, identification: String, name: String, email: String?, phone: String?, address: String?, blocked: Boolean, registerDate: LocalDateTime): Long {
         cleanErrorData()
-        try {
+        return try {
+            database.insertClient(userId, image, identification, name, email, phone, address, blocked, registerDate).value
+        }catch (e: Exception) {
+            settings.putString(Constants.ERROR_CODE, "C003")
+            settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            0
+        }
+    }
+
+    fun updateDataClient( userId: Long, image: String?, identification: String, name: String, email: String?, phone: String?, address: String?, blocked: Boolean, registerDate: LocalDateTime, id: Long): Long {
+        cleanErrorData()
+        return try {
             database.updateDataClient(
                 userId,
                 image,
@@ -48,20 +60,22 @@ class ClientSDK(
                 blocked,
                 registerDate,
                 id
-            )
+            ).value
         }catch (e: Exception) {
-            settings.putString(Constants.ERROR_CODE, "C003")
+            settings.putString(Constants.ERROR_CODE, "C004")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            0
         }
     }
 
-    suspend fun deleteClient(id: Long) {
+    fun deleteClient(id: Long): Long {
         cleanErrorData()
-        try {
-            database.deleteClient(id)
+        return try {
+            database.deleteClient(id).value
         } catch (e: Exception) {
-            settings.putString(Constants.ERROR_CODE, "C004")
+            settings.putString(Constants.ERROR_CODE, "C005")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            0
         }
     }
 }

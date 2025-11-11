@@ -75,12 +75,6 @@ fun LoginScreen(navController: NavController, modifier: Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            /*Text(
-                text = "CrediGo",
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleLarge
-            )*/
-
             Image(
                 painter = painterResource(Res.drawable.ic_credigologo),
                 contentDescription = "CrediGo",

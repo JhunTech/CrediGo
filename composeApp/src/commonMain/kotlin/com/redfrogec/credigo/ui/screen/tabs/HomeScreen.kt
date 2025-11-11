@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.redfrogec.credigo.domain.controls.BarChart
-import com.redfrogec.credigo.domain.controls.ClientRow
+import com.redfrogec.credigo.domain.controls.ClientHomeRow
 import com.redfrogec.credigo.domain.controls.MonthData
 import com.redfrogec.credigo.ui.viewModel.HomeViewModel
 
@@ -85,20 +85,8 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
 
             // Lista de clientes
             viewModel.clients.forEach { client ->
-                ClientRow(client)
+                ClientHomeRow(client)
             }
         }
     }
 }
-
-/*@Composable
-fun ChartScreen() {
-    val values = listOf(10f, 25f, 18f, 40f, 30f)
-    val labels = listOf("Ene", "Feb", "Mar", "Abr", "May")
-
-    BarChart(
-        data = values,
-        labels = labels,
-        modifier = Modifier.fillMaxWidth()
-    )
-}*/

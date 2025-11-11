@@ -16,6 +16,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -27,13 +28,17 @@ import com.redfrogec.credigo.data.model.listOfTabScreens
 import com.redfrogec.credigo.ui.screen.tabs.ClientsScreen
 import com.redfrogec.credigo.ui.screen.tabs.HomeScreen
 import com.redfrogec.credigo.ui.screen.tabs.LoansScreen
+import com.redfrogec.credigo.ui.screen.tabs.NewClientScreen
 import com.redfrogec.credigo.ui.screen.tabs.ProfileScreen
+import com.redfrogec.credigo.ui.viewModel.DashboardViewModel
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun DashboardScreen(navControllerInitial: NavController, modifier: Modifier) {
 
     val navController = rememberNavController()
+    val dashboardViewModel = viewModel<DashboardViewModel>()
+
 
     Scaffold(modifier = Modifier.fillMaxSize(),
         bottomBar = {
@@ -49,10 +54,14 @@ fun DashboardScreen(navControllerInitial: NavController, modifier: Modifier) {
                     LoansScreen(navController, modifier)
                 }
                 composable(route = Screens.Clients.route) {
-                    ClientsScreen(navController)
+                    ClientsScreen(navController, modifier)
                 }
                 composable(route = Screens.User.route) {
                     ProfileScreen(navController)
+                }
+
+                composable(route = Screens.NewClient.route) {
+                    NewClientScreen(navController,dashboardViewModel.clientData.value, modifier)
                 }
             }
         NavHost(

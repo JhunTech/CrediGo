@@ -1,6 +1,7 @@
 package com.redfrogec.credigo.domain.sdk
 
 import com.redfrogec.credigo.data.local.LocalDatabase
+import com.redfrogec.credigo.data.model.Client
 import com.redfrogec.credigo.data.model.Constants
 import com.redfrogec.credigo.data.model.Loan
 import com.redfrogec.credigo.domain.utils.cleanErrorData
@@ -12,7 +13,7 @@ class LoanSDK(
     private val settings: Settings = Settings()
     @Throws(Exception::class)
 
-    suspend fun selectAllLoansByClientId(clientId: Long, active: Boolean): List<Loan>?{
+    fun selectAllLoansByClientId(clientId: Long, active: Boolean): List<Loan>?{
         cleanErrorData()
         return try{
             database.selectAllLoansByClientId(clientId, active)
@@ -23,7 +24,7 @@ class LoanSDK(
         }
     }
 
-    suspend fun selectAllLoansByUserId(userId: Long, active: Boolean): List<Loan> {
+    fun selectAllLoansByUserId(userId: Long, active: Boolean): List<Loan> {
         cleanErrorData()
         return try{
             database.selectAllLoansByUserId(userId, active)
@@ -34,32 +35,43 @@ class LoanSDK(
         }
     }
 
-    suspend fun insertLoan (clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String, loanTypeId: Long) {
+    fun selectLoanById(id: Long): Loan? {
         cleanErrorData()
-        try {
-            database.insertLoan(clientId, value, paymentTypeId, interestId, quotaNumbers, active, creationDate, deliveryDate, loanTypeId)
-        }catch (e: Exception) {
+        return try{
+            database.selectLoanById(id)
+        } catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "L003")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            null
         }
     }
 
-    suspend fun updateDataLoan(clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String,loanTypeId: Long,  id: Long) {
+    fun insertLoan (clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String, loanTypeId: Long) {
         cleanErrorData()
         try {
-            database.updateDataLoan(clientId, value, paymentTypeId, interestId, quotaNumbers, active, creationDate, deliveryDate ,loanTypeId , id)
+            database.insertLoan(clientId, value, paymentTypeId, interestId, quotaNumbers, active, creationDate, deliveryDate, loanTypeId)
         }catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "L004")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
         }
     }
 
-    suspend fun deleteLoan(id: Long) {
+    fun updateDataLoan(clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String,loanTypeId: Long,  id: Long) {
+        cleanErrorData()
+        try {
+            database.updateDataLoan(clientId, value, paymentTypeId, interestId, quotaNumbers, active, creationDate, deliveryDate ,loanTypeId , id)
+        }catch (e: Exception) {
+            settings.putString(Constants.ERROR_CODE, "L005")
+            settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+        }
+    }
+
+    fun deleteLoan(id: Long) {
         cleanErrorData()
         try {
             database.deleteLoan(id)
         } catch (e: Exception) {
-            settings.putString(Constants.ERROR_CODE, "L005")
+            settings.putString(Constants.ERROR_CODE, "L006")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
         }
     }

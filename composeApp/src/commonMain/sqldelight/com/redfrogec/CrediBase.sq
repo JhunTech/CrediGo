@@ -97,6 +97,9 @@ DELETE FROM KeyTbl;
 selectAllClients:
 SELECT * FROM ClientTbl WHERE UserId = ?;
 
+selectClientById:
+SELECT * FROM ClientTbl WHERE Id = ?;
+
 insertClient:
 INSERT INTO ClientTbl(UserId, Image , Identification, Name, Email, Phone, Address, Blocked, RegisterDate)
 VALUES ?;
@@ -134,6 +137,9 @@ INNER JOIN
 INNER JOIN
   UserTbl AS u ON c.UserId = u.Id
 WHERE u.Id = ? AND l.Active = ?;
+
+selectLoanById:
+SELECT * FROM LoanTbl WHERE Id = ?;
 
 insertLoan:
 INSERT INTO LoanTbl(ClientId, Value, PaymentTypeId, InterestId, QuotaNumbers, Active, CreationDate, DeliveryDate, LoanTypeId)

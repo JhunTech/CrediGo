@@ -75,7 +75,7 @@ class LocalDatabase(
         return query.recoveryPasswordUserByEmailAndQuestion(passwordHash, email, questionId, response)
     }
 
-    fun deleteUser(id: Long): QueryResult<Long>  {
+    fun deleteUser(id: Long): QueryResult<Long> {
         return query.deleteUser(id)
     }
 
@@ -83,12 +83,12 @@ class LocalDatabase(
         return query.selectAllKey().executeAsOneOrNull()?.PublicKey.toString()
     }
 
-    fun insertKey(key: String){
-        query.insertKey(KeyTbl(0, key))
+    fun insertKey(key: String): QueryResult<Long> {
+        return query.insertKey(KeyTbl(0, key))
     }
 
-    fun deleteKey(){
-        query.deleteKey()
+    fun deleteKey(): QueryResult<Long> {
+        return query.deleteKey()
     }
 
     fun selectAllClients(userId: Long): List<Client> {
@@ -109,7 +109,27 @@ class LocalDatabase(
         }
     }
 
-    fun insertClient(userId: Long, image: String?, identification: String, name: String, email: String?, phone: String?, address: String?, blocked: Boolean, registerDate: LocalDateTime) {
+    fun selectClientById(id: Long): Client? {
+        val blocked: Long = 1
+        val clientTbl = query.selectClientById(id).executeAsOneOrNull()
+        if (clientTbl != null) {
+            return Client(
+                id = clientTbl.Id.toInt(),
+                userId = clientTbl.UserId.toInt(),
+                image = clientTbl.Image.toString(),
+                identification = clientTbl.Identification,
+                name = clientTbl.Name,
+                email = clientTbl.Email.toString(),
+                phone = clientTbl.Phone.toString(),
+                address = clientTbl.Address.toString(),
+                blocked = clientTbl.Blocked == blocked,
+                registerDate = LocalDateTime.parse(clientTbl.RegisterDate.toString())
+            )
+        }
+        return null
+    }
+
+    fun insertClient(userId: Long, image: String?, identification: String, name: String, email: String?, phone: String?, address: String?, blocked: Boolean, registerDate: LocalDateTime): QueryResult<Long> {
         val client = ClientTbl(
             0,
             userId,
@@ -122,15 +142,15 @@ class LocalDatabase(
             if (blocked) 1 else 0,
             registerDate.toString()
         )
-        query.insertClient(client)
+        return query.insertClient(client)
     }
 
-    fun updateDataClient(userId: Long, image: String?, identification: String, name: String, email: String?, phone: String?, address: String?, blocked: Boolean, registerDate: LocalDateTime, id: Long) {
-        query.updateDataClient(userId, image, identification, name, email, phone, address, if (blocked) 1 else 0, registerDate.toString(), id)
+    fun updateDataClient(userId: Long, image: String?, identification: String, name: String, email: String?, phone: String?, address: String?, blocked: Boolean, registerDate: LocalDateTime, id: Long): QueryResult<Long> {
+        return query.updateDataClient(userId, image, identification, name, email, phone, address, if (blocked) 1 else 0, registerDate.toString(), id)
     }
 
-    fun deleteClient(id: Long) {
-        query.deleteClient(id)
+    fun deleteClient(id: Long): QueryResult<Long> {
+        return query.deleteClient(id)
     }
 
     fun selectAllLoansByClientId(clientId: Long, active: Boolean): List<Loan> {
@@ -173,7 +193,28 @@ class LocalDatabase(
         }
     }
 
-    fun insertLoan(clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String, loanTypeId: Long){
+    fun selectLoanById(id: Long): Loan? {
+        val activeResponse: Long = 1
+        val loanTbl = query.selectLoanById(id).executeAsOneOrNull()
+        if (loanTbl != null) {
+            return Loan(
+                id = loanTbl.Id.toString(),
+                clientId = loanTbl.ClientId.toString(),
+                clientName = "",
+                value = loanTbl.Value.toDouble(),
+                paymentTypeId = loanTbl.PaymentTypeId.toInt(),
+                interestId = loanTbl.InterestId.toInt(),
+                quotaNumbers = loanTbl.QuotaNumbers.toInt(),
+                active = loanTbl.Active == activeResponse,
+                creationDate = loanTbl.CreationDate,
+                deliveryDate = loanTbl.DeliveryDate,
+                loanTypeId = loanTbl.LoanTypeId.toInt()
+            )
+        }
+        return null
+    }
+
+    fun insertLoan(clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String, loanTypeId: Long): QueryResult<Long> {
         val loan = LoanTbl(
             0,
             clientId,
@@ -186,15 +227,15 @@ class LocalDatabase(
             deliveryDate,
             loanTypeId
         )
-        query.insertLoan(loan)
+        return query.insertLoan(loan)
     }
 
-    fun updateDataLoan(clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String, loanTypeId: Long, id: Long){
-        query.updateDataLoan(clientId, value, paymentTypeId, interestId, quotaNumbers, if (active) 1 else 0, creationDate, deliveryDate,loanTypeId, id)
+    fun updateDataLoan(clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String, loanTypeId: Long, id: Long): QueryResult<Long>{
+        return query.updateDataLoan(clientId, value, paymentTypeId, interestId, quotaNumbers, if (active) 1 else 0, creationDate, deliveryDate,loanTypeId, id)
     }
 
-    fun deleteLoan(id: Long){
-        query.deleteLoan(id)
+    fun deleteLoan(id: Long): QueryResult<Long> {
+        return query.deleteLoan(id)
     }
 
     fun selectAllChargeByLoanId(loanId: Long): List<Charge> {
@@ -222,7 +263,7 @@ class LocalDatabase(
         )
     }
 
-    fun insertCharge(loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double, chargeTypeId: Long){
+    fun insertCharge(loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double, chargeTypeId: Long): QueryResult<Long> {
         val charge = ChargeTbl(
             0,
             loanId,
@@ -234,14 +275,14 @@ class LocalDatabase(
             remainingValue,
             chargeTypeId
         )
-        query.insertCharge(charge)
+        return query.insertCharge(charge)
     }
 
-    fun updateDataCharge(loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double, chargeTypeId: Long, id: Long){
-        query.updateDataCharge(loanId, quotaNumber, chargeDate, customerPaymentDate, quotaValue, chargeValue, remainingValue,chargeTypeId, id)
+    fun updateDataCharge(loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double, chargeTypeId: Long, id: Long): QueryResult<Long> {
+        return query.updateDataCharge(loanId, quotaNumber, chargeDate, customerPaymentDate, quotaValue, chargeValue, remainingValue,chargeTypeId, id)
     }
 
-    fun deleteCharge(id: Long){
-        query.deleteCharge(id)
+    fun deleteCharge(id: Long): QueryResult<Long> {
+        return query.deleteCharge(id)
     }
 }

@@ -34,9 +34,9 @@ class UserSDK(
         }
     }
 
-    fun updateUser(image: String?, email: String, name: String, passwordHash: String, questionId: Long, response: String, registerDate: LocalDateTime, updateDate: LocalDateTime?, tokenId: Long?, token: String?, tokenExpire: LocalDateTime?, id: Long): Boolean {
+    fun updateUser(image: String?, email: String, name: String, passwordHash: String, questionId: Long, response: String, registerDate: LocalDateTime, updateDate: LocalDateTime?, tokenId: Long?, token: String?, tokenExpire: LocalDateTime?, id: Long): Long {
         cleanErrorData()
-        try {
+        return try {
             database.updateUser(
                 image,
                 email,
@@ -50,12 +50,11 @@ class UserSDK(
                 token,
                 tokenExpire,
                 id
-            )
-            return true
+            ).value
         } catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "U003")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
-            return false
+            0
         }
     }
 
@@ -75,15 +74,14 @@ class UserSDK(
         }
     }
 
-    fun deleteUser(id: Long): Boolean {
+    fun deleteUser(id: Long): Long {
         cleanErrorData()
-        try {
-            database.deleteUser(id)
-            return true
+        return try {
+            database.deleteUser(id).value
         } catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "U005")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
-            return false
+            0
         }
     }
 }

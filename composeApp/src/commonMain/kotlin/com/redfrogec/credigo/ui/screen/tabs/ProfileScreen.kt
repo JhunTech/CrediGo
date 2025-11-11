@@ -64,7 +64,7 @@ fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
         ) {
             // Título
             Text(
-                text = "Profile",
+                text = "Usuario",
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.padding(bottom = 24.dp)
             )

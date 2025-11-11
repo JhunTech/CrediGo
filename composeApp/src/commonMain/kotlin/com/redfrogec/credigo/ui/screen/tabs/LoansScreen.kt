@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -57,77 +58,74 @@ fun LoansScreen(navController: NavController, modifier: Modifier) {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        /*Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(0.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Préstamos",
-                                fontSize = 22.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    },
-                    actions = {
-                        IconButton(
-                            onClick = { viewModel.onAddClick() },
-                            modifier = modifier
-                                .size(30.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(Res.drawable.ic_plus),
-                                contentDescription = "Agregar",
-                                modifier = modifier
-                                    .fillMaxSize()
-                            )
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(0.dp)
+        Column(
+            modifier = modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = "Préstamos",
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.weight(2f).wrapContentWidth(Alignment.CenterHorizontally)
+                )
+                IconButton(
+                    onClick = { viewModel.onAddClick()},
+                    modifier = Modifier.weight(1f).wrapContentWidth(Alignment.End)
+                ) {
+                    Icon(
+                        modifier = modifier
+                            .size(30.dp)
+                            .padding(0.dp),
+                        painter = painterResource(Res.drawable.ic_plus),
+                        contentDescription = "Agregar",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+            TabRow(selectedTabIndex = selectedTab, containerColor = Color.Transparent) {
+                Tab(
+                    selected = selectedTab == 0,
+                    onClick = { viewModel.onTabSelected(0) },
+                    text = { Text(
+                        text = "Activos",
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.titleSmall
+                    ) }
+                )
+                Tab(
+                    selected = selectedTab == 1,
+                    onClick = { viewModel.onTabSelected(1) },
+                    text = { Text(
+                        text = "Pagados",
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.titleSmall
+                    ) }
                 )
             }
-        ) { padding ->*/
             Column(
                 modifier = modifier
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .padding(16.dp)
+                    .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top
             ) {
-                TabRow(selectedTabIndex = selectedTab, containerColor = Color.Transparent) {
-                    Tab(
-                        selected = selectedTab == 0,
-                        onClick = { viewModel.onTabSelected(0) },
-                        text = { Text("Activos") }
-                    )
-                    Tab(
-                        selected = selectedTab == 1,
-                        onClick = { viewModel.onTabSelected(1) },
-                        text = { Text("Pagados") }
-                    )
-                }
-                Column(
-                    modifier = modifier
-                        .fillMaxSize()
-                        .padding(16.dp)
-                        .verticalScroll(scrollState),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Top
-                ) {
-                    loans.forEach { loan ->
-                        LoanItem(loan)
-                    }
+                loans.forEach { loan ->
+                    LoanItem(loan)
                 }
             }
         }
     }
-//}
+}
 
 @Composable
 fun LoanItem(loan: Loan) {
