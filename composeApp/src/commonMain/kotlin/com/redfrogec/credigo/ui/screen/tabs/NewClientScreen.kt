@@ -92,7 +92,6 @@ fun NewClientScreen(navController: NavController, clientData: Client, modifier: 
 
     val scrollState = rememberScrollState()
     var showDatePicker by remember { mutableStateOf(false) }
-
     if(clientOk)
     {
         if(simpleDialog("Alerta", clientMessage))

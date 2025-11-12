@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
+import org.koin.compose.viewmodel.koinViewModel
 
 class NewClientViewModel(private val sdk: ClientSDK): ViewModel() {
 
@@ -220,6 +221,6 @@ class NewClientViewModel(private val sdk: ClientSDK): ViewModel() {
 
     fun onBackClicked() {
         println("Return clients screen")
-        navigation.popBackStack()
+        navigation.navigate("clients")
     }
 }

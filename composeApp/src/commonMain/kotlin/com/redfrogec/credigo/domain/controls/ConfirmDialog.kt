@@ -4,20 +4,24 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
-fun ShowAlertDialog(title: String, message: String): Boolean{
+fun confirmDialog(title: String, message: String): String{
     var showAlertDialog by remember { mutableStateOf(true) }
-    var returnConfirm by remember { mutableStateOf(false) }
+    var returnConfirm by remember { mutableStateOf("None") }
     if (showAlertDialog) {
         AlertDialog(
             onDismissRequest = {
                 showAlertDialog = false
-                returnConfirm = false
+                returnConfirm = "Cancel"
             },
             title = {
                 Text(title)
@@ -30,7 +34,7 @@ fun ShowAlertDialog(title: String, message: String): Boolean{
                     onClick = {
                         showAlertDialog = false
                         println("Confirmed!")
-                        returnConfirm = true
+                        returnConfirm = "OK"
                     }
                 ) {
                     Text("Aceptar")
@@ -41,7 +45,7 @@ fun ShowAlertDialog(title: String, message: String): Boolean{
                     onClick = {
                         showAlertDialog = false
                         println("Cancelled!")
-                        returnConfirm = false
+                        returnConfirm = "Cancel"
                     }
                 ) {
                     Text("Cancelar")
