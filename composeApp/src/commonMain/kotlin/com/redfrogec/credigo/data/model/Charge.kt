@@ -17,3 +17,8 @@ data class ChargePaid(
     val totalFeesPaid: Int,
     val totalAmountCharged: Double
 )
+
+data class NumberCharge(
+    val number: Int,
+    val description: String
+)

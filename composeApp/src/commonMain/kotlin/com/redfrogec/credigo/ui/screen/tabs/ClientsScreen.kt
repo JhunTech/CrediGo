@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.redfrogec.credigo.data.model.Client
 import com.redfrogec.credigo.data.model.ClientStatus
+import com.redfrogec.credigo.domain.controls.ClientItemRow
 import com.redfrogec.credigo.domain.controls.confirmDialog
 import com.redfrogec.credigo.domain.controls.simpleDialog
 import com.redfrogec.credigo.ui.viewModel.ClientsViewModel
@@ -149,53 +150,6 @@ fun ClientsScreen(navController: NavController, modifier: Modifier = Modifier) {
             }
 
             ClientList(viewModel)
-        }
-    }
-}
-
-@Composable
-fun ClientItemRow(client: Client){
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background)
-    ) {
-        // Avatar
-        Box(
-            modifier = Modifier
-                .size(48.dp)
-                .clip(CircleShape)
-                .background(Color(0xFFF0EAE2)),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                painter = painterResource(Res.drawable.ic_user), // Coloca un ícono de usuario por defecto
-                contentDescription = null,
-                tint = Color.DarkGray,
-                modifier = Modifier.size(24.dp)
-            )
-        }
-
-        Spacer(Modifier.width(12.dp))
-
-        Column {
-            Text(
-                text = client.name+" - "+client.identification,
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Text(
-                text = "Email: ${client.email}",
-                style = MaterialTheme.typography.bodySmall,
-            )
-            Text(
-                text = "Teléfono: ${client.phone}",
-                style = MaterialTheme.typography.bodySmall,
-            )
-            Text(
-                text = if (!client.blocked) ClientStatus.Activo.toString() else ClientStatus.Bloqueado.toString(),
-                color = if (!client.blocked) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall,
-            )
         }
     }
 }

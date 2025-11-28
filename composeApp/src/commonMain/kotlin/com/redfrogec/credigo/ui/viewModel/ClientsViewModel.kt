@@ -97,6 +97,6 @@ class ClientsViewModel (private val sdk: ClientSDK): ViewModel(){
 
     fun updateClient(id: Int) {
         settings.putInt(Constants.CLIENT_ID, id)
-        navigation.navigate("newclient")
+        navigation.navigate("newClient")
     }
 }

@@ -3,6 +3,7 @@ package com.redfrogec.credigo.ui.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.redfrogec.credigo.data.model.ChargeType
 import com.redfrogec.credigo.data.model.Constants
 import com.redfrogec.credigo.data.model.SecurityQuestion
 import com.redfrogec.credigo.domain.sdk.UserSDK

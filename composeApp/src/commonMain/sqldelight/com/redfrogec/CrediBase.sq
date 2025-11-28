@@ -97,6 +97,9 @@ DELETE FROM KeyTbl;
 selectAllClients:
 SELECT * FROM ClientTbl WHERE UserId = ?;
 
+selectActiveClients:
+SELECT * FROM ClientTbl WHERE UserId = ? AND Blocked = 0;
+
 selectClientById:
 SELECT * FROM ClientTbl WHERE Id = ?;
 

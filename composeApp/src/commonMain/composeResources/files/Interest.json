@@ -1,44 +1,44 @@
 [
   {
-    "Id": 1,
-    "Value": 0.00,
-    "Description": "Interés 0%",
-    "Active": true
+    "id": 1,
+    "value": 0.00,
+    "description": "0%",
+    "active": true
   },
   {
-    "Id": 2,
-    "Value": 5.00,
-    "Description": "Interés 5%",
-    "Active": true
+    "id": 2,
+    "value": 5.00,
+    "description": "5%",
+    "active": true
   },
   {
-    "Id": 3,
-    "Value": 10.00,
-    "Description": "Interés 10%",
-    "Active": true
+    "id": 3,
+    "value": 10.00,
+    "description": "10%",
+    "active": true
   },
   {
-    "Id": 4,
-    "Value": 15.00,
-    "Description": "Interés 15%",
-    "Active": true
+    "id": 4,
+    "value": 15.00,
+    "description": "15%",
+    "active": true
   },
   {
-    "Id": 5,
-    "Value": 20.00,
-    "Description": "Interés 20%",
-    "Active": true
+    "id": 5,
+    "value": 20.00,
+    "description": "20%",
+    "active": true
   },
   {
-    "Id": 6,
-    "Value": 25.00,
-    "Description": "Interés 25%",
-    "Active": true
+    "id": 6,
+    "value": 25.00,
+    "description": "25%",
+    "active": true
   },
   {
-    "Id": 7,
-    "Value": 30.00,
-    "Description": "Interés 30%",
-    "Active": true
+    "id": 7,
+    "value": 30.00,
+    "description": "30%",
+    "active": true
   }
 ]

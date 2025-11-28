@@ -24,12 +24,23 @@ class ClientSDK(
         }
     }
 
+    fun selectActiveClients(userId: Long): List<Client>? {
+        cleanErrorData()
+        return try{
+            database.selectActiveClients(userId)
+        } catch (e: Exception) {
+            settings.putString(Constants.ERROR_CODE, "C002")
+            settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            null
+        }
+    }
+
     fun selectClientById(id: Long): Client? {
         cleanErrorData()
         return try{
             database.selectClientById(id)
         } catch (e: Exception) {
-            settings.putString(Constants.ERROR_CODE, "C002")
+            settings.putString(Constants.ERROR_CODE, "C003")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
             null
         }
@@ -40,7 +51,7 @@ class ClientSDK(
         return try {
             database.insertClient(userId, image, identification, name, email, phone, address, blocked, registerDate).value
         }catch (e: Exception) {
-            settings.putString(Constants.ERROR_CODE, "C003")
+            settings.putString(Constants.ERROR_CODE, "C004")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
             0
         }
@@ -62,7 +73,7 @@ class ClientSDK(
                 id
             ).value
         }catch (e: Exception) {
-            settings.putString(Constants.ERROR_CODE, "C004")
+            settings.putString(Constants.ERROR_CODE, "C005")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
             0
         }
@@ -73,7 +84,7 @@ class ClientSDK(
         return try {
             database.deleteClient(id).value
         } catch (e: Exception) {
-            settings.putString(Constants.ERROR_CODE, "C005")
+            settings.putString(Constants.ERROR_CODE, "C006")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
             0
         }

@@ -3,9 +3,8 @@ package com.redfrogec.credigo.data.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PaymentType(
+data class ChargeType(
     val id: Int,
     val description: String = "",
-    val days: Int = 0,
-    val active: Boolean = true
+    val creationDate: String = "",
 )

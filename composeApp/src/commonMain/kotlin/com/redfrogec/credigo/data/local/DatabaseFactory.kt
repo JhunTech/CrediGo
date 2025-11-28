@@ -109,6 +109,24 @@ class LocalDatabase(
         }
     }
 
+    fun selectActiveClients(userId: Long): List<Client> {
+        val blocked: Long = 1
+        return query.selectActiveClients(userId).executeAsList().map {
+            Client(
+                id = it.Id.toInt(),
+                userId = it.UserId.toInt(),
+                image = it.Image.toString(),
+                identification = it.Identification,
+                name = it.Name,
+                email = it.Email.toString(),
+                phone = it.Phone.toString(),
+                address = it.Address.toString(),
+                blocked = it.Blocked == blocked,
+                registerDate = LocalDateTime.parse(it.RegisterDate.toString())
+            )
+        }
+    }
+
     fun selectClientById(id: Long): Client? {
         val blocked: Long = 1
         val clientTbl = query.selectClientById(id).executeAsOneOrNull()

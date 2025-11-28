@@ -1,26 +1,26 @@
 [
   {
-    "Id": 1,
-    "Description": "Diario",
-    "Days": 1,
-    "Active": true
+    "id": 1,
+    "description": "Diario",
+    "days": 1,
+    "active": true
   },
   {
-    "Id": 2,
-    "Description": "Semanal",
-    "Days": 7,
-    "Active": true
+    "id": 2,
+    "description": "Semanal",
+    "days": 7,
+    "active": true
   },
   {
-    "Id": 3,
-    "Description": "Quincenal",
-    "Days": 15,
-    "Active": true
+    "id": 3,
+    "description": "Quincenal",
+    "days": 15,
+    "active": true
   },
   {
-    "Id": 4,
-    "Description": "Mensual",
-    "Days": 30,
-    "Active": true
+    "id": 4,
+    "description": "Mensual",
+    "days": 30,
+    "active": true
   }
 ]

@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -29,6 +30,7 @@ import com.redfrogec.credigo.ui.screen.tabs.ClientsScreen
 import com.redfrogec.credigo.ui.screen.tabs.HomeScreen
 import com.redfrogec.credigo.ui.screen.tabs.LoansScreen
 import com.redfrogec.credigo.ui.screen.tabs.NewClientScreen
+import com.redfrogec.credigo.ui.screen.tabs.NewLoanScreen
 import com.redfrogec.credigo.ui.screen.tabs.ProfileScreen
 import com.redfrogec.credigo.ui.viewModel.DashboardViewModel
 import org.jetbrains.compose.resources.painterResource
@@ -60,8 +62,12 @@ fun DashboardScreen(navControllerInitial: NavController, modifier: Modifier) {
                     ProfileScreen(navController)
                 }
 
+                //New Pages on tab
                 composable(route = Screens.NewClient.route) {
-                    NewClientScreen(navController,dashboardViewModel.clientData.value, modifier)
+                    NewClientScreen(navController, modifier)
+                }
+                composable(route = Screens.NewLoan.route) {
+                    NewLoanScreen(navController, modifier)
                 }
             }
         NavHost(
@@ -100,7 +106,8 @@ fun BottomNavigationBar (navController: NavHostController){
                 },
                 label = {
                     Text(
-                        item.label,
+                        text = item.label,
+                        overflow = TextOverflow.Ellipsis,
                         color = if (index == selectedNavigationIndex.intValue)
                             Color.Black
                         else MaterialTheme.colorScheme.secondary

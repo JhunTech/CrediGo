@@ -5,12 +5,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import com.redfrogec.credigo.data.model.Constants
 import com.redfrogec.credigo.data.model.Loan
 import com.redfrogec.credigo.domain.sdk.LoanSDK
+import com.russhwolf.settings.Settings
 
 class LoansViewModel(private val sdk: LoanSDK) : ViewModel() {
 
     lateinit var navigation: NavController
+    private val settings: Settings = Settings()
 
     var selectedTab by mutableStateOf(0) // 0 = Active, 1 = Paid
         private set
@@ -52,6 +55,7 @@ class LoansViewModel(private val sdk: LoanSDK) : ViewModel() {
     }
 
     fun onAddClick() {
-
+        settings.putInt(Constants.LOAN_ID, -1)
+        navigation.navigate("newLoan")
     }
 }

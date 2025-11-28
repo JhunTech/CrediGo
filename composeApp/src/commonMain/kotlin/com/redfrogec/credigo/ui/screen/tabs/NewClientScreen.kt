@@ -68,7 +68,7 @@ import kotlin.time.Instant
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewClientScreen(navController: NavController, clientData: Client, modifier: Modifier = Modifier) {
+fun NewClientScreen(navController: NavController, modifier: Modifier = Modifier) {
 
     val viewModel = koinViewModel<NewClientViewModel>()
     viewModel.navigation = navController
