@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlin.collections.emptyList
 
-class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: ClientSDK): ViewModel() {
+class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: ClientSDK, private val sharedViewModel: SharedViewModel): ViewModel() {
 
     lateinit var navigation: NavController
     lateinit var interestList : List<Interest>
@@ -181,5 +181,10 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
     fun onBackClicked() {
         println("Return loans screen")
         navigation.popBackStack()
+    }
+
+    fun showSelectClient(){
+        settings.putBoolean(Constants.EXTERNAL_SEARCH_CLIENT, true)
+        navigation.navigate("clients")
     }
 }

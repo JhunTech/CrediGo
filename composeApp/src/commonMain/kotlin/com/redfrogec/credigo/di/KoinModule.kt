@@ -12,6 +12,7 @@ import com.redfrogec.credigo.ui.viewModel.LoginViewModel
 import com.redfrogec.credigo.ui.viewModel.NewClientViewModel
 import com.redfrogec.credigo.ui.viewModel.NewLoanViewModel
 import com.redfrogec.credigo.ui.viewModel.PasswordRecoveryViewModel
+import com.redfrogec.credigo.ui.viewModel.SharedViewModel
 import com.redfrogec.credigo.ui.viewModel.SignUpViewModel
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
@@ -50,13 +51,15 @@ val sharedModule = module {
         )
     }
 
+    single { SharedViewModel() }
+
     viewModel { LoginViewModel(sdk = get()) }
     viewModel { SignUpViewModel(sdk = get()) }
     viewModel { PasswordRecoveryViewModel(sdk = get()) }
     viewModel { LoansViewModel(sdk = get()) }
-    viewModel { ClientsViewModel(sdk = get()) }
+    viewModel { ClientsViewModel(sdk = get(), sharedViewModel = get()) }
     viewModel { NewClientViewModel(sdk = get()) }
-    viewModel { NewLoanViewModel(loanSDK = get(), clientSDK = get()) }
+    viewModel { NewLoanViewModel(loanSDK = get(), clientSDK = get(), sharedViewModel = get()) }
 }
 
 fun initializeKoin(config: (KoinApplication.() -> Unit)? = null) {

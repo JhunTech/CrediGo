@@ -5,7 +5,8 @@ object Constants {
     const val ERROR_MESSAGE = "ERROR_MESSAGE"
     const val USER_ID = "USER_ID"
     const val CLIENT_ID = "CLIENT_ID"
+    const val CLIENT_NAME = "CLIENT_NAME"
+    const val EXTERNAL_SEARCH_CLIENT = "EXTERNAL_SEARCH_CLIENT"
     const val LOAN_ID = "LOAN_ID"
-    const val MIN_QUOTE = 1
     const val MAX_QUOTE = 24
 }

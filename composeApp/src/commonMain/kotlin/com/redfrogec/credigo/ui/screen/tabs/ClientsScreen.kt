@@ -46,6 +46,7 @@ import com.redfrogec.credigo.domain.controls.confirmDialog
 import com.redfrogec.credigo.domain.controls.simpleDialog
 import com.redfrogec.credigo.ui.viewModel.ClientsViewModel
 import credigo.composeapp.generated.resources.Res
+import credigo.composeapp.generated.resources.ic_close
 import credigo.composeapp.generated.resources.ic_plus
 import credigo.composeapp.generated.resources.ic_user
 import org.jetbrains.compose.resources.painterResource
@@ -58,6 +59,8 @@ fun ClientsScreen(navController: NavController, modifier: Modifier = Modifier) {
     val showConfirmDelete by viewModel.showConfirmDelete.collectAsState()
     val selectedIdClient by viewModel.selectedIdClient.collectAsState()
     val clientDeleteOk by viewModel.clientDeleteOk.collectAsState()
+    val externalSearchClient by viewModel.externalSearchClient.collectAsState()
+
 
 
     val query = viewModel.searchQuery.collectAsState().value
@@ -102,20 +105,20 @@ fun ClientsScreen(navController: NavController, modifier: Modifier = Modifier) {
             ) {
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = "Clientes",
+                    text = if(externalSearchClient) {"Selecciona"} else {"Listado Clientes"},
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(2f).wrapContentWidth(Alignment.CenterHorizontally)
                 )
                 IconButton(
-                    onClick = { viewModel.onAddClick()},
+                    onClick = { if(externalSearchClient) {viewModel.onCLoseClick()} else {viewModel.onAddClick()}},
                     modifier = Modifier.weight(1f).wrapContentWidth(Alignment.End)
                 ) {
                     Icon(
                         modifier = modifier
                             .size(30.dp)
                             .padding(0.dp),
-                        painter = painterResource(Res.drawable.ic_plus),
+                        painter = painterResource(if(externalSearchClient) {Res.drawable.ic_close} else {Res.drawable.ic_plus}),
                         contentDescription = "Agregar",
                         tint = MaterialTheme.colorScheme.primary
                     )
@@ -158,6 +161,7 @@ fun ClientsScreen(navController: NavController, modifier: Modifier = Modifier) {
 @Composable
 fun ClientList(viewModel: ClientsViewModel) {
     val clients by viewModel.clients.collectAsState()
+    val externalSearchClient by viewModel.externalSearchClient.collectAsState()
 
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -165,59 +169,63 @@ fun ClientList(viewModel: ClientsViewModel) {
         contentPadding = PaddingValues(vertical = 12.dp)
     ) {
         items(clients!!, key = { it.id }) { client ->
-            val dismissState = rememberSwipeToDismissBoxState(
-                confirmValueChange = { value ->
-                    when (value) {
-                        SwipeToDismissBoxValue.StartToEnd -> { // Izquierda → Eliminar
-                            viewModel.onConfirmDeleteChanged(true, client.id)
-                            true
+            if(externalSearchClient) {
+                ClientItemRow(client, viewModel)
+            } else {
+                val dismissState = rememberSwipeToDismissBoxState(
+                    confirmValueChange = { value ->
+                        when (value) {
+                            SwipeToDismissBoxValue.StartToEnd -> { // Izquierda → Eliminar
+                                viewModel.onConfirmDeleteChanged(true, client.id)
+                                true
+                            }
+
+                            SwipeToDismissBoxValue.EndToStart -> { // Derecha → Modificar
+                                viewModel.updateClient(client.id)
+                                true
+                            }
+
+                            else -> false
+                        }
+                    }
+                )
+
+                SwipeToDismissBox(
+                    state = dismissState,
+                    backgroundContent = {
+                        val color = when (dismissState.dismissDirection) {
+                            SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.secondaryContainer // Verde
+                            SwipeToDismissBoxValue.StartToEnd -> MaterialTheme.colorScheme.error // Rojo
+                            else -> Color.Transparent
                         }
 
-                        SwipeToDismissBoxValue.EndToStart -> { // Derecha → Modificar
-                            viewModel.updateClient(client.id)
-                            true
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(color)
+                                .padding(horizontal = 16.dp),
+                            contentAlignment = when (dismissState.dismissDirection) {
+                                SwipeToDismissBoxValue.EndToStart -> Alignment.CenterEnd
+                                SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
+                                else -> Alignment.Center
+                            }
+                        ) {
+                            Text(
+                                text = when (dismissState.dismissDirection) {
+                                    SwipeToDismissBoxValue.EndToStart -> "Modificar"
+                                    SwipeToDismissBoxValue.StartToEnd -> "Eliminar"
+                                    else -> ""
+                                },
+                                color = Color.White,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
                         }
-
-                        else -> false
+                    },
+                    content = {
+                        ClientItemRow(client, viewModel)
                     }
-                }
-            )
-
-            SwipeToDismissBox(
-                state = dismissState,
-                backgroundContent = {
-                    val color = when (dismissState.dismissDirection) {
-                        SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.secondaryContainer // Verde
-                        SwipeToDismissBoxValue.StartToEnd -> MaterialTheme.colorScheme.error // Rojo
-                        else -> Color.Transparent
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(color)
-                            .padding(horizontal = 16.dp),
-                        contentAlignment = when (dismissState.dismissDirection) {
-                            SwipeToDismissBoxValue.EndToStart -> Alignment.CenterEnd
-                            SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
-                            else -> Alignment.Center
-                        }
-                    ) {
-                        Text(
-                            text = when (dismissState.dismissDirection) {
-                                SwipeToDismissBoxValue.EndToStart -> "Modificar"
-                                SwipeToDismissBoxValue.StartToEnd -> "Eliminar"
-                                else -> ""
-                            },
-                            color = Color.White,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                },
-                content = {
-                    ClientItemRow(client)
-                }
-            )
+                )
+            }
         }
     }
 }

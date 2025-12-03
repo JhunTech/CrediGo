@@ -47,6 +47,7 @@ import com.redfrogec.credigo.data.model.Charge
 import com.redfrogec.credigo.domain.controls.ClientSelectorDialog
 import com.redfrogec.credigo.ui.viewModel.ClientSelectorViewModel
 import com.redfrogec.credigo.ui.viewModel.NewLoanViewModel
+import com.redfrogec.credigo.ui.viewModel.SharedViewModel
 import credigo.composeapp.generated.resources.Res
 import credigo.composeapp.generated.resources.ic_arrow_left
 import credigo.composeapp.generated.resources.ic_user
@@ -60,6 +61,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun NewLoanScreen(navController: NavController, modifier: Modifier) {
 
     val viewModel = koinViewModel<NewLoanViewModel>()
+    val sharedViewModel = koinViewModel<SharedViewModel>()
     viewModel.navigation = navController
 
     val loanId by viewModel.loanId.collectAsState()
@@ -85,23 +87,12 @@ fun NewLoanScreen(navController: NavController, modifier: Modifier) {
     val paymentTypeId by viewModel.paymentTypeId.collectAsState()
     val paymentTypeDays by viewModel.paymentTypeDays.collectAsState()
 
-    val clientSelectorViewModel = remember {
-        ClientSelectorViewModel(clients!!)
-    }
-
     val installments by viewModel.installments.collectAsState()
     val plan by viewModel.generatedPlan.collectAsState()
     val scrollState = rememberScrollState()
 
     val greenColor = Color(0xFF2ECC71)
     val lightGreen = Color(0xFFE8F9F0)
-
-    ClientSelectorDialog(
-        viewModel = clientSelectorViewModel,
-        onClientSelected = { client ->
-            viewModel.onClientSelected(client.id, client.name)
-        }
-    )
 
     Box(
         modifier = modifier
@@ -168,7 +159,7 @@ fun NewLoanScreen(navController: NavController, modifier: Modifier) {
 
                 // Client
                 OutlinedTextField(
-                    value = selectedClientName,
+                    value = sharedViewModel.clientSelected.value?.name.toString() ,
                     onValueChange = {},
                     readOnly = true,
                     modifier = Modifier.fillMaxWidth(),
@@ -178,7 +169,7 @@ fun NewLoanScreen(navController: NavController, modifier: Modifier) {
                             painter = painterResource(Res.drawable.ic_user),
                             contentDescription = null,
                             modifier = Modifier.clickable {
-                                clientSelectorViewModel.openDialog()
+                                viewModel.showSelectClient()
                             }
                         )
                     },

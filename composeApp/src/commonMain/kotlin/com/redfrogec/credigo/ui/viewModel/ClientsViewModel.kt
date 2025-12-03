@@ -6,17 +6,15 @@ import androidx.navigation.NavController
 import com.redfrogec.credigo.data.model.Client
 import com.redfrogec.credigo.data.model.Constants
 import com.redfrogec.credigo.domain.sdk.ClientSDK
-import com.redfrogec.credigo.domain.sdk.UserSDK
 import com.russhwolf.settings.Settings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDateTime
 import kotlin.collections.emptyList
 
-class ClientsViewModel (private val sdk: ClientSDK): ViewModel(){
+class ClientsViewModel (private val sdk: ClientSDK, private val sharedViewModel: SharedViewModel): ViewModel(){
 
     lateinit var navigation: NavController
     private val settings: Settings = Settings()
@@ -42,8 +40,12 @@ class ClientsViewModel (private val sdk: ClientSDK): ViewModel(){
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
+    private val _externalSearchClient = MutableStateFlow(false)
+    val externalSearchClient: StateFlow<Boolean> = _externalSearchClient.asStateFlow()
+
     init {
         viewModelScope.launch {
+            _externalSearchClient.value = settings.getBoolean(Constants.EXTERNAL_SEARCH_CLIENT, false)
             loadClients()
         }
     }
@@ -84,6 +86,13 @@ class ClientsViewModel (private val sdk: ClientSDK): ViewModel(){
         navigation.navigate("newclient")
     }
 
+    fun onCLoseClick() {
+        settings.putInt(Constants.CLIENT_ID, -1)
+        settings.putString(Constants.CLIENT_NAME, "")
+        settings.putBoolean(Constants.EXTERNAL_SEARCH_CLIENT, false)
+        navigation.popBackStack()
+    }
+
     fun deleteClient(id: Int) {
         val deleteClient = sdk.deleteClient(id.toLong())
         if(deleteClient.toInt() > 0) {
@@ -98,5 +107,10 @@ class ClientsViewModel (private val sdk: ClientSDK): ViewModel(){
     fun updateClient(id: Int) {
         settings.putInt(Constants.CLIENT_ID, id)
         navigation.navigate("newClient")
+    }
+
+    fun selectedClient(client: Client) {
+        sharedViewModel.onSelectedClient(client)
+        navigation.popBackStack()
     }
 }

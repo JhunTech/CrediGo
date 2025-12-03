@@ -17,13 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
+import com.redfrogec.credigo.data.model.Constants
 import com.redfrogec.credigo.data.model.Screens
 import com.redfrogec.credigo.data.model.listOfTabScreens
 import com.redfrogec.credigo.ui.screen.tabs.ClientsScreen
@@ -32,15 +32,16 @@ import com.redfrogec.credigo.ui.screen.tabs.LoansScreen
 import com.redfrogec.credigo.ui.screen.tabs.NewClientScreen
 import com.redfrogec.credigo.ui.screen.tabs.NewLoanScreen
 import com.redfrogec.credigo.ui.screen.tabs.ProfileScreen
-import com.redfrogec.credigo.ui.viewModel.DashboardViewModel
+import com.redfrogec.credigo.ui.viewModel.SharedViewModel
+import com.russhwolf.settings.Settings
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun DashboardScreen(navControllerInitial: NavController, modifier: Modifier) {
 
     val navController = rememberNavController()
-    val dashboardViewModel = viewModel<DashboardViewModel>()
-
+    val sharedViewModel = koinViewModel<SharedViewModel>()
 
     Scaffold(modifier = Modifier.fillMaxSize(),
         bottomBar = {
@@ -84,6 +85,7 @@ fun BottomNavigationBar (navController: NavHostController){
     val selectedNavigationIndex = rememberSaveable {
         mutableIntStateOf(0)
     }
+    val settings: Settings = Settings()
 
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.surface
@@ -92,6 +94,9 @@ fun BottomNavigationBar (navController: NavHostController){
             NavigationBarItem(
                 selected = selectedNavigationIndex.intValue == index,
                 onClick = {
+                    if(Screens.Clients.route == item.route){
+                        settings.putBoolean(Constants.EXTERNAL_SEARCH_CLIENT, false)
+                    }
                     selectedNavigationIndex.intValue = index
                     navController.navigate(item.route)
                 },

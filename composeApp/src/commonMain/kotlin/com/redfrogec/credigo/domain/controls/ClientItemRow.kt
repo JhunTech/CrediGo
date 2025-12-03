@@ -1,6 +1,7 @@
 package com.redfrogec.credigo.domain.controls
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,12 +23,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.redfrogec.credigo.data.model.Client
 import com.redfrogec.credigo.data.model.ClientStatus
+import com.redfrogec.credigo.ui.viewModel.ClientsViewModel
 import credigo.composeapp.generated.resources.Res
 import credigo.composeapp.generated.resources.ic_user
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun ClientItemRow(client: Client){
+fun ClientItemRow(client: Client, viewModel: ClientsViewModel){
+    val externalSearchClient by viewModel.externalSearchClient.collectAsState()
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background)
@@ -35,7 +40,8 @@ fun ClientItemRow(client: Client){
             modifier = Modifier
                 .size(48.dp)
                 .clip(CircleShape)
-                .background(Color(0xFFF0EAE2)),
+                .background(Color(0xFFF0EAE2))
+                .clickable{if(externalSearchClient){viewModel.selectedClient(client)}},
             contentAlignment = Alignment.Center
         ) {
             Icon(
