@@ -7,7 +7,7 @@ import com.redfrogec.credigo.data.model.ChargeType
 import com.redfrogec.credigo.data.model.Constants
 import com.redfrogec.credigo.data.model.SecurityQuestion
 import com.redfrogec.credigo.domain.sdk.UserSDK
-import com.redfrogec.credigo.domain.utils.CurrentDateDisplay
+import com.redfrogec.credigo.domain.utils.currentDateDisplay
 import com.redfrogec.credigo.domain.utils.isValidEmail
 import com.redfrogec.credigo.domain.utils.isValidPassword
 import com.redfrogec.credigo.domain.utils.loadSecurityQuestions
@@ -131,11 +131,11 @@ class SignUpViewModel(private val sdk: UserSDK) : ViewModel() {
             _password.value,
             _idSecurityQuestion.value.toLong(),
             _answer.value,
-            CurrentDateDisplay(),
-            CurrentDateDisplay(),
+            currentDateDisplay(),
+            currentDateDisplay(),
             0,
             "",
-            CurrentDateDisplay())
+            currentDateDisplay())
         _showLoading.value = false
 
         if(insertUser.toInt() > 0) {

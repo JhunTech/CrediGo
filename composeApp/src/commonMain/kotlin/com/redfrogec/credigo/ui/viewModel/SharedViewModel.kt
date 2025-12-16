@@ -10,14 +10,14 @@ class SharedViewModel(): ViewModel()  {
     private val _clientSelected = MutableStateFlow<Client?>(null)
     var clientSelected: StateFlow<Client?> = _clientSelected
 
-    private val _externalSearchClient = MutableStateFlow<Boolean>(false)
-    val externalSearchClient: StateFlow<Boolean> = _externalSearchClient
+    private val _externalSearch = MutableStateFlow<Boolean>(false)
+    val externalSearch: StateFlow<Boolean> = _externalSearch
 
     fun onSelectedClient(client: Client){
         _clientSelected.value = client
     }
 
-    fun onExternalSearchClient(externalSearchClient: Boolean) {
-        _externalSearchClient.value = externalSearchClient
+    fun onExternalSearch(newValue: Boolean) {
+        _externalSearch.value = newValue
     }
 }

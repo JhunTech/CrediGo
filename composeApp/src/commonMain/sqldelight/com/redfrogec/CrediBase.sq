@@ -165,7 +165,8 @@ selectChargePaid:
 SELECT
     LoanId,
     COUNT(QuotaNumber) AS TotalFeesPaid,
-    SUM(ChargeValue) AS TotalAmountCharged
+    SUM(ChargeValue) AS TotalAmountCharged,
+    SUM(RemainingValue) AS TotalAmountRemaining
 FROM
     ChargeTbl
 WHERE
@@ -174,6 +175,21 @@ WHERE
     LoanId = ?
 GROUP BY
     LoanId;
+
+selectChargeNoPaid:
+    SELECT
+        LoanId,
+        COUNT(QuotaNumber) AS TotalFeesPaid,
+        SUM(ChargeValue) AS TotalAmountCharged,
+        SUM(RemainingValue) AS TotalAmountRemaining
+    FROM
+        ChargeTbl
+    WHERE
+        QuotaValue > ChargeValue AND
+        RemainingValue > 0 AND
+        LoanId = ?
+    GROUP BY
+        LoanId;
 
 insertCharge:
 INSERT INTO ChargeTbl(LoanId, QuotaNumber, ChargeDate, CustomerPaymentDate, QuotaValue, ChargeValue, RemainingValue, ChargeTypeId)

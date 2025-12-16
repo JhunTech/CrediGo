@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class LoanType(
     val id: Int,
     val description: String = "",
+    val graceQuotes: Int,
     val creationDate: String = "",
 )

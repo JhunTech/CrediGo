@@ -259,8 +259,8 @@ class LocalDatabase(
     fun selectAllChargeByLoanId(loanId: Long): List<Charge> {
         return query.selectAllChargeByLoanId(loanId).executeAsList().map {
             Charge(
-                id = it.Id.toString(),
-                loanId = it.LoanId.toString(),
+                id = it.Id,
+                loanId = it.LoanId,
                 quotaNumber = it.QuotaNumber.toInt(),
                 chargeDate = it.ChargeDate,
                 customerPaymentDate = it.CustomerPaymentDate,
@@ -275,9 +275,20 @@ class LocalDatabase(
     fun selectChargePaid(loanId: Long): ChargePaid {
         val chargePaid = query.selectChargePaid(loanId).executeAsOne()
         return ChargePaid(
-            loanId = chargePaid.LoanId.toString(),
+            loanId = chargePaid.LoanId,
             totalFeesPaid = chargePaid.TotalFeesPaid.toInt(),
-            totalAmountCharged = chargePaid.TotalAmountCharged.toString().toDouble()
+            totalAmountCharged = chargePaid.TotalAmountCharged.toString().toDouble(),
+            totalAmountRemaining = chargePaid.TotalAmountRemaining.toString().toDouble()
+        )
+    }
+
+    fun selectChargeNoPaid(loanId: Long): ChargePaid {
+        val chargePaid = query.selectChargeNoPaid(loanId).executeAsOne()
+        return ChargePaid(
+            loanId = chargePaid.LoanId,
+            totalFeesPaid = chargePaid.TotalFeesPaid.toInt(),
+            totalAmountCharged = chargePaid.TotalAmountCharged.toString().toDouble(),
+            totalAmountRemaining = chargePaid.TotalAmountRemaining.toString().toDouble()
         )
     }
 

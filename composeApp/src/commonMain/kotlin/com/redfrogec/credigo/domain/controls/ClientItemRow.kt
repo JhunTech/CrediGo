@@ -33,15 +33,16 @@ fun ClientItemRow(client: Client, viewModel: ClientsViewModel){
     val externalSearchClient by viewModel.externalSearchClient.collectAsState()
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background)
+        modifier = Modifier.fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background)
+            .clickable{if(externalSearchClient){viewModel.selectedClient(client)}}
     ) {
         // Avatar
         Box(
             modifier = Modifier
                 .size(48.dp)
                 .clip(CircleShape)
-                .background(Color(0xFFF0EAE2))
-                .clickable{if(externalSearchClient){viewModel.selectedClient(client)}},
+                .background(MaterialTheme.colorScheme.onError),
             contentAlignment = Alignment.Center
         ) {
             Icon(

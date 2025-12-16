@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -33,41 +32,37 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.redfrogec.credigo.data.model.Client
-import com.redfrogec.credigo.data.model.ClientStatus
 import com.redfrogec.credigo.domain.controls.ClientItemRow
 import com.redfrogec.credigo.domain.controls.confirmDialog
 import com.redfrogec.credigo.domain.controls.simpleDialog
 import com.redfrogec.credigo.ui.viewModel.ClientsViewModel
+import com.redfrogec.credigo.ui.viewModel.SharedViewModel
 import credigo.composeapp.generated.resources.Res
 import credigo.composeapp.generated.resources.ic_close
 import credigo.composeapp.generated.resources.ic_plus
-import credigo.composeapp.generated.resources.ic_user
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ClientsScreen(navController: NavController, modifier: Modifier = Modifier) {
     val viewModel = koinViewModel<ClientsViewModel>()
+    val sharedViewModel = koinViewModel<SharedViewModel>()
     viewModel.navigation = navController
     val showConfirmDelete by viewModel.showConfirmDelete.collectAsState()
     val selectedIdClient by viewModel.selectedIdClient.collectAsState()
     val clientDeleteOk by viewModel.clientDeleteOk.collectAsState()
     val externalSearchClient by viewModel.externalSearchClient.collectAsState()
 
-
-
     val query = viewModel.searchQuery.collectAsState().value
 
     if(showConfirmDelete)
     {
-        val dialogResponse = confirmDialog("Confirmación", "Estas seguro(a) de eliminar este cliente?")
+        val dialogResponse = confirmDialog("Confirmación", "Estás seguro(a) de eliminar este cliente?")
         if(dialogResponse == "OK")
         {
             viewModel.deleteClient(selectedIdClient)
@@ -84,6 +79,12 @@ fun ClientsScreen(navController: NavController, modifier: Modifier = Modifier) {
         {
             viewModel.loadClients()
         }
+    }
+
+    if(sharedViewModel.externalSearch.value)
+    {
+        sharedViewModel.onExternalSearch(false)
+        viewModel.loadClients()
     }
 
     Box(

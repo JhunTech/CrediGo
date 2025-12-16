@@ -46,33 +46,36 @@ class LoanSDK(
         }
     }
 
-    fun insertLoan (clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String, loanTypeId: Long) {
+    fun insertLoan (clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String, loanTypeId: Long): Long  {
         cleanErrorData()
-        try {
-            database.insertLoan(clientId, value, paymentTypeId, interestId, quotaNumbers, active, creationDate, deliveryDate, loanTypeId)
+        return try {
+            database.insertLoan(clientId, value, paymentTypeId, interestId, quotaNumbers, active, creationDate, deliveryDate, loanTypeId).value
         }catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "L004")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            0
         }
     }
 
-    fun updateDataLoan(clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String,loanTypeId: Long,  id: Long) {
+    fun updateDataLoan(clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String,loanTypeId: Long,  id: Long): Long  {
         cleanErrorData()
-        try {
-            database.updateDataLoan(clientId, value, paymentTypeId, interestId, quotaNumbers, active, creationDate, deliveryDate ,loanTypeId , id)
+        return try {
+            database.updateDataLoan(clientId, value, paymentTypeId, interestId, quotaNumbers, active, creationDate, deliveryDate ,loanTypeId , id).value
         }catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "L005")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            0
         }
     }
 
-    fun deleteLoan(id: Long) {
+    fun deleteLoan(id: Long): Long {
         cleanErrorData()
-        try {
-            database.deleteLoan(id)
+        return try {
+            database.deleteLoan(id).value
         } catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "L006")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            0
         }
     }
 }

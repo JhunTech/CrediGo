@@ -51,6 +51,7 @@ import com.redfrogec.credigo.domain.controls.LoadingPopup
 import com.redfrogec.credigo.domain.controls.dateTimeDialog
 import com.redfrogec.credigo.domain.controls.simpleDialog
 import com.redfrogec.credigo.ui.viewModel.NewClientViewModel
+import com.redfrogec.credigo.ui.viewModel.SharedViewModel
 import credigo.composeapp.generated.resources.Res
 import credigo.composeapp.generated.resources.ic_arrow_left
 import credigo.composeapp.generated.resources.ic_date_range
@@ -71,6 +72,7 @@ import kotlin.time.Instant
 fun NewClientScreen(navController: NavController, modifier: Modifier = Modifier) {
 
     val viewModel = koinViewModel<NewClientViewModel>()
+    val sharedViewModel=koinViewModel<SharedViewModel> ()
     viewModel.navigation = navController
 
     val clientId by viewModel.clientId.collectAsState()
@@ -94,7 +96,7 @@ fun NewClientScreen(navController: NavController, modifier: Modifier = Modifier)
     var showDatePicker by remember { mutableStateOf(false) }
     if(clientOk)
     {
-        if(simpleDialog("Alerta", clientMessage))
+        if(simpleDialog("Aviso", clientMessage))
         {
             viewModel.onBackClicked()
         }
@@ -108,7 +110,7 @@ fun NewClientScreen(navController: NavController, modifier: Modifier = Modifier)
     {
         val newDate = dateTimeDialog()
         if(newDate.isNotBlank())
-            viewModel.onRegisterChanged(newDate)
+            viewModel.onRegisterDateChanged(newDate)
     }
 
     LoadingPopup(showLoading)
@@ -265,7 +267,7 @@ fun NewClientScreen(navController: NavController, modifier: Modifier = Modifier)
 
                 OutlinedTextField(
                     value = registerDate,
-                    onValueChange = { viewModel.onRegisterChanged(it) },
+                    onValueChange = { viewModel.onRegisterDateChanged(it) },
                     placeholder = { Text("Fecha de Registro") },
                     readOnly = true,
                     modifier = Modifier.fillMaxWidth(),

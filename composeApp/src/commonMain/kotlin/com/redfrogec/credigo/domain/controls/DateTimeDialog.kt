@@ -5,6 +5,7 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -14,9 +15,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key.Companion.Calendar
 import androidx.compose.ui.unit.dp
+import com.redfrogec.credigo.domain.utils.currentDateDisplay
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
@@ -67,17 +73,35 @@ fun convertMillisToLocalDate(millis: Long): LocalDateTime {
     return instant.toLocalDateTime(TimeZone.UTC)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalTime::class)
 @Composable
 fun dateTimeDialog(): String {
     var showDialog by remember { mutableStateOf(true) }
     var returnDialog by remember { mutableStateOf("") }
     var selectedDate by remember { mutableStateOf<Long?>(0) }
 
+    val calendar = currentDateDisplay()
+    val minDateMillis = LocalDate(calendar.year - 1, calendar.month, calendar.day)
+        .atStartOfDayIn(TimeZone.currentSystemDefault())
+        .toEpochMilliseconds()
+
+    val maxDateMillis = LocalDate(calendar.year, calendar.month, calendar.day)
+        .atStartOfDayIn(TimeZone.currentSystemDefault())
+        .toEpochMilliseconds()
+
+    selectedDate = maxDateMillis
+
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = selectedDate,
+        selectableDates = object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                return utcTimeMillis in minDateMillis..maxDateMillis
+            }
+        }
+    )
+
     // Show the DatePickerDialog when showDialog is true
     if (showDialog) {
-        val datePickerState = rememberDatePickerState()
-
         DatePickerDialog(
             onDismissRequest = { showDialog = false },
             confirmButton = {
@@ -97,7 +121,7 @@ fun dateTimeDialog(): String {
                 ) {
                     Text("Cancel", color = MaterialTheme.colorScheme.primary)
                 }
-            }
+            },
         ) {
             DatePicker(
                 state = datePickerState,

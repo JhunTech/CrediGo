@@ -11,9 +11,10 @@ import com.redfrogec.credigo.data.model.Interest
 import com.redfrogec.credigo.data.model.LoanType
 import com.redfrogec.credigo.data.model.NumberCharge
 import com.redfrogec.credigo.data.model.PaymentType
+import com.redfrogec.credigo.domain.sdk.ChargeSDK
 import com.redfrogec.credigo.domain.sdk.ClientSDK
 import com.redfrogec.credigo.domain.sdk.LoanSDK
-import com.redfrogec.credigo.domain.utils.CurrentDateDisplay
+import com.redfrogec.credigo.domain.utils.currentDateDisplay
 import com.redfrogec.credigo.domain.utils.loadChargeTypes
 import com.redfrogec.credigo.domain.utils.loadInterests
 import com.redfrogec.credigo.domain.utils.loadLoanTypes
@@ -22,10 +23,13 @@ import com.russhwolf.settings.Settings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.collections.emptyList
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.plus
 
-class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: ClientSDK, private val sharedViewModel: SharedViewModel): ViewModel() {
+class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: ClientSDK, private val chargeSDK: ChargeSDK, private val sharedViewModel: SharedViewModel): ViewModel() {
 
     lateinit var navigation: NavController
     lateinit var interestList : List<Interest>
@@ -45,7 +49,7 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
     private val _loanId= MutableStateFlow(0)
     val loanId: StateFlow<Int> = _loanId.asStateFlow()
 
-    private val _loanValue = MutableStateFlow(0.00)
+    private val _loanValue = MutableStateFlow(0.0)
     val loanValue: StateFlow<Double> = _loanValue
 
     private val _selectedClientId = MutableStateFlow(0)
@@ -72,8 +76,8 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
     private val _loanTypeId = MutableStateFlow(0)
     val loanTypeId: StateFlow<Int> = _loanTypeId.asStateFlow()
 
-    private val _installments = MutableStateFlow("12")
-    val installments: StateFlow<String> = _installments
+    private val _loanTypeGraceQuotes = MutableStateFlow(0)
+    val loanTypeGraceQuotes: StateFlow<Int> = _loanTypeGraceQuotes.asStateFlow()
 
     private val _quotes = MutableStateFlow(1)
     val quotes: StateFlow<Int> = _quotes.asStateFlow()
@@ -92,6 +96,30 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
 
     private val _generatedPlan = MutableStateFlow<List<Charge>>(emptyList())
     val generatedPlan: StateFlow<List<Charge>> = _generatedPlan
+
+    private val _generatePlanEnabled = MutableStateFlow(false)
+    val generatePlanEnabled: StateFlow<Boolean> = _generatePlanEnabled.asStateFlow()
+
+    private val _registerLoanEnabled = MutableStateFlow(false)
+    val registerLoanEnabled: StateFlow<Boolean> = _registerLoanEnabled.asStateFlow()
+
+    private val _errorMessage = MutableStateFlow("")
+    val errorMessage: StateFlow<String> = _errorMessage.asStateFlow()
+
+    private val _showConfirmRegister = MutableStateFlow(false)
+    val showConfirmRegister: StateFlow<Boolean> = _showConfirmRegister.asStateFlow()
+
+    private val _registerDate = MutableStateFlow("")
+    val registerDate: StateFlow<String> = _registerDate.asStateFlow()
+
+    private val _loanOk = MutableStateFlow(false)
+    val loanOk: StateFlow<Boolean> = _loanOk.asStateFlow()
+
+    private val _loanFail = MutableStateFlow(false)
+    val loanFail: StateFlow<Boolean> = _loanFail.asStateFlow()
+
+    private var _showLoading = MutableStateFlow(false)
+    var showLoading: StateFlow<Boolean> = _showLoading.asStateFlow()
 
     fun loadClients(){
         val userId = settings.getInt(Constants.USER_ID, 0)
@@ -114,36 +142,36 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
 
     fun onLoanValueChange(value: Double) {
         _loanValue.value = value
+        validateHeaderForm()
     }
 
-    fun onClientSelected(clientId: Int?, clientName: String?) {
-        if (clientId != null) {
-            _selectedClientId.value = clientId
-        }
-        if (clientName != null) {
-            _selectedClientName.value = clientName
-        }
+    fun onClientSelected(clientId: Int, clientName: String): String {
+        _selectedClientId.value = clientId
+        _selectedClientName.value = clientName
+        validateHeaderForm()
+
+        return _selectedClientName.value
     }
 
     fun onInterestChange(interest: Interest) {
         _interestId.value = interest.id
         _interestDescription.value = interest.description
         _interestRate.value = interest.value
-    }
-
-    fun onTypeChange(type: String) {
-        _loanType.value = type
+        validateHeaderForm()
     }
 
     fun onNumberQuoteSelected(quote: NumberCharge) {
         _quotes.value = quote.number
         _quotesDescription.value = quote.description
+        validateHeaderForm()
     }
 
     fun onLoanTypeSelected(loanType: LoanType)
     {
         _loanTypeId.value = loanType.id
         _loanType.value = loanType.description
+        _loanTypeGraceQuotes.value = loanType.graceQuotes
+        validateHeaderForm()
     }
 
     fun onPaymentTypeSelected(paymentType: PaymentType)
@@ -151,40 +179,170 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
         _paymentTypeId.value = paymentType.id
         _paymentTypeDescription.value = paymentType.description
         _paymentTypeDays.value = paymentType.days
+        validateHeaderForm()
+    }
+
+    fun onRegisterDateChanged(newValue: String) {
+        _registerDate.value = newValue
+        validateHeaderForm()
+    }
+
+    fun onShowConfirmRegister(newValue: Boolean) {
+        _showConfirmRegister.value = newValue
+    }
+
+
+    private fun validateHeaderForm() {
+        _generatePlanEnabled.value = false
+
+        when {
+            _loanValue.value <= 0 -> _errorMessage.value += "El valor del préstamo debe ser mayor a 0\n"
+            _selectedClientId.value <= 0 -> _errorMessage.value += "Selecciona un cliente valido\n"
+            _interestId.value <= 0 -> _errorMessage.value += "No se ha seleccionado el interes\n"
+            _loanTypeId.value <= 0 -> _errorMessage.value += "Selecciona un tipo de préstamo\n"
+            _paymentTypeId.value <= 0 -> _errorMessage.value += "Selecciona un tipo de cobro\n"
+            _quotes.value <= 0 -> _errorMessage.value += "Selecciona una cantidad de cuotas\n"
+            !_registerDate.value.isNotBlank() -> _errorMessage.value += "No existe fecha de registro del préstamo\n"
+            else -> {
+                _generatePlanEnabled.value = true
+            }
+        }
     }
 
     fun generatePlan() {
-        //val principal = loanValue.value.replace(",", "").toDoubleOrNull() ?: return
+        val principal = loanValue.value
         val rateDecimal = interestRate.value / 100.0
-        val totalInstallments = installments.value.toIntOrNull() ?: return
+        val totalQuotesGrace = loanTypeGraceQuotes.value
+        val totalQuotesNormal = quotes.value
+        val days = _paymentTypeDays.value
+        val totalQuotes = totalQuotesGrace + totalQuotesNormal
+        val interestQuote = principal * rateDecimal
+        val quoteValue = (principal/totalQuotesNormal) + interestQuote
 
-        //val installmentValue = (principal * (1 + rateDecimal)) / totalInstallments
+        val today = currentDateDisplay()
+        var paymentDate: LocalDate = today.date
+        paymentDate = paymentDate.plus(DatePeriod(days = days))
+        val newPlan = MutableStateFlow<List<Charge>>(emptyList())
+        _showConfirmRegister.value = false
+        _registerLoanEnabled.value = false
 
-        val today = CurrentDateDisplay()
-
-        /*val newPlan = (1..totalInstallments).map { number ->
-            LoanInstallment(
-                number = number,
-                total = totalInstallments,
-                dueDate = today.plus(months = number),
-                value = installmentValue
-            )
+        for(i in 1..totalQuotes) {
+            if(totalQuotesGrace > 0 && i <= totalQuotesGrace) {
+                newPlan.update { it +
+                        Charge(
+                            id = -1,
+                            loanId = _loanId.value.toLong(),
+                            quotaNumber = i,
+                            chargeDate = paymentDate.toString(),
+                            customerPaymentDate = null,
+                            quotaValue = interestQuote,
+                            chargeValue = 0.0,
+                            remainingValue = interestQuote,
+                            chargeTypeId = 2
+                        )
+                }
+            }
+            else{
+                newPlan.update { it +
+                    Charge(
+                        id = -1,
+                        loanId = _loanId.value.toLong(),
+                        quotaNumber = i,
+                        chargeDate = paymentDate.toString(),
+                        customerPaymentDate = null,
+                        quotaValue = quoteValue,
+                        chargeValue = 0.0,
+                        remainingValue = quoteValue,
+                        chargeTypeId = 1
+                    )
+                }
+            }
+            paymentDate = paymentDate.plus(DatePeriod(days = days))
         }
-        _generatedPlan.value = newPlan*/
+
+        if(newPlan.value.isNotEmpty()) {
+            _generatedPlan.value = newPlan.value
+            _registerLoanEnabled.value = true
+        }
     }
 
-    fun registerLoan() {
-        // Aquí guardarías el préstamo en la BD.
-        println("Loan Registered!")
+    fun showConfirmQuestion() {
+        _showConfirmRegister.value = true
+        println("Show confirm Question")
     }
 
     fun onBackClicked() {
         println("Return loans screen")
+        sharedViewModel.onExternalSearch(true)
         navigation.popBackStack()
     }
 
     fun showSelectClient(){
         settings.putBoolean(Constants.EXTERNAL_SEARCH_CLIENT, true)
         navigation.navigate("clients")
+    }
+
+    fun onNewRegisterLoan(){
+        _loanOk.value=false
+        _loanFail.value=false
+        _showLoading.value = true
+        _errorMessage.value = ""
+
+        val insertLoan = loanSDK.insertLoan(
+            _selectedClientId.value.toLong(),
+            _loanValue.value,
+            _paymentTypeId.value.toLong(),
+            _interestId.value.toLong(),
+            _quotes.value.toLong(),
+            true,
+            _registerDate.value,
+            _registerDate.value,
+            _loanTypeId.value.toLong()
+        )
+        if(insertLoan.toInt() > 0) {
+            _errorMessage.value += "Registro del préstamo de $${_loanValue.value}, asignado al cliente: ${_selectedClientName.value}\n"
+            println(_errorMessage.value)
+            var charTypeNormal: Int = 0
+            var charTypeInterest: Int = 0
+            for (charge in generatedPlan.value) {
+                val insertCharge = chargeSDK.insertCharge(
+                    insertLoan,
+                    charge.quotaNumber.toLong(),
+                    charge.chargeDate,
+                    null,
+                    charge.quotaValue,
+                    charge.chargeValue,
+                    charge.remainingValue,
+                    charge.chargeTypeId.toLong()
+                )
+                if(insertCharge > 0){
+                    if(charge.chargeTypeId == 1)
+                        charTypeNormal++
+                    else
+                        charTypeInterest++
+
+                }
+            }
+            if(charTypeInterest > 0){
+                _errorMessage.value += "Con $charTypeInterest cuotas de solo interés\n"
+            }
+            if(charTypeNormal > 0 && charTypeInterest == 0){
+                _errorMessage.value += "y $charTypeNormal cuotas normales con capital + interés\n"
+            }
+            if(charTypeNormal > 0){
+                _errorMessage.value += "Con $charTypeNormal cuotas normales con capital + interés\n"
+            }
+            println(_errorMessage.value)
+            _showLoading.value = false
+            _loanOk.value=true
+            _loanFail.value=false
+        }
+        else{
+            _errorMessage.value += "Error en el registro de préstamo de $${_loanValue.value}, asignado al cliente: ${_selectedClientName.value}\n"
+            println(_errorMessage.value )
+            _showLoading.value = false
+            _loanOk.value=false
+            _loanFail.value=true
+        }
     }
 }

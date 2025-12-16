@@ -25,7 +25,7 @@ class ChargeSDK(
         }
     }
 
-    suspend fun selectChargePaid(loanId: Long): ChargePaid? {
+    fun selectChargePaid(loanId: Long): ChargePaid? {
         cleanErrorData()
         return try {
             database.selectChargePaid(loanId)
@@ -36,33 +36,47 @@ class ChargeSDK(
         }
     }
 
-    suspend fun insertCharge(loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double, chargeTypeId: Long){
+    fun selectChargeNoPaid(loanId: Long): ChargePaid? {
         cleanErrorData()
-        try {
-            database.insertCharge(loanId, quotaNumber, chargeDate, customerPaymentDate, quotaValue, chargeValue, remainingValue, chargeTypeId)
+        return try {
+            database.selectChargeNoPaid(loanId)
+        } catch (e: Exception) {
+            settings.putString(Constants.ERROR_CODE, "CH002")
+            settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            null
+        }
+    }
+
+     fun insertCharge(loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double, chargeTypeId: Long): Long{
+        cleanErrorData()
+        return try {
+            database.insertCharge(loanId, quotaNumber, chargeDate, customerPaymentDate, quotaValue, chargeValue, remainingValue, chargeTypeId).value
         } catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "CH004")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            0
         }
     }
 
-    suspend fun updateDataCharge(loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double, chargeTypeId: Long, id: Long){
+    fun updateDataCharge(loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double, chargeTypeId: Long, id: Long): Long{
         cleanErrorData()
-        try {
-            database.updateDataCharge(loanId, quotaNumber, chargeDate, customerPaymentDate, quotaValue, chargeValue, remainingValue, chargeTypeId, id)
+        return try {
+            database.updateDataCharge(loanId, quotaNumber, chargeDate, customerPaymentDate, quotaValue, chargeValue, remainingValue, chargeTypeId, id).value
         }catch (e: Exception){
             settings.putString(Constants.ERROR_CODE, "CH005")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            0
         }
     }
 
-    suspend fun deleteCharge(id: Long){
+    fun deleteCharge(id: Long): Long{
         cleanErrorData()
-        try {
-            database.deleteCharge(id)
+        return try {
+            database.deleteCharge(id).value
         }catch (e: Exception){
             settings.putString(Constants.ERROR_CODE, "CH006")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            0
         }
     }
 }

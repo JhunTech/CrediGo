@@ -1,8 +1,8 @@
 package com.redfrogec.credigo.data.model
 
 data class Charge (
-    val id: String,
-    val loanId: String,
+    val id: Long,
+    val loanId: Long,
     val quotaNumber: Int,
     val chargeDate: String,
     val customerPaymentDate: String?,
@@ -13,9 +13,10 @@ data class Charge (
 )
 
 data class ChargePaid(
-    val loanId: String,
+    val loanId: Long,
     val totalFeesPaid: Int,
-    val totalAmountCharged: Double
+    val totalAmountCharged: Double,
+    val totalAmountRemaining: Double
 )
 
 data class NumberCharge(

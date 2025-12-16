@@ -58,8 +58,8 @@ val sharedModule = module {
     viewModel { PasswordRecoveryViewModel(sdk = get()) }
     viewModel { LoansViewModel(sdk = get()) }
     viewModel { ClientsViewModel(sdk = get(), sharedViewModel = get()) }
-    viewModel { NewClientViewModel(sdk = get()) }
-    viewModel { NewLoanViewModel(loanSDK = get(), clientSDK = get(), sharedViewModel = get()) }
+    viewModel { NewClientViewModel(sdk = get(), sharedViewModel = get()) }
+    viewModel { NewLoanViewModel(loanSDK = get(), clientSDK = get(), chargeSDK = get(), sharedViewModel = get()) }
 }
 
 fun initializeKoin(config: (KoinApplication.() -> Unit)? = null) {

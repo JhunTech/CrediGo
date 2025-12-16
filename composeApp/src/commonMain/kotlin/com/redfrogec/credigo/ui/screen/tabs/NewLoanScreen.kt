@@ -26,6 +26,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -45,12 +46,20 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.redfrogec.credigo.data.model.Charge
 import com.redfrogec.credigo.domain.controls.ClientSelectorDialog
+import com.redfrogec.credigo.domain.controls.LoadingPopup
+import com.redfrogec.credigo.domain.controls.confirmDialog
+import com.redfrogec.credigo.domain.controls.dateTimeDialog
+import com.redfrogec.credigo.domain.controls.simpleDialog
+import com.redfrogec.credigo.domain.utils.isValid2Decimal
+import com.redfrogec.credigo.domain.utils.roundBigDecimalToTwoDecimals
 import com.redfrogec.credigo.ui.viewModel.ClientSelectorViewModel
 import com.redfrogec.credigo.ui.viewModel.NewLoanViewModel
 import com.redfrogec.credigo.ui.viewModel.SharedViewModel
 import credigo.composeapp.generated.resources.Res
 import credigo.composeapp.generated.resources.ic_arrow_left
+import credigo.composeapp.generated.resources.ic_date_range
 import credigo.composeapp.generated.resources.ic_user
+import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
@@ -68,31 +77,63 @@ fun NewLoanScreen(navController: NavController, modifier: Modifier) {
     val interests = viewModel.interestList
     val loanTypes = viewModel.loanTypes
     val paymentTypes = viewModel.paymentTypes
-    val chargeTypes = viewModel.chargeTypes
     val quoteNumberDisplay = viewModel.quoteNumbersDisplay
     var expandedInterest by remember { mutableStateOf(false) }
     var expandedLoanType by remember { mutableStateOf(false) }
     var expandedPaymentType by remember { mutableStateOf(false) }
     val quotesDescription by viewModel.quotesDescription.collectAsState()
     val loanType by viewModel.loanType.collectAsState()
-    val clients by viewModel.clients.collectAsState()
-
     val loanValue by viewModel.loanValue.collectAsState()
-    val selectedClientId by viewModel.selectedClientId.collectAsState()
-    val selectedClientName by viewModel.selectedClientName.collectAsState()
-    val interestRate by viewModel.interestRate.collectAsState()
     val interestId by viewModel.interestId.collectAsState()
-    val interestDescription by viewModel.interestDescription.collectAsState()
     val paymentTypeDescription by viewModel.paymentTypeDescription.collectAsState()
-    val paymentTypeId by viewModel.paymentTypeId.collectAsState()
-    val paymentTypeDays by viewModel.paymentTypeDays.collectAsState()
-
-    val installments by viewModel.installments.collectAsState()
+    val generatePlanEnabled by viewModel.generatePlanEnabled.collectAsState()
+    val registerLoanEnabled by viewModel.registerLoanEnabled.collectAsState()
     val plan by viewModel.generatedPlan.collectAsState()
+    val showConfirmRegister by viewModel.showConfirmRegister.collectAsState()
+    val registerDate by viewModel.registerDate.collectAsState()
+    var showDatePicker by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
+    val showLoading by viewModel.showLoading.collectAsState()
+    val loanOK by viewModel.loanOk.collectAsState()
+    val loanFail by viewModel.loanFail.collectAsState()
 
     val greenColor = Color(0xFF2ECC71)
     val lightGreen = Color(0xFFE8F9F0)
+
+    if(showConfirmRegister)
+    {
+        val dialogResponse = confirmDialog("Confirmación", "Estás seguro(a) de registrar este préstamo?.\nRecuerda que una vez generado no puede modificarse los datos, ni tampoco los cobros.")
+        if(dialogResponse == "OK")
+        {
+            viewModel.onNewRegisterLoan()
+        }
+        else if(dialogResponse == "Cancel")
+        {
+            viewModel.onShowConfirmRegister(false)
+        }
+    }
+
+    if(showDatePicker)
+    {
+        val newDate = dateTimeDialog()
+        if(newDate.isNotBlank())
+            viewModel.onRegisterDateChanged(newDate)
+    }
+
+    if(loanOK)
+    {
+        if(simpleDialog("Aviso", errorMessage))
+        {
+            viewModel.onBackClicked()
+        }
+    }
+
+    if(loanFail) {
+        simpleDialog("Error", errorMessage)
+    }
+
+    LoadingPopup(showLoading)
 
     Box(
         modifier = modifier
@@ -146,8 +187,13 @@ fun NewLoanScreen(navController: NavController, modifier: Modifier) {
 
                 // Loan Value
                 OutlinedTextField(
-                    value = loanValue.toString(),
-                    onValueChange = { viewModel.onLoanValueChange(it.toDouble()) },
+                    value = if (loanValue > 0) loanValue.toString() else "0",
+                    onValueChange = {
+                        it ->
+                        if (!it.isEmpty() && isValid2Decimal(it)) {
+                            viewModel.onLoanValueChange(it.toDouble())
+                        }
+                    },
                     placeholder = { Text("Valor del préstamo") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
@@ -159,7 +205,11 @@ fun NewLoanScreen(navController: NavController, modifier: Modifier) {
 
                 // Client
                 OutlinedTextField(
-                    value = sharedViewModel.clientSelected.value?.name.toString() ,
+                    value =
+                        if(sharedViewModel.clientSelected.value != null)
+                            viewModel.onClientSelected(sharedViewModel.clientSelected.value!!.id , sharedViewModel.clientSelected.value!!.name)
+                        else viewModel.onClientSelected(0, "")
+                    ,
                     onValueChange = {},
                     readOnly = true,
                     modifier = Modifier.fillMaxWidth(),
@@ -192,9 +242,9 @@ fun NewLoanScreen(navController: NavController, modifier: Modifier) {
                                 .weight(1f)
                                 .padding(horizontal = 6.dp)
                                 .background(
-                                    if (selectedInterest.id == interestId) greenColor else Color(
-                                        0xFFEFEFEF
-                                    ),
+                                    if (selectedInterest.id == interestId)
+                                        greenColor
+                                        else Color(0xFFEFEFEF),
                                     RoundedCornerShape(10.dp)
                                 )
                                 .clickable { viewModel.onInterestChange(selectedInterest) }
@@ -213,15 +263,14 @@ fun NewLoanScreen(navController: NavController, modifier: Modifier) {
                 Spacer(Modifier.height(20.dp))
 
                 ExposedDropdownMenuBox(
-                    expanded = expandedPaymentType,
-                    onExpandedChange = { expandedPaymentType = !expandedPaymentType },
-                    modifier = Modifier.weight(1f)
+                    expanded = expandedLoanType,
+                    onExpandedChange = { expandedLoanType = !expandedLoanType }
                 ) {
                     OutlinedTextField(
-                        value = paymentTypeDescription,
+                        value = loanType,
                         onValueChange = {},
                         readOnly = true,
-                        placeholder = { Text("Tipo de cobro") },
+                        placeholder = { Text("T. de Prést..") },
 
                         modifier = Modifier
                             .fillMaxWidth()
@@ -229,27 +278,47 @@ fun NewLoanScreen(navController: NavController, modifier: Modifier) {
                         shape = RoundedCornerShape(10.dp),
                         singleLine = true,
                         trailingIcon = {
-                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedPaymentType)
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedLoanType)
                         }
                     )
 
                     ExposedDropdownMenu(
-                        expanded = expandedPaymentType,
-                        onDismissRequest = { expandedPaymentType = false }
+                        expanded = expandedLoanType,
+                        onDismissRequest = { expandedLoanType = false }
                     ) {
-                        paymentTypes.forEach { paymentType ->
+                        loanTypes.forEach { loanType ->
                             DropdownMenuItem(
-                                text = { Text(paymentType.description) },
+                                text = { Text(loanType.description) },
                                 onClick = {
-                                    viewModel.onPaymentTypeSelected(
-                                        paymentType
+                                    viewModel.onLoanTypeSelected(
+                                        loanType
                                     )
-                                    expandedPaymentType = false
+                                    expandedLoanType = false
                                 }
                             )
                         }
                     }
                 }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                OutlinedTextField(
+                    value = registerDate,
+                    onValueChange = { viewModel.onRegisterDateChanged(it) },
+                    placeholder = { Text("Fecha de Inicio") },
+                    readOnly = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp),
+                    trailingIcon = {
+                        IconButton(onClick = { showDatePicker = !showDatePicker }) {
+                            Icon(
+                                painter = painterResource(Res.drawable.ic_date_range),
+                                contentDescription = "Select date"
+                            )
+                        }
+                    }
+                )
 
                 Spacer(Modifier.height(20.dp))
 
@@ -257,15 +326,15 @@ fun NewLoanScreen(navController: NavController, modifier: Modifier) {
                 Row(Modifier.fillMaxWidth()) {
 
                     ExposedDropdownMenuBox(
-                        expanded = expandedLoanType,
-                        onExpandedChange = { expandedLoanType = !expandedLoanType },
+                        expanded = expandedPaymentType,
+                        onExpandedChange = { expandedPaymentType = !expandedPaymentType },
                         modifier = Modifier.weight(1f)
                     ) {
                         OutlinedTextField(
-                            value = loanType,
+                            value = paymentTypeDescription,
                             onValueChange = {},
                             readOnly = true,
-                            placeholder = { Text("T. de Prést..") },
+                            placeholder = { Text("T. de cobro") },
 
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -273,22 +342,22 @@ fun NewLoanScreen(navController: NavController, modifier: Modifier) {
                             shape = RoundedCornerShape(10.dp),
                             singleLine = true,
                             trailingIcon = {
-                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedLoanType)
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedPaymentType)
                             }
                         )
 
                         ExposedDropdownMenu(
-                            expanded = expandedLoanType,
-                            onDismissRequest = { expandedLoanType = false }
+                            expanded = expandedPaymentType,
+                            onDismissRequest = { expandedPaymentType = false }
                         ) {
-                            loanTypes.forEach { loanType ->
+                            paymentTypes.forEach { paymentType ->
                                 DropdownMenuItem(
-                                    text = { Text(loanType.description) },
+                                    text = { Text(paymentType.description) },
                                     onClick = {
-                                        viewModel.onLoanTypeSelected(
-                                            loanType
+                                        viewModel.onPaymentTypeSelected(
+                                            paymentType
                                         )
-                                        expandedLoanType = false
+                                        expandedPaymentType = false
                                     }
                                 )
                             }
@@ -338,29 +407,34 @@ fun NewLoanScreen(navController: NavController, modifier: Modifier) {
 
                 Spacer(Modifier.height(20.dp))
 
-                // Pre-process Button
                 Button(
                     onClick = { viewModel.generatePlan() },
+                    enabled = generatePlanEnabled,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(55.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = lightGreen)
+                        .height(50.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primaryContainer)
                 ) {
-                    Text("Pre-process", color = greenColor, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = "Generar Cuotas",
+                        fontSize = 18.sp,
+                        color = Color.White
+                    )
                 }
 
                 Spacer(Modifier.height(25.dp))
 
                 if (plan.isNotEmpty()) {
                     Text(
-                        "Generated Installment Plan",
+                        "Plan de cuotas",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(Modifier.height(15.dp))
 
                     plan.forEach { item ->
-                        ChargeCard(item)
+                        ChargeCard(item, plan.size)
                         Spacer(Modifier.height(15.dp))
                     }
                 }
@@ -368,13 +442,19 @@ fun NewLoanScreen(navController: NavController, modifier: Modifier) {
                 Spacer(Modifier.weight(1f))
 
                 Button(
-                    onClick = viewModel::registerLoan,
+                    onClick = { viewModel.showConfirmQuestion()},
+                    enabled = registerLoanEnabled,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(55.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = greenColor)
+                        .height(50.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
                 ) {
-                    Text("Register Loan", fontWeight = FontWeight.Bold, color = Color.White)
+                    Text(
+                        text = "Registrar Préstamo",
+                        fontSize = 18.sp,
+                        color = Color.White
+                    )
                 }
             }
         }
@@ -401,7 +481,7 @@ fun ChargeCard(item: Charge, totalQuote: Int = 0) {
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    "Fecha Cobro: ${item.chargeDate}",
+                    "Fecha: ${LocalDate.parse(item.chargeDate)}",
                     color = Color.Gray,
                     fontSize = 13.sp
                 )
@@ -409,14 +489,16 @@ fun ChargeCard(item: Charge, totalQuote: Int = 0) {
 
             Spacer(Modifier.height(8.dp))
 
-            Text("Value:   $${item.quotaValue}")
-            Text("Paid:    $${item.chargeValue}")
+            Text("Valor: $${roundBigDecimalToTwoDecimals(item.quotaValue)}")
+            Text("Pagado: $${roundBigDecimalToTwoDecimals(item.chargeValue)}")
 
             Text(
-                "Pending: $${item.remainingValue}",
+                "Pendiente: $${roundBigDecimalToTwoDecimals(item.remainingValue)}",
                 color = Color.Red,
                 fontWeight = FontWeight.Bold
             )
         }
     }
 }
+
+

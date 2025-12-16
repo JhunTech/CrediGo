@@ -11,7 +11,7 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalTime::class)
-fun CurrentDateDisplay(): LocalDateTime {
+fun currentDateDisplay(): LocalDateTime {
     val now = Clock.System.now()
     val localDateTime = now.toLocalDateTime(TimeZone.currentSystemDefault())
 

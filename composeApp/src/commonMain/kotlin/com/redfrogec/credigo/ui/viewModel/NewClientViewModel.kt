@@ -6,21 +6,19 @@ import androidx.navigation.NavController
 import com.redfrogec.credigo.data.model.Client
 import com.redfrogec.credigo.data.model.Constants
 import com.redfrogec.credigo.domain.sdk.ClientSDK
-import com.redfrogec.credigo.domain.utils.CurrentDateDisplay
+import com.redfrogec.credigo.domain.utils.currentDateDisplay
 import com.redfrogec.credigo.domain.utils.isValidEmail
 import com.redfrogec.credigo.domain.utils.isValidIdentification
 import com.redfrogec.credigo.domain.utils.isValidName
 import com.redfrogec.credigo.domain.utils.isValidPhone
-import com.redfrogec.credigo.domain.utils.loadSecurityQuestions
 import com.russhwolf.settings.Settings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
-import org.koin.compose.viewmodel.koinViewModel
 
-class NewClientViewModel(private val sdk: ClientSDK): ViewModel() {
+class NewClientViewModel(private val sdk: ClientSDK, private val sharedViewModel: SharedViewModel): ViewModel() {
 
     lateinit var navigation: NavController
 
@@ -134,7 +132,7 @@ class NewClientViewModel(private val sdk: ClientSDK): ViewModel() {
         validateForm()
     }
 
-    fun onRegisterChanged(newValue: String) {
+    fun onRegisterDateChanged(newValue: String) {
         _registerDate.value = newValue
         validateForm()
     }
@@ -170,7 +168,7 @@ class NewClientViewModel(private val sdk: ClientSDK): ViewModel() {
                 _phone.value,
                 _address.value,
                 _blocked.value,
-                CurrentDateDisplay()
+                currentDateDisplay()
             )
             if(insertClient.toInt() > 0) {
                 _clientMessage.value = "Registro exitoso del cliente: ${_name.value}"
@@ -221,6 +219,7 @@ class NewClientViewModel(private val sdk: ClientSDK): ViewModel() {
 
     fun onBackClicked() {
         println("Return clients screen")
-        navigation.navigate("clients")
+        sharedViewModel.onExternalSearch(true)
+        navigation.popBackStack()
     }
 }
