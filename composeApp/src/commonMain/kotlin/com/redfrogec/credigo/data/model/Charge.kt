@@ -19,6 +19,14 @@ data class ChargePaid(
     val totalAmountRemaining: Double
 )
 
+data class ChargePending(
+    val id: Long,
+    val chargeDate: String,
+    val quotaValue: Double,
+    val chargeValue: Double,
+    val remainingValue: Double,
+)
+
 data class NumberCharge(
     val number: Int,
     val description: String

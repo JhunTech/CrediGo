@@ -56,7 +56,7 @@ val sharedModule = module {
     viewModel { LoginViewModel(sdk = get()) }
     viewModel { SignUpViewModel(sdk = get()) }
     viewModel { PasswordRecoveryViewModel(sdk = get()) }
-    viewModel { LoansViewModel(sdk = get()) }
+    viewModel { LoansViewModel(loanSDK = get(), chargeSDK = get(), sharedViewModel = get()) }
     viewModel { ClientsViewModel(sdk = get(), sharedViewModel = get()) }
     viewModel { NewClientViewModel(sdk = get(), sharedViewModel = get()) }
     viewModel { NewLoanViewModel(loanSDK = get(), clientSDK = get(), chargeSDK = get(), sharedViewModel = get()) }

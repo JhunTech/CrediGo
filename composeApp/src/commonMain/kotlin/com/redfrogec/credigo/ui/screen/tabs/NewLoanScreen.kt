@@ -104,7 +104,7 @@ fun NewLoanScreen(navController: NavController, modifier: Modifier) {
     if(showConfirmRegister)
     {
         val dialogResponse = confirmDialog("Confirmación", "Estás seguro(a) de registrar este préstamo?.\nRecuerda que una vez generado no puede modificarse los datos, ni tampoco los cobros.")
-        if(dialogResponse == "OK")
+        if(dialogResponse == "OK" && !loanOK)
         {
             viewModel.onNewRegisterLoan()
         }

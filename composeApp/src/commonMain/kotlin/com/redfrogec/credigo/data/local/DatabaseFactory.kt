@@ -10,6 +10,7 @@ import com.redfrogec.LoanTbl
 import com.redfrogec.UserTbl
 import com.redfrogec.credigo.data.model.Charge
 import com.redfrogec.credigo.data.model.ChargePaid
+import com.redfrogec.credigo.data.model.ChargePending
 import com.redfrogec.credigo.data.model.Client
 import com.redfrogec.credigo.data.model.Loan
 import com.redfrogec.credigo.data.model.User
@@ -176,10 +177,10 @@ class LocalDatabase(
         val activeResponse: Long = 1
         return query.selectAllLoansByClientId(clientId, activeRequest).executeAsList().map {
             Loan(
-                id = it.Id.toString(),
-                clientId = it.ClientId.toString(),
+                id = it.Id,
+                clientId = it.ClientId,
                 clientName = "",
-                value = it.Value.toDouble(),
+                value = it.Value,
                 paymentTypeId = it.PaymentTypeId.toInt(),
                 interestId = it.InterestId.toInt(),
                 quotaNumbers = it.QuotaNumbers.toInt(),
@@ -196,10 +197,10 @@ class LocalDatabase(
         val activeResponse: Long = 1
         return query.selectAllLoansByUserId(userId, activeRequest).executeAsList().map {
             Loan(
-                id = it.Id.toString(),
-                clientId = it.ClientId.toString(),
+                id = it.Id,
+                clientId = it.ClientId,
                 clientName = it.ClientName,
-                value = it.Value.toDouble(),
+                value = it.Value,
                 paymentTypeId = it.PaymentTypeId.toInt(),
                 interestId = it.InterestId.toInt(),
                 quotaNumbers = it.QuotaNumbers.toInt(),
@@ -216,10 +217,10 @@ class LocalDatabase(
         val loanTbl = query.selectLoanById(id).executeAsOneOrNull()
         if (loanTbl != null) {
             return Loan(
-                id = loanTbl.Id.toString(),
-                clientId = loanTbl.ClientId.toString(),
+                id = loanTbl.Id,
+                clientId = loanTbl.ClientId,
                 clientName = "",
-                value = loanTbl.Value.toDouble(),
+                value = loanTbl.Value,
                 paymentTypeId = loanTbl.PaymentTypeId.toInt(),
                 interestId = loanTbl.InterestId.toInt(),
                 quotaNumbers = loanTbl.QuotaNumbers.toInt(),
@@ -272,23 +273,36 @@ class LocalDatabase(
         }
     }
 
-    fun selectChargePaid(loanId: Long): ChargePaid {
-        val chargePaid = query.selectChargePaid(loanId).executeAsOne()
-        return ChargePaid(
-            loanId = chargePaid.LoanId,
-            totalFeesPaid = chargePaid.TotalFeesPaid.toInt(),
-            totalAmountCharged = chargePaid.TotalAmountCharged.toString().toDouble(),
-            totalAmountRemaining = chargePaid.TotalAmountRemaining.toString().toDouble()
-        )
+    fun selectChargePaid(loanId: Long): List<ChargePaid> {
+        return query.selectChargesPaid(loanId).executeAsList().map {
+            ChargePaid(
+                loanId = it.LoanId,
+                totalFeesPaid = it.TotalFeesPaid.toInt(),
+                totalAmountCharged = it.TotalAmountCharged.toString().toDouble(),
+                totalAmountRemaining = it.TotalAmountRemaining.toString().toDouble()
+            )
+        }
     }
 
-    fun selectChargeNoPaid(loanId: Long): ChargePaid {
-        val chargePaid = query.selectChargeNoPaid(loanId).executeAsOne()
-        return ChargePaid(
-            loanId = chargePaid.LoanId,
-            totalFeesPaid = chargePaid.TotalFeesPaid.toInt(),
-            totalAmountCharged = chargePaid.TotalAmountCharged.toString().toDouble(),
-            totalAmountRemaining = chargePaid.TotalAmountRemaining.toString().toDouble()
+    fun selectChargeNoPaid(loanId: Long): List<ChargePaid>  {
+        return query.selectChargesNoPaid(loanId).executeAsList().map {
+            ChargePaid(
+                loanId = it.LoanId,
+                totalFeesPaid = it.TotalFeesPaid.toInt(),
+                totalAmountCharged = it.TotalAmountCharged.toString().toDouble(),
+                totalAmountRemaining = it.TotalAmountRemaining.toString().toDouble()
+            )
+        }
+    }
+
+    fun nextPendingQuotaByLoan(loanId: Long): ChargePending? {
+        val chargePending = query.nextPendingQuotaByLoan(loanId).executeAsOne()
+        return ChargePending(
+            id = chargePending.Id,
+            chargeDate = chargePending.ChargeDate,
+            quotaValue = chargePending.QuotaValue,
+            chargeValue = chargePending.ChargeValue,
+            remainingValue = chargePending.RemainingValue
         )
     }
 

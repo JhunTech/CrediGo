@@ -161,7 +161,7 @@ DELETE FROM LoanTbl WHERE Id = ?;
 selectAllChargeByLoanId:
 SELECT * FROM ChargeTbl WHERE LoanId = ?;
 
-selectChargePaid:
+selectChargesPaid:
 SELECT
     LoanId,
     COUNT(QuotaNumber) AS TotalFeesPaid,
@@ -176,20 +176,27 @@ WHERE
 GROUP BY
     LoanId;
 
-selectChargeNoPaid:
-    SELECT
-        LoanId,
-        COUNT(QuotaNumber) AS TotalFeesPaid,
-        SUM(ChargeValue) AS TotalAmountCharged,
-        SUM(RemainingValue) AS TotalAmountRemaining
-    FROM
-        ChargeTbl
-    WHERE
-        QuotaValue > ChargeValue AND
-        RemainingValue > 0 AND
-        LoanId = ?
-    GROUP BY
-        LoanId;
+selectChargesNoPaid:
+SELECT
+    LoanId,
+    COUNT(QuotaNumber) AS TotalFeesPaid,
+    SUM(ChargeValue) AS TotalAmountCharged,
+    SUM(RemainingValue) AS TotalAmountRemaining
+FROM
+    ChargeTbl
+WHERE
+    QuotaValue > ChargeValue AND
+    RemainingValue > 0 AND
+    LoanId = ?
+GROUP BY
+    LoanId;
+
+nextPendingQuotaByLoan:
+SELECT Id, ChargeDate, QuotaValue, ChargeValue, RemainingValue
+FROM ChargeTbl
+WHERE LoanId = ? AND QuotaValue > ChargeValue
+ORDER BY ChargeDate ASC
+LIMIT 1;
 
 insertCharge:
 INSERT INTO ChargeTbl(LoanId, QuotaNumber, ChargeDate, CustomerPaymentDate, QuotaValue, ChargeValue, RemainingValue, ChargeTypeId)

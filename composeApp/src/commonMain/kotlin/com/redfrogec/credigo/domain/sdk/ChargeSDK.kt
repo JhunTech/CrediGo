@@ -3,6 +3,7 @@ package com.redfrogec.credigo.domain.sdk
 import com.redfrogec.credigo.data.local.LocalDatabase
 import com.redfrogec.credigo.data.model.Charge
 import com.redfrogec.credigo.data.model.ChargePaid
+import com.redfrogec.credigo.data.model.ChargePending
 import com.redfrogec.credigo.data.model.Constants
 import com.redfrogec.credigo.domain.utils.cleanErrorData
 import com.russhwolf.settings.Settings
@@ -14,7 +15,7 @@ class ChargeSDK(
     private val settings: Settings = Settings()
     @Throws(Exception::class)
 
-    suspend fun selectAllChargeByLoanId(loanId: Long): List<Charge>{
+    fun selectAllChargeByLoanId(loanId: Long): List<Charge>{
         cleanErrorData()
         return try{
             database.selectAllChargeByLoanId(loanId)
@@ -25,25 +26,25 @@ class ChargeSDK(
         }
     }
 
-    fun selectChargePaid(loanId: Long): ChargePaid? {
+    fun selectChargePaid(loanId: Long): List<ChargePaid>  {
         cleanErrorData()
         return try {
             database.selectChargePaid(loanId)
         } catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "CH002")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
-            null
+            emptyList()
         }
     }
 
-    fun selectChargeNoPaid(loanId: Long): ChargePaid? {
+    fun selectChargeNoPaid(loanId: Long): List<ChargePaid>  {
         cleanErrorData()
         return try {
             database.selectChargeNoPaid(loanId)
         } catch (e: Exception) {
-            settings.putString(Constants.ERROR_CODE, "CH002")
+            settings.putString(Constants.ERROR_CODE, "CH003")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
-            null
+            emptyList()
         }
     }
 
@@ -77,6 +78,17 @@ class ChargeSDK(
             settings.putString(Constants.ERROR_CODE, "CH006")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
             0
+        }
+    }
+
+    fun nextPendingQuotaByLoan(id: Long): ChargePending? {
+        cleanErrorData()
+        return try {
+            database.nextPendingQuotaByLoan(id)
+        }catch (e: Exception){
+            settings.putString(Constants.ERROR_CODE, "CH007")
+            settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            null
         }
     }
 }

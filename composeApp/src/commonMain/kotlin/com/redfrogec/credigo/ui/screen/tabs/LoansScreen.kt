@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,17 +17,18 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,10 +36,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.redfrogec.credigo.data.model.Loan
+import com.redfrogec.credigo.data.model.loanUI
 import com.redfrogec.credigo.ui.viewModel.LoansViewModel
 import credigo.composeapp.generated.resources.Res
-import credigo.composeapp.generated.resources.ic_arrow_left
 import credigo.composeapp.generated.resources.ic_credit_card
 import credigo.composeapp.generated.resources.ic_plus
 import org.jetbrains.compose.resources.painterResource
@@ -51,7 +52,9 @@ fun LoansScreen(navController: NavController, modifier: Modifier) {
     viewModel.navigation = navController
     val scrollState = rememberScrollState()
     val selectedTab = viewModel.selectedTab
-    val loans = if (selectedTab == 0) viewModel.activeLoans else viewModel.paidLoans
+    val paidLoansUI by viewModel.paidLoansUI.collectAsState()
+    val activeLoansUI by viewModel.activeLoansUI.collectAsState()
+    val loans = if (selectedTab == 0) paidLoansUI else activeLoansUI
 
     Box(
         modifier = modifier
@@ -114,13 +117,20 @@ fun LoansScreen(navController: NavController, modifier: Modifier) {
             Column(
                 modifier = modifier
                     .fillMaxSize()
-                    .padding(16.dp)
-                    .verticalScroll(scrollState),
+                    .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top
             ) {
-                loans.forEach { loan ->
-                    LoanItem(loan)
+                if(loans != null && loans.isNotEmpty()){
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize().padding(0.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = PaddingValues(vertical = 2.dp)
+                    ) {
+                        items(loans, key = { it.id }) { loan ->
+                            LoanItem(loan)
+                        }
+                    }
                 }
             }
         }
@@ -128,8 +138,8 @@ fun LoansScreen(navController: NavController, modifier: Modifier) {
 }
 
 @Composable
-fun LoanItem(loan: Loan) {
-    Row(
+fun LoanItem(loan: loanUI) {
+    /*Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding( vertical = 12.dp),
@@ -156,5 +166,45 @@ fun LoanItem(loan: Loan) {
         }
 
         Text("Cuotas: ${loan.quotaNumbers}", fontSize = 14.sp, color = Color.Black)
+    }*/
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White, RoundedCornerShape(12.dp))
+            .padding(6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .background(Color(0xFFE6F4EF), RoundedCornerShape(12.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painterResource(Res.drawable.ic_credit_card),
+                contentDescription = null
+            )
+        }
+
+        Spacer(Modifier.width(12.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
+            Text(loan.clientName, fontWeight = FontWeight.Bold)
+            Text(loan.loanNumber, color = Color(0xFF00A86B))
+        }
+
+        Column(horizontalAlignment = Alignment.End) {
+            Text(
+                "$${loan.value}",
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                "${loan.quotaInfo} • ${loan.dueInfo}",
+                color = Color(0xFF00A86B),
+                fontSize = 12.sp
+            )
+        }
     }
 }
