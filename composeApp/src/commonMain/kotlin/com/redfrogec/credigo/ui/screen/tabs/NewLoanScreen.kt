@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.redfrogec.credigo.data.model.Charge
+import com.redfrogec.credigo.domain.controls.ChargeCard
 import com.redfrogec.credigo.domain.controls.ClientSelectorDialog
 import com.redfrogec.credigo.domain.controls.LoadingPopup
 import com.redfrogec.credigo.domain.controls.confirmDialog
@@ -461,44 +462,5 @@ fun NewLoanScreen(navController: NavController, modifier: Modifier) {
     }
 }
 
-@Composable
-fun ChargeCard(item: Charge, totalQuote: Int = 0) {
-
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(Modifier.padding(16.dp)) {
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    "Cuota ${item.quotaNumber} de $totalQuote",
-                    fontWeight = FontWeight.SemiBold
-                )
-                Text(
-                    "Fecha: ${LocalDate.parse(item.chargeDate)}",
-                    color = Color.Gray,
-                    fontSize = 13.sp
-                )
-            }
-
-            Spacer(Modifier.height(8.dp))
-
-            Text("Valor: $${roundBigDecimalToTwoDecimals(item.quotaValue)}")
-            Text("Pagado: $${roundBigDecimalToTwoDecimals(item.chargeValue)}")
-
-            Text(
-                "Pendiente: $${roundBigDecimalToTwoDecimals(item.remainingValue)}",
-                color = Color.Red,
-                fontWeight = FontWeight.Bold
-            )
-        }
-    }
-}
 
 

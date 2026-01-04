@@ -85,6 +85,9 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
     private val _quotesDescription = MutableStateFlow("")
     val quotesDescription: StateFlow<String> = _quotesDescription.asStateFlow()
 
+    private val _totalQuotes = MutableStateFlow(0)
+    val totalQuotes: StateFlow<Int> = _totalQuotes.asStateFlow()
+
     private val _paymentTypeId = MutableStateFlow(0)
     val paymentTypeId: StateFlow<Int> = _paymentTypeId.asStateFlow()
 
@@ -215,7 +218,7 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
         val totalQuotesGrace = loanTypeGraceQuotes.value
         val totalQuotesNormal = quotes.value
         val days = _paymentTypeDays.value
-        val totalQuotes = totalQuotesGrace + totalQuotesNormal
+        _totalQuotes.value = totalQuotesGrace + totalQuotesNormal
         val interestQuote = principal * rateDecimal
         val quoteValue = (principal/totalQuotesNormal) + interestQuote
 
@@ -226,7 +229,7 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
         _showConfirmRegister.value = false
         _registerLoanEnabled.value = false
 
-        for(i in 1..totalQuotes) {
+        for(i in 1..totalQuotes.value) {
             if(totalQuotesGrace > 0 && i <= totalQuotesGrace) {
                 newPlan.update { it +
                         Charge(
@@ -273,8 +276,9 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
 
     fun onBackClicked() {
         println("Return loans screen")
-        sharedViewModel.onExternalSearch(true)
+        //sharedViewModel.onExternalSearch(true)
         navigation.popBackStack()
+        navigation.navigate("activeLoans")
     }
 
     fun showSelectClient(){
@@ -293,7 +297,7 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
             _loanValue.value,
             _paymentTypeId.value.toLong(),
             _interestId.value.toLong(),
-            _quotes.value.toLong(),
+            totalQuotes.value.toLong(),
             true,
             _registerDate.value,
             _registerDate.value,
@@ -304,9 +308,10 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
             println(_errorMessage.value)
             var charTypeNormal: Int = 0
             var charTypeInterest: Int = 0
+            val lastInsertId = chargeSDK.lastInsertId()
             for (charge in generatedPlan.value) {
                 val insertCharge = chargeSDK.insertCharge(
-                    insertLoan,
+                    lastInsertId,
                     charge.quotaNumber.toLong(),
                     charge.chargeDate,
                     null,

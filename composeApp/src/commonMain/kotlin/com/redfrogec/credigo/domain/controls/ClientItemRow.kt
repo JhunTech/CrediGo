@@ -59,20 +59,20 @@ fun ClientItemRow(client: Client, viewModel: ClientsViewModel){
             Text(
                 text = client.name+" - "+client.identification,
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyLarge
             )
             Text(
                 text = "Email: ${client.email}",
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
             )
             Text(
                 text = "Teléfono: ${client.phone}",
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
             )
             Text(
                 text = if (!client.blocked) ClientStatus.Activo.toString() else ClientStatus.Bloqueado.toString(),
                 color = if (!client.blocked) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
     }

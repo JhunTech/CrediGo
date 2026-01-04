@@ -26,11 +26,13 @@ import androidx.navigation.createGraph
 import com.redfrogec.credigo.data.model.Constants
 import com.redfrogec.credigo.data.model.Screens
 import com.redfrogec.credigo.data.model.listOfTabScreens
+import com.redfrogec.credigo.ui.screen.tabs.ActiveLoansScreen
 import com.redfrogec.credigo.ui.screen.tabs.ClientsScreen
 import com.redfrogec.credigo.ui.screen.tabs.HomeScreen
-import com.redfrogec.credigo.ui.screen.tabs.LoansScreen
+import com.redfrogec.credigo.ui.screen.tabs.ListQuotesScreen
 import com.redfrogec.credigo.ui.screen.tabs.NewClientScreen
 import com.redfrogec.credigo.ui.screen.tabs.NewLoanScreen
+import com.redfrogec.credigo.ui.screen.tabs.PaidLoansScreen
 import com.redfrogec.credigo.ui.screen.tabs.ProfileScreen
 import com.redfrogec.credigo.ui.viewModel.SharedViewModel
 import com.russhwolf.settings.Settings
@@ -53,8 +55,8 @@ fun DashboardScreen(navControllerInitial: NavController, modifier: Modifier) {
                 composable(route = Screens.Home.route) {
                     HomeScreen(navController)
                 }
-                composable(route = Screens.Loans.route) {
-                    LoansScreen(navController, modifier)
+                composable(route = Screens.ActiveLoans.route) {
+                    ActiveLoansScreen(navController, modifier)
                 }
                 composable(route = Screens.Clients.route) {
                     ClientsScreen(navController, modifier)
@@ -69,6 +71,12 @@ fun DashboardScreen(navControllerInitial: NavController, modifier: Modifier) {
                 }
                 composable(route = Screens.NewLoan.route) {
                     NewLoanScreen(navController, modifier)
+                }
+                composable(route = Screens.ListQuotes.route) {
+                    ListQuotesScreen(navController, modifier)
+                }
+                composable(route = Screens.PaidLoans.route) {
+                    PaidLoansScreen(navController, modifier)
                 }
             }
         NavHost(

@@ -7,10 +7,11 @@ import com.redfrogec.credigo.domain.sdk.KeySDK
 import com.redfrogec.credigo.domain.sdk.LoanSDK
 import com.redfrogec.credigo.domain.sdk.UserSDK
 import com.redfrogec.credigo.ui.viewModel.ClientsViewModel
-import com.redfrogec.credigo.ui.viewModel.LoansViewModel
+import com.redfrogec.credigo.ui.viewModel.ActiveLoansViewModel
 import com.redfrogec.credigo.ui.viewModel.LoginViewModel
 import com.redfrogec.credigo.ui.viewModel.NewClientViewModel
 import com.redfrogec.credigo.ui.viewModel.NewLoanViewModel
+import com.redfrogec.credigo.ui.viewModel.PaidLoansViewModel
 import com.redfrogec.credigo.ui.viewModel.PasswordRecoveryViewModel
 import com.redfrogec.credigo.ui.viewModel.SharedViewModel
 import com.redfrogec.credigo.ui.viewModel.SignUpViewModel
@@ -56,10 +57,11 @@ val sharedModule = module {
     viewModel { LoginViewModel(sdk = get()) }
     viewModel { SignUpViewModel(sdk = get()) }
     viewModel { PasswordRecoveryViewModel(sdk = get()) }
-    viewModel { LoansViewModel(loanSDK = get(), chargeSDK = get(), sharedViewModel = get()) }
+    viewModel { ActiveLoansViewModel(loanSDK = get(), chargeSDK = get(), sharedViewModel = get()) }
     viewModel { ClientsViewModel(sdk = get(), sharedViewModel = get()) }
     viewModel { NewClientViewModel(sdk = get(), sharedViewModel = get()) }
     viewModel { NewLoanViewModel(loanSDK = get(), clientSDK = get(), chargeSDK = get(), sharedViewModel = get()) }
+    viewModel { PaidLoansViewModel(loanSDK = get()) }
 }
 
 fun initializeKoin(config: (KoinApplication.() -> Unit)? = null) {

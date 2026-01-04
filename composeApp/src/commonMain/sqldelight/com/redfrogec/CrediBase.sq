@@ -159,7 +159,7 @@ DELETE FROM LoanTbl WHERE Id = ?;
 
 --Cobros--
 selectAllChargeByLoanId:
-SELECT * FROM ChargeTbl WHERE LoanId = ?;
+SELECT * FROM ChargeTbl;
 
 selectChargesPaid:
 SELECT
@@ -194,13 +194,16 @@ GROUP BY
 nextPendingQuotaByLoan:
 SELECT Id, ChargeDate, QuotaValue, ChargeValue, RemainingValue
 FROM ChargeTbl
-WHERE LoanId = ? AND QuotaValue > ChargeValue
+WHERE LoanId = ? AND RemainingValue > 0
 ORDER BY ChargeDate ASC
 LIMIT 1;
 
 insertCharge:
 INSERT INTO ChargeTbl(LoanId, QuotaNumber, ChargeDate, CustomerPaymentDate, QuotaValue, ChargeValue, RemainingValue, ChargeTypeId)
 VALUES ?;
+
+lastInsertId:
+SELECT last_insert_rowid();
 
 updateDataCharge:
 UPDATE ChargeTbl SET
@@ -210,3 +213,6 @@ WHERE Id = ?;
 
 deleteCharge:
 DELETE FROM ChargeTbl WHERE Id = ?;
+
+deleteAllCharges:
+DELETE FROM ChargeTbl WHERE LoanId = ?;

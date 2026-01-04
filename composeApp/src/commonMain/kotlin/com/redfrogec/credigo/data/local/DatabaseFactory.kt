@@ -258,7 +258,7 @@ class LocalDatabase(
     }
 
     fun selectAllChargeByLoanId(loanId: Long): List<Charge> {
-        return query.selectAllChargeByLoanId(loanId).executeAsList().map {
+        return query.selectAllChargeByLoanId().executeAsList().map {
             Charge(
                 id = it.Id,
                 loanId = it.LoanId,
@@ -273,26 +273,24 @@ class LocalDatabase(
         }
     }
 
-    fun selectChargePaid(loanId: Long): List<ChargePaid> {
-        return query.selectChargesPaid(loanId).executeAsList().map {
-            ChargePaid(
-                loanId = it.LoanId,
-                totalFeesPaid = it.TotalFeesPaid.toInt(),
-                totalAmountCharged = it.TotalAmountCharged.toString().toDouble(),
-                totalAmountRemaining = it.TotalAmountRemaining.toString().toDouble()
-            )
-        }
+    fun selectChargePaid(loanId: Long): ChargePaid {
+        val chargePaid = query.selectChargesPaid(loanId).executeAsOne()
+        return ChargePaid(
+            loanId = chargePaid.LoanId,
+            totalFeesPaid = chargePaid.TotalFeesPaid.toInt(),
+            totalAmountCharged = chargePaid.TotalAmountCharged.toString().toDouble(),
+            totalAmountRemaining = chargePaid.TotalAmountRemaining.toString().toDouble()
+        )
     }
 
-    fun selectChargeNoPaid(loanId: Long): List<ChargePaid>  {
-        return query.selectChargesNoPaid(loanId).executeAsList().map {
-            ChargePaid(
-                loanId = it.LoanId,
-                totalFeesPaid = it.TotalFeesPaid.toInt(),
-                totalAmountCharged = it.TotalAmountCharged.toString().toDouble(),
-                totalAmountRemaining = it.TotalAmountRemaining.toString().toDouble()
-            )
-        }
+    fun selectChargeNoPaid(loanId: Long): ChargePaid  {
+        val chargeNoPaid = query.selectChargesNoPaid(loanId).executeAsOne()
+        return ChargePaid(
+            loanId = chargeNoPaid.LoanId,
+            totalFeesPaid = chargeNoPaid.TotalFeesPaid.toInt(),
+            totalAmountCharged = chargeNoPaid.TotalAmountCharged.toString().toDouble(),
+            totalAmountRemaining = chargeNoPaid.TotalAmountRemaining.toString().toDouble()
+        )
     }
 
     fun nextPendingQuotaByLoan(loanId: Long): ChargePending? {
@@ -321,11 +319,19 @@ class LocalDatabase(
         return query.insertCharge(charge)
     }
 
+    fun lastInsertId(): Long {
+        return query.lastInsertId().executeAsOne()
+    }
+
     fun updateDataCharge(loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double, chargeTypeId: Long, id: Long): QueryResult<Long> {
         return query.updateDataCharge(loanId, quotaNumber, chargeDate, customerPaymentDate, quotaValue, chargeValue, remainingValue,chargeTypeId, id)
     }
 
     fun deleteCharge(id: Long): QueryResult<Long> {
         return query.deleteCharge(id)
+    }
+
+    fun deleteAllCharges(id: Long): QueryResult<Long> {
+        return query.deleteAllCharges(id)
     }
 }

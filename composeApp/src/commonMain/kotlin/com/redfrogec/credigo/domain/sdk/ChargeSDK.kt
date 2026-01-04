@@ -26,25 +26,25 @@ class ChargeSDK(
         }
     }
 
-    fun selectChargePaid(loanId: Long): List<ChargePaid>  {
+    fun selectChargePaid(loanId: Long): ChargePaid?  {
         cleanErrorData()
         return try {
             database.selectChargePaid(loanId)
         } catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "CH002")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
-            emptyList()
+            null
         }
     }
 
-    fun selectChargeNoPaid(loanId: Long): List<ChargePaid>  {
+    fun selectChargeNoPaid(loanId: Long): ChargePaid?  {
         cleanErrorData()
         return try {
             database.selectChargeNoPaid(loanId)
         } catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "CH003")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
-            emptyList()
+            null
         }
     }
 
@@ -89,6 +89,28 @@ class ChargeSDK(
             settings.putString(Constants.ERROR_CODE, "CH007")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
             null
+        }
+    }
+
+    fun lastInsertId(): Long {
+        cleanErrorData()
+        return try {
+            database.lastInsertId()
+        } catch (e: Exception) {
+            settings.putString(Constants.ERROR_CODE, "CH008")
+            settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            0
+        }
+    }
+
+    fun deleteAllCharges(id: Long): Long{
+        cleanErrorData()
+        return try {
+            database.deleteAllCharges(id).value
+        }catch (e: Exception){
+            settings.putString(Constants.ERROR_CODE, "CH006")
+            settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            0
         }
     }
 }
