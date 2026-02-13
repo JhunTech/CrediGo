@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
 
-class ActiveLoansViewModel(private val loanSDK: LoanSDK, private val chargeSDK: ChargeSDK, private val sharedViewModel: SharedViewModel) : ViewModel() {
+class ActiveLoansViewModel(private val loanSDK: LoanSDK, private val chargeSDK: ChargeSDK) : ViewModel() {
 
     lateinit var navigation: NavController
     private val settings: Settings = Settings()
@@ -36,7 +36,6 @@ class ActiveLoansViewModel(private val loanSDK: LoanSDK, private val chargeSDK: 
 
     init {
         viewModelScope.launch {
-            //_externalSearchClient.value = settings.getBoolean(Constants.EXTERNAL_SEARCH_CLIENT, false)
             loadLoans()
         }
     }
@@ -111,8 +110,8 @@ class ActiveLoansViewModel(private val loanSDK: LoanSDK, private val chargeSDK: 
         _selectedIdLoan.value = id
     }
 
-    fun onShowQuotes(id: Int) {
-        settings.putInt(Constants.LOAN_ID, id)
+    fun onShowQuotes(id: Long) {
+        settings.putLong(Constants.LOAN_ID, id)
         navigation.navigate("listQuotes")
     }
 

@@ -131,7 +131,7 @@ fun NewClientScreen(navController: NavController, modifier: Modifier = Modifier)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 12.dp, horizontal = 8.dp),
+                    .padding(vertical = 12.dp, horizontal = 0.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
@@ -292,7 +292,7 @@ fun NewClientScreen(navController: NavController, modifier: Modifier = Modifier)
                         .fillMaxWidth()
                         .height(50.dp),
                     shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF008954))
+                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
                 ) {
                     Text(
                         text = if (clientId < 0) "Registrar" else "Actualizar",

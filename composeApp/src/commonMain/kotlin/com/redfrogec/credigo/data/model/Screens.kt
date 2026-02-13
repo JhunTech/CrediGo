@@ -12,11 +12,11 @@ sealed class Screens(val icon: DrawableResource, val label: String, val route: S
     //Initial Screen
     data object Login : Screens(icon = Res.drawable.ic_home, "", "login")
     data object SignUp : Screens(icon = Res.drawable.ic_home, "", "signup")
-    data object PasswordRecovery : Screens(icon = Res.drawable.ic_home, "", "passwordrecovery")
+    data object PasswordRecovery : Screens(icon = Res.drawable.ic_home, "", "passwordRecovery")
     data object DashBoard : Screens(icon = Res.drawable.ic_home, "", "dashboard")
     //Tabs
     data object Home : Screens(icon = Res.drawable.ic_home, "Home", "home")
-    data object ActiveLoans : Screens(icon = Res.drawable.ic_dollar, "P. Act.", "activeloans")
+    data object ActiveLoans : Screens(icon = Res.drawable.ic_dollar, "Préstamo", "activeloans")
     data object Clients : Screens(icon = Res.drawable.ic_clients, "Clientes", "clients")
     data object User : Screens(icon = Res.drawable.ic_user, "Usuario", "user")
     //New Tab

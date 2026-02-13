@@ -276,7 +276,6 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
 
     fun onBackClicked() {
         println("Return loans screen")
-        //sharedViewModel.onExternalSearch(true)
         navigation.popBackStack()
         navigation.navigate("activeLoans")
     }

@@ -83,7 +83,7 @@ class LoginViewModel(private val sdk: UserSDK) : ViewModel() {
     }
 
     fun onForgotPasswordClicked() {
-        navigation.navigate("passwordrecovery")
+        navigation.navigate("passwordRecovery")
     }
 
     fun onSignUpClicked() {

@@ -51,7 +51,7 @@ fun PaidLoansScreen(navController: NavController, modifier: Modifier) {
             modifier = modifier
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
+            verticalArrangement = Arrangement.Center
         ) {
             Row(
                 modifier = modifier
@@ -62,21 +62,19 @@ fun PaidLoansScreen(navController: NavController, modifier: Modifier) {
                 Icon(
                     modifier = modifier
                         .size(25.dp)
-                        .padding(0.dp)
-                        .clickable { viewModel.onBackClicked() },
+                        .padding(start = 16.dp)
+                        .clickable { viewModel.onBackClicked() }
+                        .weight(1f).wrapContentWidth(Alignment.Start),
                     painter = painterResource(Res.drawable.ic_arrow_left),
                     contentDescription = "Back",
                     tint = MaterialTheme.colorScheme.primary
                 )
 
-                // Espaciador flexible antes del título
-                Spacer(modifier = Modifier.weight(1f))
-
                 Text(
-                    text = "Préstamos Cobrados",
+                    text = "Prést. Cobrados",
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.weight(1f).wrapContentWidth(Alignment.CenterHorizontally)
+                    modifier = Modifier.weight(2f).wrapContentWidth(Alignment.CenterHorizontally)
                 )
 
                 // Espaciador flexible después del título (mantiene el centro visual)

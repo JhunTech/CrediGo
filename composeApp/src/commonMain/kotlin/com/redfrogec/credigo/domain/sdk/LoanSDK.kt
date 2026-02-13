@@ -20,7 +20,7 @@ class LoanSDK(
         } catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "L001")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
-            null
+            emptyList()
         }
     }
 
@@ -57,10 +57,10 @@ class LoanSDK(
         }
     }
 
-    fun updateDataLoan(clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String,loanTypeId: Long,  id: Long): Long  {
+    fun updateLoan(clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String,loanTypeId: Long,  id: Long): Long  {
         cleanErrorData()
         return try {
-            database.updateDataLoan(clientId, value, paymentTypeId, interestId, quotaNumbers, active, creationDate, deliveryDate ,loanTypeId , id).value
+            database.updateLoan(clientId, value, paymentTypeId, interestId, quotaNumbers, active, creationDate, deliveryDate ,loanTypeId , id).value
         }catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "L005")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
@@ -74,6 +74,17 @@ class LoanSDK(
             database.deleteLoan(id).value
         } catch (e: Exception) {
             settings.putString(Constants.ERROR_CODE, "L006")
+            settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            0
+        }
+    }
+
+    fun updateLoanState(active: Boolean, id: Long): Long  {
+        cleanErrorData()
+        return try {
+            database.updateLoanState(active, id).value
+        }catch (e: Exception) {
+            settings.putString(Constants.ERROR_CODE, "L007")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
             0
         }

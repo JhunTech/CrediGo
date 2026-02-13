@@ -70,12 +70,6 @@ fun ActiveLoansScreen(navController: NavController, modifier: Modifier) {
         }
     }
 
-    /*if(sharedViewModel.externalSearch.value)
-    {
-        sharedViewModel.onExternalSearch(false)
-        viewModel.loadLoans()
-    }*/
-
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -95,7 +89,7 @@ fun ActiveLoansScreen(navController: NavController, modifier: Modifier) {
             ) {
                 Icon(
                     modifier = modifier
-                        .size(30.dp)
+                        .size(25.dp)
                         .padding(start = 16.dp)
                         .clickable{ viewModel.onPayLoanClick() }
                         .weight(1f).wrapContentWidth(Alignment.Start),
@@ -119,7 +113,7 @@ fun ActiveLoansScreen(navController: NavController, modifier: Modifier) {
                 ) {
                     Icon(
                         modifier = modifier
-                            .size(30.dp)
+                            .size(25.dp)
                             .padding(0.dp),
                         painter = painterResource(Res.drawable.ic_plus),
                         contentDescription = "AddLoan",
@@ -160,7 +154,7 @@ fun LoanList(loans: List<loanUI>, viewModel: ActiveLoansViewModel){
                         }
 
                         SwipeToDismissBoxValue.EndToStart -> { // Derecha → Cuotas
-                            viewModel.onShowQuotes(loan.id.toInt())
+                            viewModel.onShowQuotes(loan.id)
                             true
                         }
 

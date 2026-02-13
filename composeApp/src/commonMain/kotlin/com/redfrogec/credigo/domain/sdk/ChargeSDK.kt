@@ -59,10 +59,10 @@ class ChargeSDK(
         }
     }
 
-    fun updateDataCharge(loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double, chargeTypeId: Long, id: Long): Long{
+    fun updateDataCharge(loanId: Long, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double, id: Long): Long{
         cleanErrorData()
         return try {
-            database.updateDataCharge(loanId, quotaNumber, chargeDate, customerPaymentDate, quotaValue, chargeValue, remainingValue, chargeTypeId, id).value
+            database.updateDataCharge(loanId, customerPaymentDate, quotaValue, chargeValue, remainingValue, id).value
         }catch (e: Exception){
             settings.putString(Constants.ERROR_CODE, "CH005")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
@@ -108,9 +108,20 @@ class ChargeSDK(
         return try {
             database.deleteAllCharges(id).value
         }catch (e: Exception){
-            settings.putString(Constants.ERROR_CODE, "CH006")
+            settings.putString(Constants.ERROR_CODE, "CH009")
             settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
             0
+        }
+    }
+
+    fun selectChargesTotals(loanId: Long): ChargePaid?  {
+        cleanErrorData()
+        return try {
+            database.selectChargesTotals(loanId)
+        } catch (e: Exception) {
+            settings.putString(Constants.ERROR_CODE, "CH002")
+            settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            null
         }
     }
 }

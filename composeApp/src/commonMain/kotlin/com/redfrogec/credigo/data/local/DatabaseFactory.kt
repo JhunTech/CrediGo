@@ -249,8 +249,12 @@ class LocalDatabase(
         return query.insertLoan(loan)
     }
 
-    fun updateDataLoan(clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String, loanTypeId: Long, id: Long): QueryResult<Long>{
-        return query.updateDataLoan(clientId, value, paymentTypeId, interestId, quotaNumbers, if (active) 1 else 0, creationDate, deliveryDate,loanTypeId, id)
+    fun updateLoan(clientId: Long, value: Double, paymentTypeId: Long, interestId: Long, quotaNumbers: Long, active: Boolean, creationDate: String, deliveryDate: String, loanTypeId: Long, id: Long): QueryResult<Long>{
+        return query.updateLoan(clientId, value, paymentTypeId, interestId, quotaNumbers, if (active) 1 else 0, creationDate, deliveryDate,loanTypeId, id)
+    }
+
+    fun updateLoanState(active: Boolean, id: Long): QueryResult<Long>{
+        return query.updateLoanState(if (active) 1 else 0, id)
     }
 
     fun deleteLoan(id: Long): QueryResult<Long> {
@@ -258,19 +262,29 @@ class LocalDatabase(
     }
 
     fun selectAllChargeByLoanId(loanId: Long): List<Charge> {
-        return query.selectAllChargeByLoanId().executeAsList().map {
+        return query.selectAllChargeByLoanId(loanId).executeAsList().map {
             Charge(
                 id = it.Id,
                 loanId = it.LoanId,
                 quotaNumber = it.QuotaNumber.toInt(),
                 chargeDate = it.ChargeDate,
                 customerPaymentDate = it.CustomerPaymentDate,
-                quotaValue = it.QuotaValue.toDouble(),
-                chargeValue = it.ChargeValue.toDouble(),
-                remainingValue = it.RemainingValue.toDouble(),
+                quotaValue = it.QuotaValue,
+                chargeValue = it.ChargeValue,
+                remainingValue = it.RemainingValue,
                 chargeTypeId = it.ChargeTypeId.toInt()
             )
         }
+    }
+
+    fun selectChargesTotals(loanId: Long): ChargePaid {
+        val chargePaid = query.selectChargesTotals(loanId).executeAsOne()
+        return ChargePaid(
+            loanId = chargePaid.LoanId,
+            totalFeesPaid = chargePaid.TotalFeesPaid.toInt(),
+            totalAmountCharged = chargePaid.TotalAmountCharged.toString().toDouble(),
+            totalAmountRemaining = chargePaid.TotalAmountRemaining.toString().toDouble()
+        )
     }
 
     fun selectChargePaid(loanId: Long): ChargePaid {
@@ -323,8 +337,8 @@ class LocalDatabase(
         return query.lastInsertId().executeAsOne()
     }
 
-    fun updateDataCharge(loanId: Long, quotaNumber: Long, chargeDate: String, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double, chargeTypeId: Long, id: Long): QueryResult<Long> {
-        return query.updateDataCharge(loanId, quotaNumber, chargeDate, customerPaymentDate, quotaValue, chargeValue, remainingValue,chargeTypeId, id)
+    fun updateDataCharge(loanId: Long, customerPaymentDate: String?, quotaValue: Double, chargeValue: Double, remainingValue: Double, id: Long): QueryResult<Long> {
+        return query.updateDataCharge(loanId, customerPaymentDate, quotaValue, chargeValue, remainingValue, id)
     }
 
     fun deleteCharge(id: Long): QueryResult<Long> {

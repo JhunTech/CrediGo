@@ -148,10 +148,15 @@ insertLoan:
 INSERT INTO LoanTbl(ClientId, Value, PaymentTypeId, InterestId, QuotaNumbers, Active, CreationDate, DeliveryDate, LoanTypeId)
 VALUES ?;
 
-updateDataLoan:
+updateLoan:
 UPDATE LoanTbl SET
     ClientId = ?, Value = ?, PaymentTypeId = ?, InterestId = ?, QuotaNumbers = ?,
     Active = ?, CreationDate = ?, DeliveryDate = ?, LoanTypeId = ?
+WHERE Id = ?;
+
+updateLoanState:
+UPDATE LoanTbl SET
+    Active = ?
 WHERE Id = ?;
 
 deleteLoan:
@@ -159,7 +164,20 @@ DELETE FROM LoanTbl WHERE Id = ?;
 
 --Cobros--
 selectAllChargeByLoanId:
-SELECT * FROM ChargeTbl;
+SELECT * FROM ChargeTbl WHERE LoanId = ?;
+
+selectChargesTotals:
+SELECT
+    LoanId,
+    COUNT(QuotaNumber) AS TotalFeesPaid,
+    SUM(ChargeValue) AS TotalAmountCharged,
+    SUM(RemainingValue) AS TotalAmountRemaining
+FROM
+    ChargeTbl
+WHERE
+    LoanId = ?
+GROUP BY
+    LoanId;
 
 selectChargesPaid:
 SELECT
@@ -207,8 +225,8 @@ SELECT last_insert_rowid();
 
 updateDataCharge:
 UPDATE ChargeTbl SET
-    LoanId = ?, QuotaNumber = ?,ChargeDate = ?,CustomerPaymentDate = ?, QuotaValue = ?,
-    ChargeValue = ?, RemainingValue = ?, ChargeTypeId = ?
+    LoanId = ?, CustomerPaymentDate = ?, QuotaValue = ?,
+    ChargeValue = ?, RemainingValue = ?
 WHERE Id = ?;
 
 deleteCharge:
