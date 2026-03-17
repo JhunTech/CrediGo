@@ -43,14 +43,12 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
 fun ListQuotesScreen(navController: NavController, modifier: Modifier) {
 
     val viewModel = koinViewModel<ListQuotesViewModel>()
     viewModel.navigation = navController
 
     val quotes by viewModel.quotes.collectAsState()
-    val loanId by viewModel.loanId.collectAsState()
     var showPayPopup by remember { mutableStateOf(false) }
     var reloadQuotes by remember { mutableStateOf(false) }
     var selectedQuote by remember { mutableStateOf<Charge?>(null) }
@@ -116,7 +114,11 @@ fun ListQuotesScreen(navController: NavController, modifier: Modifier) {
                                     .background(Color.Transparent)
                                     .clickable{
                                         selectedQuote = quote
-                                        showPayPopup = true
+                                        showPayPopup = if(quote.quotaNumber == 1){
+                                            quote.quotaValue > quote.chargeValue
+                                        } else{
+                                            quotes[quote.quotaNumber-2].quotaValue == quotes[quote.quotaNumber-2].chargeValue && quote.quotaValue > quote.chargeValue
+                                        }
                                     },
                             ) {
                                 ChargeCard(quote, quotes.size)

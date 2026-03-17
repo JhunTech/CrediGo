@@ -63,6 +63,9 @@ CREATE TABLE ChargeTbl (
 findUserByEmailAndPassword:
 SELECT * FROM UserTbl WHERE Email = ? AND PasswordHash = ?;
 
+selectDataUser:
+SELECT * FROM UserTbl WHERE Id = ?;
+
 insertUser:
 INSERT INTO UserTbl(Image, Email, Name, PasswordHash, QuestionId, Response, RegisterDate, UpdateDate, TokenId, Token, TokenExpire)
 VALUES ?;

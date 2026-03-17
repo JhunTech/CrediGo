@@ -21,9 +21,6 @@ class ListQuotesViewModel(private val chargeSDK: ChargeSDK): ViewModel() {
     private val _quotes = MutableStateFlow<List<Charge>>(emptyList())
     val quotes: StateFlow<List<Charge>> = _quotes.asStateFlow()
 
-    private val _loanId = MutableStateFlow<Long>(-1)
-    val loanId: StateFlow<Long> = _loanId.asStateFlow()
-
     init {
         viewModelScope.launch {
             loadQuotes()
@@ -32,7 +29,6 @@ class ListQuotesViewModel(private val chargeSDK: ChargeSDK): ViewModel() {
 
     fun loadQuotes() {
         val loanId = settings.getLong(Constants.LOAN_ID, 0)
-        _loanId.value = loanId
         _quotes.value = emptyList()
         val dataQuotes = chargeSDK.selectAllChargeByLoanId(loanId)
         if(dataQuotes.isNotEmpty()) {

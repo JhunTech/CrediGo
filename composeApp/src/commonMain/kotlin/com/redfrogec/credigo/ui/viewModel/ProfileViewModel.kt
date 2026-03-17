@@ -5,33 +5,38 @@ import androidx.lifecycle.ViewModel
 import com.redfrogec.credigo.data.model.ProfileUiState
 import androidx.compose.runtime.State
 import androidx.navigation.NavController
+import com.redfrogec.credigo.domain.sdk.UserSDK
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
-class ProfileViewModel(navController: NavController) : ViewModel() {
+class ProfileViewModel(private val sdk: UserSDK) : ViewModel() {
 
-    private val _navigation = navController
-    private val _uiState = mutableStateOf(ProfileUiState())
-    val uiState: State<ProfileUiState> get() = _uiState /** Cargar datos iniciales (puede ser llamada desde el platform entry point). */
-
-    fun loadInitialData() {
-        _uiState.value = ProfileUiState( name = "Sophia Carter", memberSince = "Member since 2021", profileImageUrl = null )
+    lateinit var navigation: NavController
+    private val _uiState = MutableStateFlow(ProfileUiState())
+    val uiState: StateFlow<ProfileUiState> = _uiState
+    fun onChangePassword() {
+        println("Change password clicked")
     }
 
-    /** Actualizaciones sencillas sobre el estado */
-    fun updateName(newName: String) {
-        _uiState.value = _uiState.value.copy(name = newName)
+    fun onLogout() {
+        println("Logout clicked")
     }
 
-    fun updateMemberSince(text: String) {
-        _uiState.value = _uiState.value.copy(memberSince = text)
+    fun onDeleteUser() {
+        println("Delete user clicked")
     }
 
-    fun updateProfileImage(url: String?) {
-        _uiState.value = _uiState.value.copy(profileImageUrl = url)
+    fun onChangePhoto() {
+        println("Change profile photo")
+    }
+
+    /*fun loadInitialData() {
+        //_uiState.value = ProfileUiState( name = "Sophia Carter", memberSince = "Member since 2021", profileImageUrl = null )
     }
 
     /** * Ejemplo de método que en una implementación real llamaría a un repositorio/API. * En commonMain puedes exponer la firma y hacer la implementación por plataforma si lo necesitas. */
     suspend fun refreshFromRepository(fetcher: suspend () -> ProfileUiState) {
         val remote = fetcher()
         _uiState.value = remote
-    }
+    }*/
 }

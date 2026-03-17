@@ -62,7 +62,11 @@ fun DashboardScreen(navControllerInitial: NavController, modifier: Modifier) {
                     ClientsScreen(navController, modifier)
                 }
                 composable(route = Screens.User.route) {
-                    ProfileScreen(navController)
+                    ProfileScreen(onLogout = {
+                        navControllerInitial.navigate(Screens.Login.route) {
+                            popUpTo(Screens.DashBoard.route) { inclusive = true }
+                        }
+                    })
                 }
 
                 //New Pages on tab

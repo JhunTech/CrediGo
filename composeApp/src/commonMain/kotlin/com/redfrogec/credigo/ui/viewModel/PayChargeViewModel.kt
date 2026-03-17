@@ -49,7 +49,20 @@ class PayChargeViewModel(private val loanSDK: LoanSDK, private val chargeSDK: Ch
             _uiState.value.chargeId
         )
         if(updateCharge > 0) {
+            changeLoanState(_uiState.value.loanId)
             _confirmPayment.value = true
+        }
+    }
+
+    fun changeLoanState(loanId: Long){
+        val selectedLoan = loanSDK.selectLoanById(loanId)
+        if(selectedLoan != null){
+            val chargesPaid = chargeSDK.selectChargePaid(loanId)
+            if (chargesPaid != null){
+                if (chargesPaid.totalFeesPaid == selectedLoan.quotaNumbers) {
+                    loanSDK.updateLoanState(false, loanId)
+                }
+            }
         }
     }
 }

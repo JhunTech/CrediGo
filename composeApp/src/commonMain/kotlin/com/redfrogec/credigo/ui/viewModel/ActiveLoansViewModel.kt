@@ -50,7 +50,12 @@ class ActiveLoansViewModel(private val loanSDK: LoanSDK, private val chargeSDK: 
                 val nextPendingQuotaByLoan: ChargePending? = chargeSDK.nextPendingQuotaByLoan(loan.id)
                 val selectAllChargeByLoanId = chargeSDK.selectAllChargeByLoanId(loan.id)
                 val quotaInfo = if (chargesPaid != null){
-                    "${chargesPaid.totalFeesPaid+1}/${loan.quotaNumbers}"
+                    if (chargesPaid.totalFeesPaid == loan.quotaNumbers) {
+                        "${chargesPaid.totalFeesPaid}/${loan.quotaNumbers}"
+                    }
+                    else{
+                        "${chargesPaid.totalFeesPaid+1}/${loan.quotaNumbers}"
+                    }
                 } else{
                     "1/${loan.quotaNumbers}"
                 }
