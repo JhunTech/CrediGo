@@ -51,7 +51,7 @@ class ClientsViewModel (private val sdk: ClientSDK, private val sharedViewModel:
     }
 
     fun loadClients(){
-        val userId = settings.getInt(Constants.USER_ID, 0)
+        val userId = settings.getLong(Constants.USER_ID, 0)
         val dataClients = sdk.selectAllClients(userId.toLong())
         if(dataClients != null) {
             _defaultClients.value = dataClients

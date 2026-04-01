@@ -1,8 +1,6 @@
 package com.redfrogec.credigo.ui.screen.tabs
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,16 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,39 +23,51 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
+import com.redfrogec.credigo.data.model.Constants
 import com.redfrogec.credigo.domain.controls.OfficialIdField
 import com.redfrogec.credigo.domain.controls.PasswordField
 import com.redfrogec.credigo.domain.controls.ProfileField
 import com.redfrogec.credigo.domain.controls.ProfileHeader
-import com.redfrogec.credigo.ui.viewModel.LoginViewModel
-import com.redfrogec.credigo.ui.viewModel.NewClientViewModel
+import com.redfrogec.credigo.domain.controls.simpleDialog
 import com.redfrogec.credigo.ui.viewModel.ProfileViewModel
-import credigo.composeapp.generated.resources.Res
-import credigo.composeapp.generated.resources.ic_arrow_left
-import credigo.composeapp.generated.resources.ic_close
-import credigo.composeapp.generated.resources.ic_contact
-import credigo.composeapp.generated.resources.ic_help
-import credigo.composeapp.generated.resources.ic_notifications
-import credigo.composeapp.generated.resources.ic_security
-import credigo.composeapp.generated.resources.ic_settings
-import credigo.composeapp.generated.resources.ic_user
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
+import com.russhwolf.settings.Settings
 
 @Composable
 fun ProfileScreen(onLogout: () -> Unit, modifier: Modifier = Modifier) {
 
     val viewModel = koinViewModel<ProfileViewModel>()
     val state by viewModel.uiState.collectAsState()
+    val showConfirmDelete by viewModel.showConfirmDelete.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
+    val userFail by viewModel.userFail.collectAsState()
+    val deleteUserOk by viewModel.deleteUserOk.collectAsState()
     val scrollState = rememberScrollState()
+
+    val settings: Settings = Settings()
+
+    if(showConfirmDelete)
+    {
+        if(simpleDialog("Alerta", "Estas seguro(a) que deseas eliminar tu usuario, no podrás recuperar la data de tus préstamos."))
+        {
+            viewModel.onDeleteUser()
+        }
+    }
+
+    if(deleteUserOk)
+    {
+        if(simpleDialog("Aviso", "Tus datos han sido borrados."))
+        {
+            onLogout()
+        }
+    }
+
+    if(userFail) {
+        simpleDialog("Error", errorMessage)
+    }
 
     Box(
         modifier = modifier
@@ -109,22 +115,27 @@ fun ProfileScreen(onLogout: () -> Unit, modifier: Modifier = Modifier) {
             ProfileField("NOMBRE COMPLETO", state.fullName)
             ProfileField("CORREO ELECTRÓNICO", state.email)
 
-            PasswordField(
+            /*PasswordField(
                 onChangeClick = viewModel::onChangePassword
-            )
+            )*/
 
-            ProfileField("PREGUNTA DE SEGURIDAD", state.securityQuestion)
+            ProfileField("PASSWORD", "••••••••")
+
+            ProfileField(state.securityQuestion, state.responseQuestion)
             ProfileField("TELÉFONO MÓVIL", state.phone)
 
-            OfficialIdField(
+            /*OfficialIdField(
                 officialId = state.officialId,
                 verified = state.isVerified
-            )
+            )*/
 
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
-                onClick = { onLogout() },
+                onClick = {
+                    settings.remove(Constants.USER_ID)
+                    onLogout()
+                    },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
@@ -141,7 +152,7 @@ fun ProfileScreen(onLogout: () -> Unit, modifier: Modifier = Modifier) {
             Spacer(Modifier.height(12.dp))
 
             Button(
-                onClick = { },
+                onClick = { viewModel.showConfirmDelete() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
@@ -155,38 +166,5 @@ fun ProfileScreen(onLogout: () -> Unit, modifier: Modifier = Modifier) {
                 )
             }
         }
-    }
-}
-
-@Composable fun SectionTitle(title: String) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-        modifier = Modifier .fillMaxWidth()
-            .padding(vertical = 8.dp)
-    )
-}
-
-@Composable fun ProfileItem(
-    title: String,
-    iconRes: DrawableResource,
-    onClick: () -> Unit = {}
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            painter = painterResource(iconRes),
-            contentDescription = null,
-            tint = Color.Black,
-            modifier = Modifier.size(24.dp)
-        )
-
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(text = title, fontSize = 16.sp)
     }
 }

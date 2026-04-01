@@ -84,4 +84,40 @@ class UserSDK(
             0
         }
     }
+
+    fun deleteUserData(id: Long): Long {
+        cleanErrorData()
+        return try {
+            database.deleteUserData(id).value
+        } catch (e: Exception) {
+            settings.putString(Constants.ERROR_CODE, "U006")
+            settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            0
+        }
+    }
+
+    fun updatePassword(passwordHash: String, id: Long): Long {
+        cleanErrorData()
+        return try {
+            database.updatePassword(
+                passwordHash,
+                id
+            ).value
+        } catch (e: Exception) {
+            settings.putString(Constants.ERROR_CODE, "U007")
+            settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            0
+        }
+    }
+
+    fun selectDataUser(id: Long): User? {
+        cleanErrorData()
+        return try{
+            database.selectDataUser(id)
+        } catch (e: Exception) {
+            settings.putString(Constants.ERROR_CODE, "U008")
+            settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            null
+        }
+    }
 }

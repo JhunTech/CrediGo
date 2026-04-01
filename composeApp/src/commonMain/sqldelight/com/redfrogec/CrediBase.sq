@@ -77,6 +77,11 @@ UPDATE UserTbl SET
     Token = ?, TokenExpire = ?
 WHERE Id = ?;
 
+updatePassword:
+UPDATE UserTbl SET
+    PasswordHash = ?
+WHERE Id = ?;
+
 recoveryPasswordUserByEmailAndQuestion:
 UPDATE UserTbl SET
     PasswordHash = ?
@@ -84,6 +89,12 @@ WHERE Email = ? AND QuestionId = ? AND Response = ?;
 
 deleteUser:
 DELETE FROM UserTbl WHERE Id = ?;
+
+deleteUserData:
+DELETE FROM ChargeTbl WHERE LoanId IN (SELECT Id FROM LoanTbl WHERE ClientId IN (SELECT Id FROM ClientTbl WHERE UserId = :userId));
+DELETE FROM LoanTbl WHERE ClientId IN (SELECT Id FROM ClientTbl WHERE UserId = :userId);
+DELETE FROM ClientTbl WHERE UserId = :userId;
+DELETE FROM UserTbl WHERE Id = :userId;
 
 --lLaves--
 selectAllKey:

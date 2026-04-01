@@ -33,16 +33,16 @@ class LocalDatabase(
         val userTbl = query.findUserByEmailAndPassword(email, password).executeAsOneOrNull()
         if (userTbl != null) {
             return User(
-                id = userTbl.Id.toInt(),
+                id = userTbl.Id,
                 image = userTbl.Image,
                 email = userTbl.Email,
                 name = userTbl.Name,
                 passwordHash = userTbl.PasswordHash,
-                questionId = userTbl.QuestionId.toInt(),
+                questionId = userTbl.QuestionId,
                 response = userTbl.Response,
                 registerDate = LocalDateTime.parse(userTbl.RegisterDate),
                 updateDate = LocalDateTime.parse(userTbl.UpdateDate.toString()),
-                tokenId = userTbl.TokenId?.toInt(),
+                tokenId = userTbl.TokenId,
                 token = userTbl.Token,
                 tokenExpire = LocalDateTime.parse(userTbl.TokenExpire.toString())
             )
@@ -55,16 +55,16 @@ class LocalDatabase(
         val userTbl = query.selectDataUser(id).executeAsOneOrNull()
         if (userTbl != null) {
             return User(
-                id = userTbl.Id.toInt(),
+                id = userTbl.Id,
                 image = userTbl.Image,
                 email = userTbl.Email,
                 name = userTbl.Name,
                 passwordHash = userTbl.PasswordHash,
-                questionId = userTbl.QuestionId.toInt(),
+                questionId = userTbl.QuestionId,
                 response = userTbl.Response,
                 registerDate = LocalDateTime.parse(userTbl.RegisterDate),
                 updateDate = LocalDateTime.parse(userTbl.UpdateDate.toString()),
-                tokenId = userTbl.TokenId?.toInt(),
+                tokenId = userTbl.TokenId,
                 token = userTbl.Token,
                 tokenExpire = LocalDateTime.parse(userTbl.TokenExpire.toString())
             )
@@ -94,12 +94,20 @@ class LocalDatabase(
         return query.updateUser(image, email, name, passwordHash, questionId, response, registerDate.toString(), updateDate.toString(), tokenId, token, tokenExpire.toString(), id)
     }
 
+    fun updatePassword(passwordHash: String, id: Long): QueryResult<Long>  {
+        return query.updatePassword(passwordHash, id)
+    }
+
     fun recoveryPasswordUserByEmailAndQuestion(passwordHash: String, email: String, questionId: Long, response: String): QueryResult<Long>  {
         return query.recoveryPasswordUserByEmailAndQuestion(passwordHash, email, questionId, response)
     }
 
     fun deleteUser(id: Long): QueryResult<Long> {
         return query.deleteUser(id)
+    }
+
+    fun deleteUserData(id: Long): QueryResult<Long> {
+        return query.deleteUserData(id)
     }
 
     fun selectAllKey(): String{

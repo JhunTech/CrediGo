@@ -63,7 +63,7 @@ fun ProfileHeader(
     )
 
     Text(
-        "ID Cliente: $clientId",
+        "ID Usuario: $clientId",
         color = Color.Gray
     )
 }

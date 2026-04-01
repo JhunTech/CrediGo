@@ -35,7 +35,7 @@ class PaidLoansViewModel(private val loanSDK: LoanSDK) : ViewModel() {
     }
 
     fun loadLoans() {
-        val userId = settings.getInt(Constants.USER_ID, 0)
+        val userId = settings.getLong(Constants.USER_ID, 0)
         val paidLoans = loanSDK.selectAllLoansByUserId(userId.toLong(), false)
         if (paidLoans.isNotEmpty()) {
             paidLoans.forEach { loan ->

@@ -41,7 +41,7 @@ class ActiveLoansViewModel(private val loanSDK: LoanSDK, private val chargeSDK: 
     }
 
     fun loadLoans() {
-        val userId = settings.getInt(Constants.USER_ID, 0)
+        val userId = settings.getLong(Constants.USER_ID, 0)
         val activeLoans = loanSDK.selectAllLoansByUserId(userId.toLong(), true)
         if (activeLoans.isNotEmpty()) {
             activeLoans.forEach { loan ->

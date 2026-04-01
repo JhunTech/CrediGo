@@ -72,7 +72,7 @@ class LoginViewModel(private val sdk: UserSDK) : ViewModel() {
         if(user != null)
         {
             println("Login successful for ${username.value}")
-            settings.putInt(Constants.USER_ID, user.id)
+            settings.putLong(Constants.USER_ID, user.id)
             navigation.navigate("dashboard")
         }
         else

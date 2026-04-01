@@ -35,8 +35,8 @@ class PasswordRecoveryViewModel(private val sdk: UserSDK) : ViewModel() {
     private val _securityQuestion = MutableStateFlow("")
     val securityQuestion: StateFlow<String> = _securityQuestion.asStateFlow()
 
-    private val _idSecurityQuestion = MutableStateFlow(0)
-    val idSecurityQuestion: StateFlow<Int> = _idSecurityQuestion.asStateFlow()
+    private val _idSecurityQuestion = MutableStateFlow(0L)
+    val idSecurityQuestion: StateFlow<Long> = _idSecurityQuestion.asStateFlow()
 
     private val _answer = MutableStateFlow("")
     val answer: StateFlow<String> = _answer.asStateFlow()
@@ -69,7 +69,7 @@ class PasswordRecoveryViewModel(private val sdk: UserSDK) : ViewModel() {
         validateForm()
     }
 
-    fun onSecurityQuestionChange(id: Int, question: String) {
+    fun onSecurityQuestionChange(id: Long, question: String) {
         _idSecurityQuestion.value = id
         _securityQuestion.value = question
         validateForm()

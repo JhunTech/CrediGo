@@ -46,8 +46,8 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
         )
     }
 
-    private val _loanId= MutableStateFlow(0)
-    val loanId: StateFlow<Int> = _loanId.asStateFlow()
+    private val _loanId= MutableStateFlow(0L)
+    val loanId: StateFlow<Long> = _loanId.asStateFlow()
 
     private val _loanValue = MutableStateFlow(0.0)
     val loanValue: StateFlow<Double> = _loanValue
@@ -125,8 +125,8 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
     var showLoading: StateFlow<Boolean> = _showLoading.asStateFlow()
 
     fun loadClients(){
-        val userId = settings.getInt(Constants.USER_ID, 0)
-        val dataClients = clientSDK.selectActiveClients(userId.toLong())
+        val userId = settings.getLong(Constants.USER_ID, 0)
+        val dataClients = clientSDK.selectActiveClients(userId)
         if(dataClients != null) {
             _clients.value = dataClients
         }
@@ -134,7 +134,7 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
 
     init {
         viewModelScope.launch {
-            _loanId.value = settings.getInt(Constants.LOAN_ID, 0)
+            _loanId.value = settings.getLong(Constants.LOAN_ID, 0)
             interestList = loadInterests()
             loanTypes = loadLoanTypes()
             paymentTypes = loadPaymentTypes()
@@ -234,7 +234,7 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
                 newPlan.update { it +
                         Charge(
                             id = -1,
-                            loanId = _loanId.value.toLong(),
+                            loanId = _loanId.value,
                             quotaNumber = i,
                             chargeDate = paymentDate.toString(),
                             customerPaymentDate = null,
@@ -249,7 +249,7 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
                 newPlan.update { it +
                     Charge(
                         id = -1,
-                        loanId = _loanId.value.toLong(),
+                        loanId = _loanId.value,
                         quotaNumber = i,
                         chargeDate = paymentDate.toString(),
                         customerPaymentDate = null,
