@@ -2,6 +2,7 @@ package com.redfrogec.credigo.backgroundscheduler
 
 import android.content.Context
 import androidx.work.*
+import com.redfrogec.credigo.data.model.Constants
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CancellationException
 
@@ -35,7 +36,7 @@ fun setAppContext(context: Context) {
 actual fun initializeBackgroundScheduler() {
     appContext?.let { context ->
         val workRequest = PeriodicWorkRequestBuilder<BackgroundWorker>(
-            15, TimeUnit.MINUTES // Intervalo mínimo de Android
+            Constants.TIME_MINUTES.toLong(), TimeUnit.MINUTES // Intervalo mínimo de Android
         )
             .setConstraints(
                 Constraints.Builder()

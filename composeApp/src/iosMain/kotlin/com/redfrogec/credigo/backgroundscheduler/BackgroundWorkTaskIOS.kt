@@ -1,5 +1,6 @@
 package com.redfrogec.credigo.backgroundscheduler
 
+import com.redfrogec.credigo.data.model.Constants
 import kotlinx.cinterop.*
 import platform.BackgroundTasks.*
 import platform.Foundation.*
@@ -44,7 +45,7 @@ private fun scheduleNextBackgroundTask() {
     val request = BGAppRefreshTaskRequest(taskId)
     
     // iOS no garantiza ejecución exacta cada 5 min, pero 15.0 es el valor mínimo recomendado
-    request.earliestBeginDate = NSDate().dateByAddingTimeInterval(15.0 * 60.0)
+    request.earliestBeginDate = NSDate().dateByAddingTimeInterval(Constants.TIME_MINUTES * 60.0)
     
     memScoped {
         val errorPtr = alloc<ObjCObjectVar<NSError?>>()

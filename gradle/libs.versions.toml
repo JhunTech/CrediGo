@@ -20,8 +20,8 @@ settings = "1.3.0"
 dateTime = "0.7.1"
 koin = "4.1.1"
 backHandler = "1.9.1"
-workmanager = "2.10.2"
-alarmee = "2.0.0"
+workmanager = "2.11.2"
+alarmee = "2.6.0"
 
 
 [libraries]
