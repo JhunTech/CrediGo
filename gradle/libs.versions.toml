@@ -21,6 +21,7 @@ dateTime = "0.7.1"
 koin = "4.1.1"
 backHandler = "1.9.1"
 workmanager = "2.10.2"
+alarmee = "2.0.0"
 
 
 [libraries]
@@ -56,6 +57,7 @@ koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
 ui-backhandler = { module = "org.jetbrains.compose.ui:ui-backhandler" , version.ref = "backHandler" }
 workmanager = { module = "androidx.work:work-runtime-ktx", version.ref = "workmanager" }
+alarmee = { group = "io.github.tweener", name = "alarmee", version.ref = "alarmee" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
