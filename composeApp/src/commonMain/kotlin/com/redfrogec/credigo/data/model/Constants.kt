@@ -9,5 +9,5 @@ object Constants {
     const val EXTERNAL_SEARCH_CLIENT = "EXTERNAL_SEARCH_CLIENT"
     const val LOAN_ID = "LOAN_ID"
     const val MAX_QUOTE = 24
-    const val TIME_MINUTES = 15 //480 es cada 8 horas
+    const val TIME_MINUTES = 16 //480 es cada 8 horas
 }

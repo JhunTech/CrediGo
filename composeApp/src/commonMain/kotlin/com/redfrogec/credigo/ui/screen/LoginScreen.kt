@@ -34,6 +34,7 @@ import androidx.navigation.NavController
 import com.redfrogec.credigo.domain.controls.LoadingPopup
 import com.redfrogec.credigo.domain.controls.simpleDialog
 import com.redfrogec.credigo.ui.viewModel.LoginViewModel
+import com.redfrogec.credigo.ui.viewModel.NotificationViewModel
 import credigo.composeapp.generated.resources.Res
 import credigo.composeapp.generated.resources.ic_credigo
 import credigo.composeapp.generated.resources.ic_credigologo
@@ -44,6 +45,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun LoginScreen(navController: NavController, modifier: Modifier) {
     val viewModel = koinViewModel<LoginViewModel>()
+    val viewModelNotification = koinViewModel<NotificationViewModel>()
     val username by viewModel.username.collectAsState()
     val password by viewModel.password.collectAsState()
     val loginEnabled by viewModel.loginEnabled.collectAsState()
@@ -149,4 +151,6 @@ fun LoginScreen(navController: NavController, modifier: Modifier) {
             }
         }
     }
+
+    viewModelNotification.onEnableNotificationsClicked()
 }

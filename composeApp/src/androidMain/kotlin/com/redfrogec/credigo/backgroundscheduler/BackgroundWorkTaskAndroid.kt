@@ -14,6 +14,16 @@ class BackgroundWorker(
     override suspend fun doWork(): Result {
         return try {
             // Ejecuta la función del commonMain (ahora es suspend)
+            val manager: LocalNotificationManager = LocalNotificationManager(applicationContext)
+            if (!manager.hasPermission()) {
+                val granted = manager.requestPermission()
+
+                if (granted) {
+                    manager.showNotification("Success", "Notifications enabled!")
+                }
+            } /*else {
+                manager.showNotification("Wohooo", "Notifications enabled!")
+            }*/
             performSharedBackgroundWork()
             Result.success()
         } catch (e: CancellationException) {
@@ -33,7 +43,8 @@ fun setAppContext(context: Context) {
     appContext = context
 }
 
-actual fun initializeBackgroundScheduler() {
+fun initializeBackgroundScheduler(context: Context) {
+    setAppContext(context)
     appContext?.let { context ->
         val workRequest = PeriodicWorkRequestBuilder<BackgroundWorker>(
             Constants.TIME_MINUTES.toLong(), TimeUnit.MINUTES // Intervalo mínimo de Android

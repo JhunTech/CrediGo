@@ -42,6 +42,7 @@ kotlin {
             implementation(libs.sqldelight.android)
             implementation(libs.ktor.client.android)
             implementation(libs.koin.android)
+            implementation(libs.koin.workmanager)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -116,4 +117,3 @@ sqldelight {
         }
     }
 }
-
