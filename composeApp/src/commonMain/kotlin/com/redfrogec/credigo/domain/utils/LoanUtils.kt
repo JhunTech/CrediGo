@@ -12,7 +12,7 @@ import org.koin.core.component.KoinComponent
 class LoanUtils(private val loanSDK: LoanSDK, private val chargeSDK: ChargeSDK) : KoinComponent {
     fun loadLoansInfo(): List<loanUI> {
         val loansUI: List<loanUI> = emptyList()
-        val userId = settings.getLong(Constants.USER_ID, 0)
+        val userId = 0L//settings.getLong(Constants.USER_ID, 0)
         val activeLoans = loanSDK.selectAllLoansByUserId(userId, true)
         if (activeLoans.isNotEmpty()) {
             activeLoans.forEach { loan ->
