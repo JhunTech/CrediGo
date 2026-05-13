@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 
 class NotificationViewModel(private val manager: LocalNotificationManager): ViewModel() {
 
-    fun onEnableNotificationsClicked() {
+    fun onEnableNotifications() {
         viewModelScope.launch {
             if (!manager.hasPermission()) {
                 val granted = manager.requestPermission()

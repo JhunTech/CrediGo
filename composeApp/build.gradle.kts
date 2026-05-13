@@ -37,7 +37,6 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-            implementation(libs.workmanager)
             //SQLDELIGHT
             implementation(libs.sqldelight.android)
             implementation(libs.ktor.client.android)
@@ -70,8 +69,6 @@ kotlin {
 
             implementation(libs.multiplatform.settings)
             implementation(libs.multiplatform.settings.no.arg)
-
-            implementation(libs.alarmee)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

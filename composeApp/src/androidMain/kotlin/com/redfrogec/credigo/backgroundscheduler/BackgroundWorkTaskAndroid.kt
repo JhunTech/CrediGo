@@ -17,12 +17,10 @@ class BackgroundWorker(
         Log.d("BackgroundWorker", "Iniciando tarea en segundo plano... ID: ${id}")
         return try {
             // Solo mostrar notificación si tiene permiso concedido previamente
-            if (manager.hasPermission()) {
                 manager.showNotification("CrediGo", "Ejecutando tarea en segundo plano...")
-            }
             
             // Tarea compartida del commonMain
-            performSharedBackgroundWork()
+            //performSharedBackgroundWork()
             
             Log.d("BackgroundWorker", "Tarea completada con éxito")
             Result.success()
@@ -42,7 +40,7 @@ fun initializeBackgroundScheduler(workManager: WorkManager) {
     Log.d("BackgroundWorker", "Configurando scheduler periódico")
     
     val constraints = Constraints.Builder()
-        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
         .build()
 
     val workRequest = PeriodicWorkRequestBuilder<BackgroundWorker>(
@@ -60,7 +58,7 @@ fun initializeBackgroundScheduler(workManager: WorkManager) {
     // si no hay cambios significativos en la configuración.
     workManager.enqueueUniquePeriodicWork(
         "CrediGoBackgroundTask",
-        ExistingPeriodicWorkPolicy.KEEP,
+        ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
         workRequest
     )
 }

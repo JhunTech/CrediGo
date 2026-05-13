@@ -55,6 +55,8 @@ fun LoginScreen(navController: NavController, modifier: Modifier) {
     viewModel.navigation = navController
     val scrollState = rememberScrollState()
 
+    viewModelNotification.onEnableNotifications()
+
     if(loginFail) {
         if(simpleDialog("Alerta", "Usuario o contraseña incorrectos")){
             viewModel.clearControls()
@@ -151,6 +153,4 @@ fun LoginScreen(navController: NavController, modifier: Modifier) {
             }
         }
     }
-
-    viewModelNotification.onEnableNotificationsClicked()
 }
