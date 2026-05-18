@@ -1,6 +1,7 @@
 package com.redfrogec.credigo.ui.viewModel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.redfrogec.credigo.data.local.LocalDatabase
 import com.redfrogec.credigo.data.model.Constants
@@ -8,13 +9,13 @@ import com.redfrogec.credigo.domain.sdk.UserSDK
 import com.redfrogec.credigo.domain.utils.isValidEmail
 import com.redfrogec.credigo.domain.utils.isValidPassword
 import com.russhwolf.settings.Settings
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LoginViewModel(private val sdk: UserSDK) : ViewModel() {
 
@@ -63,22 +64,27 @@ class LoginViewModel(private val sdk: UserSDK) : ViewModel() {
     }
 
     fun onLoginClicked() {
-        // Aquí iría la lógica para llamar al backend (API REST)
-        _showLoading.value = true
-        val user = sdk.findUserByEmailAndPassword(_username.value, _password.value)
-        _showLoading.value = false
-        clearControls()
-
-        if(user != null)
-        {
-            println("Login successful for ${username.value}")
-            settings.putLong(Constants.USER_ID, user.id)
-            navigation.navigate("dashboard")
-        }
-        else
-        {
-            println("Login failed for ${username.value}")
-            _loginFail.value=true
+        viewModelScope.launch {
+            _showLoading.value = true
+            val user = withContext(Dispatchers.IO) {
+                sdk.findUserByEmailAndPassword(_username.value, _password.value)
+            }
+            _showLoading.value = false
+            
+            if(user != null)
+            {
+                println("Login successful for ${username.value}")
+                settings.putLong(Constants.USER_ID, user.id)
+                clearControls()
+                navigation.navigate("dashboard") {
+                    popUpTo("login") { inclusive = true }
+                }
+            }
+            else
+            {
+                println("Login failed for ${username.value}")
+                _loginFail.value = true
+            }
         }
     }
 
@@ -95,6 +101,6 @@ class LoginViewModel(private val sdk: UserSDK) : ViewModel() {
         _password.value = ""
         _errorMessage.value = ""
         _loginEnabled.value = false
-        _loginFail.value=false
+        _loginFail.value = false
     }
 }

@@ -23,11 +23,13 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -52,10 +54,15 @@ fun LoginScreen(navController: NavController, modifier: Modifier) {
     val errorMessage by viewModel.errorMessage.collectAsState()
     val loginFail by viewModel.loginFail.collectAsState()
     val showLoading by viewModel.showLoading.collectAsState()
-    viewModel.navigation = navController
+
+    val keyboardController = LocalSoftwareKeyboardController.current
     val scrollState = rememberScrollState()
 
-    viewModelNotification.onEnableNotifications()
+    viewModel.navigation = navController
+
+    LaunchedEffect(Unit) {
+        viewModelNotification.onEnableNotifications()
+    }
 
     if(loginFail) {
         if(simpleDialog("Alerta", "Usuario o contraseña incorrectos")){
@@ -92,7 +99,7 @@ fun LoginScreen(navController: NavController, modifier: Modifier) {
             OutlinedTextField(
                 value = username,
                 onValueChange = { viewModel.onUsernameChanged(it) },
-                    placeholder = { Text("Email") },
+                placeholder = { Text("Email") },
                 modifier = modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),
                 singleLine = true
@@ -113,7 +120,10 @@ fun LoginScreen(navController: NavController, modifier: Modifier) {
             Spacer(modifier = modifier.height(20.dp))
 
             Button(
-                onClick = { viewModel.onLoginClicked() },
+                onClick = {
+                    keyboardController?.hide()
+                    viewModel.onLoginClicked()
+                },
                 enabled = loginEnabled,
                 modifier = modifier
                     .fillMaxWidth()
@@ -130,13 +140,19 @@ fun LoginScreen(navController: NavController, modifier: Modifier) {
                 text = "Perdiste tu contraseña?",
                 color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.labelSmall,
-                modifier = modifier.clickable { viewModel.onForgotPasswordClicked() }
+                modifier = modifier.clickable {
+                    keyboardController?.hide()
+                    viewModel.onForgotPasswordClicked()
+                }
             )
 
             Spacer(modifier = modifier.height(30.dp))
 
             OutlinedButton(
-                onClick = { viewModel.onSignUpClicked() },
+                onClick = {
+                    keyboardController?.hide()
+                    viewModel.onSignUpClicked()
+                },
                 modifier = modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp)
             ) {

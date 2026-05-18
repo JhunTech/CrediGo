@@ -70,7 +70,7 @@ val sharedModule = module {
     viewModel { ListQuotesViewModel(chargeSDK = get()) }
     viewModel { PayChargeViewModel(loanSDK = get(), chargeSDK = get()) }
     viewModel { ProfileViewModel(sdk = get()) }
-    single { NotificationViewModel(get()) }
+    viewModel { NotificationViewModel(get()) }
 }
 
 fun initializeKoin(config: (KoinApplication.() -> Unit)? = null) {

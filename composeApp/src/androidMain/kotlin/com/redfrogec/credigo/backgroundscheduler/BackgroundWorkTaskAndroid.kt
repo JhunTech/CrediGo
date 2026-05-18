@@ -14,10 +14,10 @@ class BackgroundWorker(
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
-        Log.d("BackgroundWorker", "Iniciando tarea en segundo plano... ID: ${id}")
+        Log.d("BackgroundWorker", "Iniciando tarea en segundo plano")
         return try {
             // Solo mostrar notificación si tiene permiso concedido previamente
-                manager.showNotification("CrediGo", "Ejecutando tarea en segundo plano...")
+            manager.showNotification("CrediGo", "Ejecutando tarea en segundo plano...")
             
             // Tarea compartida del commonMain
             //performSharedBackgroundWork()
@@ -25,8 +25,6 @@ class BackgroundWorker(
             Log.d("BackgroundWorker", "Tarea completada con éxito")
             Result.success()
         } catch (e: CancellationException) {
-            // CoroutineWorker usa CancellationException para señalar que el worker debe detenerse.
-            // No es un error, es un comportamiento esperado cuando WorkManager detiene la tarea.
             Log.d("BackgroundWorker", "Tarea cancelada o interrumpida por el sistema")
             throw e
         } catch (e: Exception) {
@@ -54,11 +52,11 @@ fun initializeBackgroundScheduler(workManager: WorkManager) {
         )
         .build()
 
-    // Cambiamos a KEEP para evitar que se cancele y reinicie la tarea cada vez que se inicia la app
-    // si no hay cambios significativos en la configuración.
+    // Usamos KEEP para evitar cancelar y re-encolar la tarea cada vez que se inicia la app.
+    // Esto reduce el riesgo de inconsistencias con los paths del APK tras una actualización.
     workManager.enqueueUniquePeriodicWork(
         "CrediGoBackgroundTask",
-        ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
+        ExistingPeriodicWorkPolicy.KEEP,
         workRequest
     )
 }

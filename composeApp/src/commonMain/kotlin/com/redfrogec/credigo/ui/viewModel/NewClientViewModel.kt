@@ -12,10 +12,13 @@ import com.redfrogec.credigo.domain.utils.isValidIdentification
 import com.redfrogec.credigo.domain.utils.isValidName
 import com.redfrogec.credigo.domain.utils.isValidPhone
 import com.russhwolf.settings.Settings
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDateTime
 
 class NewClientViewModel(private val sdk: ClientSDK, private val sharedViewModel: SharedViewModel): ViewModel() {
@@ -76,7 +79,9 @@ class NewClientViewModel(private val sdk: ClientSDK, private val sharedViewModel
         viewModelScope.launch {
             _clientId.value = settings.getInt(Constants.CLIENT_ID, 0)
             _userId.value = settings.getInt(Constants.USER_ID, 0)
-            val dataClient = sdk.selectClientById(_clientId.value.toLong())
+            val dataClient = withContext(Dispatchers.IO) {
+                sdk.selectClientById(_clientId.value.toLong())
+            }
             if(dataClient != null)
             {
                 loadClient(dataClient)
@@ -154,67 +159,56 @@ class NewClientViewModel(private val sdk: ClientSDK, private val sharedViewModel
     }
 
     fun onNewClientClicked() {
-        _clientOk.value=false
-        _clientFail.value=false
+        viewModelScope.launch {
+            _clientOk.value = false
+            _clientFail.value = false
+            _showLoading.value = true
 
-        _showLoading.value = true
-        if(_clientId.value < 0) {
-            val insertClient = sdk.insertClient(
-                _userId.value.toLong(),
-                _image.value,
-                _identification.value,
-                _name.value,
-                _email.value,
-                _phone.value,
-                _address.value,
-                _blocked.value,
-                currentDateDisplay()
-            )
-            if(insertClient.toInt() > 0) {
-                _clientMessage.value = "Registro exitoso del cliente: ${_name.value}"
-                println(_clientMessage.value)
+            val result = withContext(Dispatchers.IO) {
+                if (_clientId.value < 0) {
+                    val insertId = sdk.insertClient(
+                        _userId.value.toLong(),
+                        _image.value,
+                        _identification.value,
+                        _name.value,
+                        _email.value,
+                        _phone.value,
+                        _address.value,
+                        _blocked.value,
+                        currentDateDisplay()
+                    )
+                    Pair(insertId.toInt() > 0, "Registro")
+                } else {
+                    val updateCount = sdk.updateDataClient(
+                        _userId.value.toLong(),
+                        _image.value,
+                        _identification.value,
+                        _name.value,
+                        _email.value,
+                        _phone.value,
+                        _address.value,
+                        _blocked.value,
+                        LocalDateTime.parse(_registerDate.value),
+                        _clientId.value.toLong()
+                    )
+                    Pair(updateCount.toInt() > 0, "Actualización")
+                }
+            }
+
+            val (isSuccess, action) = result
+            if (isSuccess) {
+                _clientMessage.value = "$action exitoso del cliente: ${_name.value}"
                 _errorMessage.value = ""
-                _clientOk.value=true
-                _clientFail.value=false
-            }
-            else{
-                _clientMessage.value = "Error de registro del cliente: ${_name.value}"
-                println(_clientMessage.value)
+                _clientOk.value = true
+                _clientFail.value = false
+            } else {
+                _clientMessage.value = "Error de $action del cliente: ${_name.value}"
                 _errorMessage.value = settings.getString(Constants.ERROR_MESSAGE, "")
-                _clientOk.value=false
-                _clientFail.value=true
+                _clientOk.value = false
+                _clientFail.value = true
             }
+            _showLoading.value = false
         }
-        else
-        {
-            val updateClient = sdk.updateDataClient(
-                _userId.value.toLong(),
-                _image.value,
-                _identification.value,
-                _name.value,
-                _email.value,
-                _phone.value,
-                _address.value,
-                _blocked.value,
-                LocalDateTime.parse(_registerDate.value),
-                _clientId.value.toLong()
-            )
-            if(updateClient.toInt() > 0) {
-                _clientMessage.value = "Actualización del cliente: ${_name.value}"
-                println(_clientMessage.value)
-                _errorMessage.value = ""
-                _clientOk.value=true
-                _clientFail.value=false
-            }
-            else{
-                _clientMessage.value = "Error de actualización del cliente: ${_name.value}"
-                println(_clientMessage.value)
-                _errorMessage.value = settings.getString(Constants.ERROR_MESSAGE, "")
-                _clientOk.value=false
-                _clientFail.value=true
-            }
-        }
-        _showLoading.value = false
     }
 
     fun onBackClicked() {
