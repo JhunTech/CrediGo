@@ -26,6 +26,7 @@ import androidx.navigation.createGraph
 import com.redfrogec.credigo.data.model.Constants
 import com.redfrogec.credigo.data.model.Screens
 import com.redfrogec.credigo.data.model.listOfTabScreens
+import com.redfrogec.credigo.domain.controls.SendAppToBackground
 import com.redfrogec.credigo.ui.screen.tabs.ActiveLoansScreen
 import com.redfrogec.credigo.ui.screen.tabs.ClientsScreen
 import com.redfrogec.credigo.ui.screen.tabs.HomeScreen
@@ -43,7 +44,8 @@ import org.koin.compose.viewmodel.koinViewModel
 fun DashboardScreen(navControllerInitial: NavController, modifier: Modifier) {
 
     val navController = rememberNavController()
-    val sharedViewModel = koinViewModel<SharedViewModel>()
+
+    SendAppToBackground()
 
     Scaffold(modifier = Modifier.fillMaxSize(),
         bottomBar = {

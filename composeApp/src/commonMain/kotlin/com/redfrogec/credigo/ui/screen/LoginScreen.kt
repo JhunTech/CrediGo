@@ -17,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -27,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -34,16 +34,16 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.redfrogec.credigo.domain.controls.LoadingPopup
+import com.redfrogec.credigo.domain.controls.SendAppToBackground
 import com.redfrogec.credigo.domain.controls.simpleDialog
 import com.redfrogec.credigo.ui.viewModel.LoginViewModel
 import com.redfrogec.credigo.ui.viewModel.NotificationViewModel
 import credigo.composeapp.generated.resources.Res
-import credigo.composeapp.generated.resources.ic_credigo
 import credigo.composeapp.generated.resources.ic_credigologo
-import credigo.composeapp.generated.resources.ic_plus
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LoginScreen(navController: NavController, modifier: Modifier) {
     val viewModel = koinViewModel<LoginViewModel>()
@@ -63,6 +63,8 @@ fun LoginScreen(navController: NavController, modifier: Modifier) {
     LaunchedEffect(Unit) {
         viewModelNotification.onEnableNotifications()
     }
+
+    SendAppToBackground()
 
     if(loginFail) {
         if(simpleDialog("Alerta", "Usuario o contraseña incorrectos")){

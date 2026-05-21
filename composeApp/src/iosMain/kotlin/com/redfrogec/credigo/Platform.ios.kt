@@ -7,3 +7,7 @@ class IOSPlatform: Platform {
 }
 
 actual fun getPlatform(): Platform = IOSPlatform()
+
+actual fun sendToBackground() {
+    // iOS does not allow programmatically moving the app to background.
+}

@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.redfrogec.credigo.domain.controls.LoadingPopup
+import com.redfrogec.credigo.domain.controls.SendAppToBackground
 import com.redfrogec.credigo.domain.controls.simpleDialog
 import com.redfrogec.credigo.ui.viewModel.PasswordRecoveryViewModel
 import credigo.composeapp.generated.resources.Res
@@ -51,7 +52,6 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
-@Preview
 @Composable
 fun PasswordRecoveryScreen(navController: NavController, modifier: Modifier) {
     val viewModel = koinViewModel< PasswordRecoveryViewModel>()
@@ -84,9 +84,7 @@ fun PasswordRecoveryScreen(navController: NavController, modifier: Modifier) {
 
     LoadingPopup(showLoading)
 
-    BackHandler(enabled = true) {
-        println("Probando el back handler")
-    }
+    SendAppToBackground()
 
     Box(
         modifier = modifier

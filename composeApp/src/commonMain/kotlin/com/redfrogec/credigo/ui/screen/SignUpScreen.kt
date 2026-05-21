@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.redfrogec.credigo.domain.controls.LoadingPopup
+import com.redfrogec.credigo.domain.controls.SendAppToBackground
 import com.redfrogec.credigo.domain.controls.simpleDialog
 import com.redfrogec.credigo.ui.viewModel.SignUpViewModel
 import credigo.composeapp.generated.resources.Res
@@ -49,11 +50,12 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
 fun SignUpScreen(navController: NavController, modifier: Modifier) {
     val viewModel = koinViewModel<SignUpViewModel>()
     viewModel.navigation = navController
+
+    SendAppToBackground()
 
     val email by viewModel.email.collectAsState()
     val name by viewModel.name.collectAsState()
