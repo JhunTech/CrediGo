@@ -5,15 +5,18 @@ import com.redfrogec.credigo.data.model.Constants
 import com.redfrogec.credigo.data.model.loanUI
 import com.redfrogec.credigo.domain.sdk.ChargeSDK
 import com.redfrogec.credigo.domain.sdk.LoanSDK
+import com.russhwolf.settings.Settings
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
 import org.koin.core.component.KoinComponent
 
 class LoanUtils(private val loanSDK: LoanSDK, private val chargeSDK: ChargeSDK) : KoinComponent {
+    private val settings: Settings = Settings()
+
     fun loadLoansInfo(): List<loanUI> {
-        val loansUI: List<loanUI> = emptyList()
-        val userId = 0L//settings.getLong(Constants.USER_ID, 0)
+        val userId = settings.getLong(Constants.USER_ID, 0)
         val activeLoans = loanSDK.selectAllLoansByUserId(userId, true)
+        val loansUI = mutableListOf<loanUI>()
         if (activeLoans.isNotEmpty()) {
             activeLoans.forEach { loan ->
                 val chargesPaid = chargeSDK.selectChargePaid(loan.id)
@@ -48,7 +51,7 @@ class LoanUtils(private val loanSDK: LoanSDK, private val chargeSDK: ChargeSDK) 
                     dueInfo = dueInfo,
                     isPaid = loan.active
                 )
-                loansUI.plus(loanUI)
+                loansUI.add(loanUI)
             }
         }
         return loansUI

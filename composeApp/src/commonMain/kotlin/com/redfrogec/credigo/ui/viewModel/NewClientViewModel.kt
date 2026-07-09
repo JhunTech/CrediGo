@@ -27,11 +27,11 @@ class NewClientViewModel(private val sdk: ClientSDK, private val sharedViewModel
 
     private val settings: Settings = Settings()
 
-    private val _clientId= MutableStateFlow(0)
-    val clientId: StateFlow<Int> = _clientId.asStateFlow()
+    private val _clientId= MutableStateFlow(0L)
+    val clientId: StateFlow<Long> = _clientId.asStateFlow()
 
-    private val _userId= MutableStateFlow(0)
-    val userId: StateFlow<Int> = _userId.asStateFlow()
+    private val _userId= MutableStateFlow(0L)
+    val userId: StateFlow<Long> = _userId.asStateFlow()
 
     private val _image = MutableStateFlow("")
     val image: StateFlow<String> = _image.asStateFlow()
@@ -77,8 +77,8 @@ class NewClientViewModel(private val sdk: ClientSDK, private val sharedViewModel
 
     init {
         viewModelScope.launch {
-            _clientId.value = settings.getInt(Constants.CLIENT_ID, 0)
-            _userId.value = settings.getInt(Constants.USER_ID, 0)
+            _clientId.value = settings.getLong(Constants.CLIENT_ID, 0)
+            _userId.value = settings.getLong(Constants.USER_ID, 0)
             val dataClient = withContext(Dispatchers.IO) {
                 sdk.selectClientById(_clientId.value.toLong())
             }

@@ -52,8 +52,8 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
     private val _loanValue = MutableStateFlow(0.0)
     val loanValue: StateFlow<Double> = _loanValue
 
-    private val _selectedClientId = MutableStateFlow(0)
-    val selectedClientId: StateFlow<Int> = _selectedClientId.asStateFlow()
+    private val _selectedClientId = MutableStateFlow(0L)
+    val selectedClientId: StateFlow<Long> = _selectedClientId.asStateFlow()
 
     private val _selectedClientName = MutableStateFlow("")
     val selectedClientName: StateFlow<String> = _selectedClientName.asStateFlow()
@@ -134,7 +134,7 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
 
     init {
         viewModelScope.launch {
-            _loanId.value = settings.getLong(Constants.LOAN_ID, 0)
+            _loanId.value = settings.getLong(Constants.LOAN_ID, 0L)
             interestList = loadInterests()
             loanTypes = loadLoanTypes()
             paymentTypes = loadPaymentTypes()
@@ -148,7 +148,7 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
         validateHeaderForm()
     }
 
-    fun onClientSelected(clientId: Int, clientName: String): String {
+    fun onClientSelected(clientId: Long, clientName: String): String {
         _selectedClientId.value = clientId
         _selectedClientName.value = clientName
         validateHeaderForm()

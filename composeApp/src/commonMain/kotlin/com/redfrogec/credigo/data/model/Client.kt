@@ -5,8 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Client(
-    val id: Int,
-    val userId: Int,
+    val id: Long,
+    val userId: Long,
     val image: String,
     val identification: String,
     val name: String,

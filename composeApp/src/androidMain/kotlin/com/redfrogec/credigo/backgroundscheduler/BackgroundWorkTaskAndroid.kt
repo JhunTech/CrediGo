@@ -4,13 +4,15 @@ import android.content.Context
 import android.util.Log
 import androidx.work.*
 import com.redfrogec.credigo.data.model.Constants
+import com.redfrogec.credigo.domain.utils.LoanUtils
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CancellationException
 
 class BackgroundWorker(
     context: Context,
     workerParams: WorkerParameters,
-    private val manager: LocalNotificationManager
+    private val manager: LocalNotificationManager,
+    private val loanUtils: LoanUtils
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -20,7 +22,8 @@ class BackgroundWorker(
             manager.showNotification("CrediGo", "Ejecutando tarea en segundo plano...")
             
             // Tarea compartida del commonMain
-            //performSharedBackgroundWork()
+            val loans = loanUtils.loadLoansInfo()
+            Log.d("BackgroundWorker", "Información de préstamos cargada: ${loans.size} registros.")
             
             Log.d("BackgroundWorker", "Tarea completada con éxito")
             Result.success()

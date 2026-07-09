@@ -22,8 +22,8 @@ class ClientsViewModel (private val sdk: ClientSDK, private val sharedViewModel:
     private val _showConfirmDelete = MutableStateFlow(false)
     val showConfirmDelete: StateFlow<Boolean> = _showConfirmDelete.asStateFlow()
 
-    private val _selectedIdClient = MutableStateFlow(-1)
-    val selectedIdClient: StateFlow<Int> = _selectedIdClient.asStateFlow()
+    private val _selectedIdClient = MutableStateFlow(-1L)
+    val selectedIdClient: StateFlow<Long> = _selectedIdClient.asStateFlow()
 
     private val _defaultClients = MutableStateFlow<List<Client>>(emptyList())
     val defaultClients: StateFlow<List<Client>?> = _defaultClients.asStateFlow()
@@ -52,7 +52,7 @@ class ClientsViewModel (private val sdk: ClientSDK, private val sharedViewModel:
 
     fun loadClients(){
         val userId = settings.getLong(Constants.USER_ID, 0)
-        val dataClients = sdk.selectAllClients(userId.toLong())
+        val dataClients = sdk.selectAllClients(userId)
         if(dataClients != null) {
             _defaultClients.value = dataClients
             _clients.value = dataClients
@@ -64,7 +64,7 @@ class ClientsViewModel (private val sdk: ClientSDK, private val sharedViewModel:
         navigation.navigate("clients")
     }
 
-    fun onConfirmDeleteChanged(newValue: Boolean, id: Int) {
+    fun onConfirmDeleteChanged(newValue: Boolean, id: Long) {
         _showConfirmDelete.value = newValue
         _selectedIdClient.value = id
     }
@@ -82,19 +82,19 @@ class ClientsViewModel (private val sdk: ClientSDK, private val sharedViewModel:
     }
 
     fun onAddClick() {
-        settings.putInt(Constants.CLIENT_ID, -1)
+        settings.putLong(Constants.CLIENT_ID, -1)
         navigation.navigate("newclient")
     }
 
     fun onCLoseClick() {
-        settings.putInt(Constants.CLIENT_ID, -1)
+        settings.putLong(Constants.CLIENT_ID, -1)
         settings.putString(Constants.CLIENT_NAME, "")
         settings.putBoolean(Constants.EXTERNAL_SEARCH_CLIENT, false)
         navigation.popBackStack()
     }
 
-    fun deleteClient(id: Int) {
-        val deleteClient = sdk.deleteClient(id.toLong())
+    fun deleteClient(id: Long) {
+        val deleteClient = sdk.deleteClient(id)
         if(deleteClient.toInt() > 0) {
             print("Cliente borrado correctamente con ID: $id")
         }
@@ -104,8 +104,8 @@ class ClientsViewModel (private val sdk: ClientSDK, private val sharedViewModel:
         loadClients()
     }
 
-    fun updateClient(id: Int) {
-        settings.putInt(Constants.CLIENT_ID, id)
+    fun updateClient(id: Long) {
+        settings.putLong(Constants.CLIENT_ID, id)
         navigation.navigate("newClient")
     }
 

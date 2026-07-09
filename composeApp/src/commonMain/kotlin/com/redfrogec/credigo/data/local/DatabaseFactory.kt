@@ -126,8 +126,8 @@ class LocalDatabase(
         val blocked: Long = 1
         return query.selectAllClients(userId).executeAsList().map {
             Client(
-                id = it.Id.toInt(),
-                userId = it.UserId.toInt(),
+                id = it.Id,
+                userId = it.UserId,
                 image = it.Image.toString(),
                 identification = it.Identification,
                 name = it.Name,
@@ -144,8 +144,8 @@ class LocalDatabase(
         val blocked: Long = 1
         return query.selectActiveClients(userId).executeAsList().map {
             Client(
-                id = it.Id.toInt(),
-                userId = it.UserId.toInt(),
+                id = it.Id,
+                userId = it.UserId,
                 image = it.Image.toString(),
                 identification = it.Identification,
                 name = it.Name,
@@ -163,8 +163,8 @@ class LocalDatabase(
         val clientTbl = query.selectClientById(id).executeAsOneOrNull()
         if (clientTbl != null) {
             return Client(
-                id = clientTbl.Id.toInt(),
-                userId = clientTbl.UserId.toInt(),
+                id = clientTbl.Id,
+                userId = clientTbl.UserId,
                 image = clientTbl.Image.toString(),
                 identification = clientTbl.Identification,
                 name = clientTbl.Name,
