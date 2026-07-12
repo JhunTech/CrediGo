@@ -17,16 +17,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.redfrogec.credigo.data.model.loanUI
+import com.redfrogec.credigo.data.model.LoanUI
 import credigo.composeapp.generated.resources.Res
 import credigo.composeapp.generated.resources.ic_credit_card
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun LoanItem(loan: loanUI) {
+fun LoanItem(loan: LoanUI) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

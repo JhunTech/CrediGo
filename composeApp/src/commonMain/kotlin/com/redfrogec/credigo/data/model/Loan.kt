@@ -14,7 +14,7 @@ data class Loan(
     val loanTypeId: Int
 )
 
-data class loanUI(
+data class LoanUI(
     val id: Long,
     val clientName: String,
     val loanNumber: String,

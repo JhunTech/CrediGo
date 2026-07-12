@@ -1,13 +1,10 @@
 package com.redfrogec.credigo.ui.viewModel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.redfrogec.credigo.data.model.Constants
-import com.redfrogec.credigo.data.model.loanUI
+import com.redfrogec.credigo.data.model.LoanUI
 import com.redfrogec.credigo.domain.sdk.ChargeSDK
 import com.redfrogec.credigo.domain.sdk.LoanSDK
 import com.redfrogec.credigo.domain.utils.LoanUtils
@@ -26,8 +23,8 @@ class ActiveLoansViewModel(
     lateinit var navigation: NavController
     private val settings: Settings = Settings()
 
-    private val _activeLoansUI = MutableStateFlow<List<loanUI>>(emptyList())
-    val activeLoansUI: StateFlow<List<loanUI>?> = _activeLoansUI.asStateFlow()
+    private val _activeLoansUI = MutableStateFlow<List<LoanUI>>(emptyList())
+    val activeLoansUI: StateFlow<List<LoanUI>?> = _activeLoansUI.asStateFlow()
 
     private val _showConfirmDelete = MutableStateFlow(false)
     val showConfirmDelete: StateFlow<Boolean> = _showConfirmDelete.asStateFlow()
@@ -42,7 +39,7 @@ class ActiveLoansViewModel(
     }
 
     fun loadLoans() {
-        val loans = loanUtils.loadLoansInfo()
+        val loans = loanUtils.loadLoansInfo(false)
         _activeLoansUI.value = loans
     }
 

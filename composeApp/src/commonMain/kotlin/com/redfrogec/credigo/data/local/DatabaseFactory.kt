@@ -72,6 +72,28 @@ class LocalDatabase(
         return null
     }
 
+    fun selectActiveUser(): User? {
+        println("INFO: Reading the cached user from the local database from unique user")
+        val userTbl = query.selectActiveUser().executeAsOneOrNull()
+        if (userTbl != null) {
+            return User(
+                id = userTbl.Id,
+                image = userTbl.Image,
+                email = userTbl.Email,
+                name = userTbl.Name,
+                passwordHash = userTbl.PasswordHash,
+                questionId = userTbl.QuestionId,
+                response = userTbl.Response,
+                registerDate = LocalDateTime.parse(userTbl.RegisterDate),
+                updateDate = LocalDateTime.parse(userTbl.UpdateDate.toString()),
+                tokenId = userTbl.TokenId,
+                token = userTbl.Token,
+                tokenExpire = LocalDateTime.parse(userTbl.TokenExpire.toString())
+            )
+        }
+        return null
+    }
+
     fun insertUser(image: String?, email: String, name: String, passwordHash: String, questionId: Long, response: String, registerDate: LocalDateTime, updateDate: LocalDateTime?, tokenId: Long?, token: String?, tokenExpire: LocalDateTime?): QueryResult<Long> {
         val user = UserTbl(
             0,
@@ -337,7 +359,7 @@ class LocalDatabase(
         )
     }
 
-    fun nextPendingQuotaByLoan(loanId: Long): ChargePending? {
+    fun nextPendingQuotaByLoan(loanId: Long): ChargePending {
         val chargePending = query.nextPendingQuotaByLoan(loanId).executeAsOne()
         return ChargePending(
             id = chargePending.Id,

@@ -120,4 +120,15 @@ class UserSDK(
             null
         }
     }
+
+    fun selectActiveUser(): User? {
+        cleanErrorData()
+        return try{
+            database.selectActiveUser()
+        } catch (e: Exception) {
+            settings.putString(Constants.ERROR_CODE, "U009")
+            settings.putString(Constants.ERROR_MESSAGE, e.message.toString())
+            null
+        }
+    }
 }

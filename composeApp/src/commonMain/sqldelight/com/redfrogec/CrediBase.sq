@@ -66,6 +66,11 @@ SELECT * FROM UserTbl WHERE Email = ? AND PasswordHash = ?;
 selectDataUser:
 SELECT * FROM UserTbl WHERE Id = ?;
 
+selectActiveUser:
+SELECT * FROM UserTbl
+ORDER BY Id DESC
+LIMIT 1;
+
 insertUser:
 INSERT INTO UserTbl(Image, Email, Name, PasswordHash, QuestionId, Response, RegisterDate, UpdateDate, TokenId, Token, TokenExpire)
 VALUES ?;

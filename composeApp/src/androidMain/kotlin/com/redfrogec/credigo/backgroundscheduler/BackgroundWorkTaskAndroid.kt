@@ -2,11 +2,19 @@ package com.redfrogec.credigo.backgroundscheduler
 
 import android.content.Context
 import android.util.Log
-import androidx.work.*
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.CoroutineWorker
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
+import androidx.work.WorkerParameters
 import com.redfrogec.credigo.data.model.Constants
 import com.redfrogec.credigo.domain.utils.LoanUtils
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CancellationException
+import java.util.concurrent.TimeUnit
 
 class BackgroundWorker(
     context: Context,
@@ -18,14 +26,18 @@ class BackgroundWorker(
     override suspend fun doWork(): Result {
         Log.d("BackgroundWorker", "Iniciando tarea en segundo plano")
         return try {
-            // Solo mostrar notificación si tiene permiso concedido previamente
-            manager.showNotification("CrediGo", "Ejecutando tarea en segundo plano...")
-            
             // Tarea compartida del commonMain
-            val loans = loanUtils.loadLoansInfo()
+            val loans = loanUtils.loadLoansInfo(true)
+            if(loans.isNotEmpty()){
+                loans.forEach { loan ->
+                    if(loan.dueInfo.startsWith("Atrasado")){
+                        val loanMessage = "Cuotas ${loan.quotaInfo} - ${loan.dueInfo}"
+                        manager.showNotification("Prést N.${loan.id} de ${loan.clientName}", loanMessage)
+                    }
+                }
+            }
             Log.d("BackgroundWorker", "Información de préstamos cargada: ${loans.size} registros.")
-            
-            Log.d("BackgroundWorker", "Tarea completada con éxito")
+
             Result.success()
         } catch (e: CancellationException) {
             Log.d("BackgroundWorker", "Tarea cancelada o interrumpida por el sistema")

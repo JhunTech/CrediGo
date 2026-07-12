@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,8 +21,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
@@ -34,13 +31,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.redfrogec.credigo.data.model.loanUI
+import com.redfrogec.credigo.data.model.LoanUI
 import com.redfrogec.credigo.domain.controls.LoanItem
 import com.redfrogec.credigo.domain.controls.confirmDialog
 import com.redfrogec.credigo.ui.viewModel.ActiveLoansViewModel
-import com.redfrogec.credigo.ui.viewModel.SharedViewModel
 import credigo.composeapp.generated.resources.Res
-import credigo.composeapp.generated.resources.ic_arrow_left
 import credigo.composeapp.generated.resources.ic_loans
 import credigo.composeapp.generated.resources.ic_plus
 import org.jetbrains.compose.resources.painterResource
@@ -52,7 +47,6 @@ fun ActiveLoansScreen(navController: NavController, modifier: Modifier) {
 
     val viewModel = koinViewModel<ActiveLoansViewModel>()
     viewModel.navigation = navController
-    val sharedViewModel = koinViewModel<SharedViewModel>()
     val activeLoansUI by viewModel.activeLoansUI.collectAsState()
     val showConfirmDelete by viewModel.showConfirmDelete.collectAsState()
     val selectedIdLoan by viewModel.selectedIdLoan.collectAsState()
@@ -137,7 +131,7 @@ fun ActiveLoansScreen(navController: NavController, modifier: Modifier) {
 }
 
 @Composable
-fun LoanList(loans: List<loanUI>, viewModel: ActiveLoansViewModel){
+fun LoanList(loans: List<LoanUI>, viewModel: ActiveLoansViewModel){
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(0.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),

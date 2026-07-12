@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DatePeriod
-import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.plus
 
 class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: ClientSDK, private val chargeSDK: ChargeSDK, private val sharedViewModel: SharedViewModel): ViewModel() {
@@ -223,7 +223,7 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
         val quoteValue = (principal/totalQuotesNormal) + interestQuote
 
         val today = currentDateDisplay()
-        var paymentDate: LocalDate = today.date
+        var paymentDate = LocalDateTime.parse(registerDate.value).date
         paymentDate = paymentDate.plus(DatePeriod(days = days))
         val newPlan = MutableStateFlow<List<Charge>>(emptyList())
         _showConfirmRegister.value = false
@@ -292,7 +292,7 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
         _errorMessage.value = ""
 
         val insertLoan = loanSDK.insertLoan(
-            _selectedClientId.value.toLong(),
+            _selectedClientId.value,
             _loanValue.value,
             _paymentTypeId.value.toLong(),
             _interestId.value.toLong(),

@@ -1,6 +1,5 @@
 package com.redfrogec.credigo.di
 
-import androidx.lifecycle.ViewModel
 import com.redfrogec.credigo.data.local.LocalDatabase
 import com.redfrogec.credigo.domain.sdk.ChargeSDK
 import com.redfrogec.credigo.domain.sdk.ClientSDK
@@ -8,8 +7,8 @@ import com.redfrogec.credigo.domain.sdk.KeySDK
 import com.redfrogec.credigo.domain.sdk.LoanSDK
 import com.redfrogec.credigo.domain.sdk.UserSDK
 import com.redfrogec.credigo.domain.utils.LoanUtils
-import com.redfrogec.credigo.ui.viewModel.ClientsViewModel
 import com.redfrogec.credigo.ui.viewModel.ActiveLoansViewModel
+import com.redfrogec.credigo.ui.viewModel.ClientsViewModel
 import com.redfrogec.credigo.ui.viewModel.ListQuotesViewModel
 import com.redfrogec.credigo.ui.viewModel.LoginViewModel
 import com.redfrogec.credigo.ui.viewModel.NewClientViewModel
@@ -60,7 +59,8 @@ val sharedModule = module {
     single<LoanUtils> {
         LoanUtils(
             loanSDK = get(),
-            chargeSDK = get()
+            chargeSDK = get(),
+            userSDK = get()
         )
     }
 
