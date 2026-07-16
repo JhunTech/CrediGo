@@ -4,11 +4,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -19,13 +22,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.redfrogec.credigo.data.model.Client
+import com.redfrogec.credigo.data.model.TopClient
 import credigo.composeapp.generated.resources.Res
 import credigo.composeapp.generated.resources.ic_client_3
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun ClientHomeRow(client: Client) {
+fun ClientHomeRow(client: TopClient, id: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -48,8 +51,24 @@ fun ClientHomeRow(client: Client) {
         Spacer(modifier = Modifier.width(12.dp))
 
         Column {
-            Text("Client ${client.id}: ${client.name}", fontWeight = FontWeight.Medium)
-            Text(client.identification, color = Color(0xFF2E7D32))
+            Text("Client ${id}: ${client.clientName}", style = MaterialTheme.typography.bodyLarge)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = "P: ${client.totalLoans}",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(1f).wrapContentWidth(Alignment.Start)
+                )
+                Text(
+                    text = "C: ${client.totalCharges}",
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(1f).wrapContentWidth(Alignment.Start)
+                )
+            }
         }
     }
 }

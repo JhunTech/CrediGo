@@ -83,7 +83,7 @@ class ClientsViewModel (private val sdk: ClientSDK, private val sharedViewModel:
 
     fun onAddClick() {
         settings.putLong(Constants.CLIENT_ID, -1)
-        navigation.navigate("newclient")
+        navigation.navigate("newClient")
     }
 
     fun onCLoseClick() {

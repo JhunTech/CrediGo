@@ -82,6 +82,6 @@ class ActiveLoansViewModel(
     }
 
     fun onPayLoanClick() {
-        navigation.navigate("paidloans")
+        navigation.navigate("paidLoans")
     }
 }

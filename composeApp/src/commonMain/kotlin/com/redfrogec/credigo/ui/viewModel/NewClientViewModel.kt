@@ -80,7 +80,7 @@ class NewClientViewModel(private val sdk: ClientSDK, private val sharedViewModel
             _clientId.value = settings.getLong(Constants.CLIENT_ID, 0)
             _userId.value = settings.getLong(Constants.USER_ID, 0)
             val dataClient = withContext(Dispatchers.IO) {
-                sdk.selectClientById(_clientId.value.toLong())
+                sdk.selectClientById(_clientId.value)
             }
             if(dataClient != null)
             {
@@ -167,7 +167,7 @@ class NewClientViewModel(private val sdk: ClientSDK, private val sharedViewModel
             val result = withContext(Dispatchers.IO) {
                 if (_clientId.value < 0) {
                     val insertId = sdk.insertClient(
-                        _userId.value.toLong(),
+                        _userId.value,
                         _image.value,
                         _identification.value,
                         _name.value,
@@ -180,7 +180,7 @@ class NewClientViewModel(private val sdk: ClientSDK, private val sharedViewModel
                     Pair(insertId.toInt() > 0, "Registro")
                 } else {
                     val updateCount = sdk.updateDataClient(
-                        _userId.value.toLong(),
+                        _userId.value,
                         _image.value,
                         _identification.value,
                         _name.value,
@@ -189,7 +189,7 @@ class NewClientViewModel(private val sdk: ClientSDK, private val sharedViewModel
                         _address.value,
                         _blocked.value,
                         LocalDateTime.parse(_registerDate.value),
-                        _clientId.value.toLong()
+                        _clientId.value
                     )
                     Pair(updateCount.toInt() > 0, "Actualización")
                 }
@@ -213,7 +213,7 @@ class NewClientViewModel(private val sdk: ClientSDK, private val sharedViewModel
 
     fun onBackClicked() {
         println("Return clients screen")
-        sharedViewModel.onExternalSearch(true)
         navigation.popBackStack()
+        navigation.navigate("clients")
     }
 }

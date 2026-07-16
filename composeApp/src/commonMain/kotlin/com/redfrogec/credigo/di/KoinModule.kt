@@ -9,6 +9,7 @@ import com.redfrogec.credigo.domain.sdk.UserSDK
 import com.redfrogec.credigo.domain.utils.LoanUtils
 import com.redfrogec.credigo.ui.viewModel.ActiveLoansViewModel
 import com.redfrogec.credigo.ui.viewModel.ClientsViewModel
+import com.redfrogec.credigo.ui.viewModel.HomeViewModel
 import com.redfrogec.credigo.ui.viewModel.ListQuotesViewModel
 import com.redfrogec.credigo.ui.viewModel.LoginViewModel
 import com.redfrogec.credigo.ui.viewModel.NewClientViewModel
@@ -69,6 +70,7 @@ val sharedModule = module {
     viewModel { LoginViewModel(sdk = get()) }
     viewModel { SignUpViewModel(sdk = get()) }
     viewModel { PasswordRecoveryViewModel(sdk = get()) }
+    viewModel { HomeViewModel(loanSDK = get(), chargeSDK = get()) }
     viewModel { ActiveLoansViewModel(loanSDK = get(), chargeSDK = get(), loanUtils = get()) }
     viewModel { ClientsViewModel(sdk = get(), sharedViewModel = get()) }
     viewModel { NewClientViewModel(sdk = get(), sharedViewModel = get()) }

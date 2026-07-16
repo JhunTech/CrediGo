@@ -27,8 +27,8 @@ private val AXIS_COLOR = Color.Gray
 private const val PADDING_BOTTOM = 60f // Espacio para las etiquetas de meses
 
 data class MonthData(
-    val month: String,
-    val value: Float
+    var month: String,
+    var value: Float
 )
 
 @Composable

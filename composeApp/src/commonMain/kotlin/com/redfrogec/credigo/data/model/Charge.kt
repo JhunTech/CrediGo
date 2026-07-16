@@ -16,7 +16,8 @@ data class ChargePaid(
     val loanId: Long,
     val totalFeesPaid: Int,
     val totalAmountCharged: Double,
-    val totalAmountRemaining: Double
+    val totalAmountRemaining: Double,
+    val totalAmountQuota: Double
 )
 
 data class ChargePending(

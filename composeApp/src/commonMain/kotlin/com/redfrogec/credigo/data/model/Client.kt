@@ -18,3 +18,9 @@ data class Client(
 )
 
 enum class ClientStatus { Activo, Bloqueado }
+
+data class TopClient(
+    val clientName: String,
+    val totalLoans: Double,
+    val totalCharges: Double,
+)

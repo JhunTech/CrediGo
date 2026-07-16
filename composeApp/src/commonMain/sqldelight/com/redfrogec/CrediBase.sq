@@ -190,7 +190,8 @@ SELECT
     LoanId,
     COUNT(QuotaNumber) AS TotalFeesPaid,
     SUM(ChargeValue) AS TotalAmountCharged,
-    SUM(RemainingValue) AS TotalAmountRemaining
+    SUM(RemainingValue) AS TotalAmountRemaining,
+    SUM(QuotaValue) AS TotalAmountQuota
 FROM
     ChargeTbl
 WHERE
@@ -203,7 +204,8 @@ SELECT
     LoanId,
     COUNT(QuotaNumber) AS TotalFeesPaid,
     SUM(ChargeValue) AS TotalAmountCharged,
-    SUM(RemainingValue) AS TotalAmountRemaining
+    SUM(RemainingValue) AS TotalAmountRemaining,
+    SUM(QuotaValue) AS TotalAmountQuota
 FROM
     ChargeTbl
 WHERE
@@ -218,7 +220,8 @@ SELECT
     LoanId,
     COUNT(QuotaNumber) AS TotalFeesPaid,
     SUM(ChargeValue) AS TotalAmountCharged,
-    SUM(RemainingValue) AS TotalAmountRemaining
+    SUM(RemainingValue) AS TotalAmountRemaining,
+    SUM(QuotaValue) AS TotalAmountQuota
 FROM
     ChargeTbl
 WHERE

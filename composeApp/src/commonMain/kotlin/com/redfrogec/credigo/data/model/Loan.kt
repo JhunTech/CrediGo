@@ -1,5 +1,7 @@
 package com.redfrogec.credigo.data.model
 
+import kotlinx.datetime.LocalDate
+
 data class Loan(
     val id: Long,
     val clientId: Long,
@@ -22,4 +24,10 @@ data class LoanUI(
     val quotaInfo: String,
     val dueInfo: String,
     val isPaid: Boolean
+)
+
+data class LoanDate(
+    val monthNumber: Int,
+    val month: String,
+    var value: Float
 )

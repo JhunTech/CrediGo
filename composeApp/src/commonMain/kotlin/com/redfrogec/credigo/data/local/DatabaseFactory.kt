@@ -335,7 +335,8 @@ class LocalDatabase(
             loanId = chargePaid.LoanId,
             totalFeesPaid = chargePaid.TotalFeesPaid.toInt(),
             totalAmountCharged = chargePaid.TotalAmountCharged.toString().toDouble(),
-            totalAmountRemaining = chargePaid.TotalAmountRemaining.toString().toDouble()
+            totalAmountRemaining = chargePaid.TotalAmountRemaining.toString().toDouble(),
+            totalAmountQuota = chargePaid.TotalAmountQuota.toString().toDouble()
         )
     }
 
@@ -345,7 +346,8 @@ class LocalDatabase(
             loanId = chargePaid.LoanId,
             totalFeesPaid = chargePaid.TotalFeesPaid.toInt(),
             totalAmountCharged = chargePaid.TotalAmountCharged.toString().toDouble(),
-            totalAmountRemaining = chargePaid.TotalAmountRemaining.toString().toDouble()
+            totalAmountRemaining = chargePaid.TotalAmountRemaining.toString().toDouble(),
+            totalAmountQuota = chargePaid.TotalAmountQuota.toString().toDouble()
         )
     }
 
@@ -355,7 +357,8 @@ class LocalDatabase(
             loanId = chargeNoPaid.LoanId,
             totalFeesPaid = chargeNoPaid.TotalFeesPaid.toInt(),
             totalAmountCharged = chargeNoPaid.TotalAmountCharged.toString().toDouble(),
-            totalAmountRemaining = chargeNoPaid.TotalAmountRemaining.toString().toDouble()
+            totalAmountRemaining = chargeNoPaid.TotalAmountRemaining.toString().toDouble(),
+            totalAmountQuota = chargeNoPaid.TotalAmountQuota.toString().toDouble()
         )
     }
 
