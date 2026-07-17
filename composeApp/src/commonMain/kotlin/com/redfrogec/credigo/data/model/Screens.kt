@@ -16,14 +16,14 @@ sealed class Screens(val icon: DrawableResource, val label: String, val route: S
     data object DashBoard : Screens(icon = Res.drawable.ic_home, "", "dashboard")
     //Tabs
     data object Home : Screens(icon = Res.drawable.ic_home, "Home", "home")
-    data object ActiveLoans : Screens(icon = Res.drawable.ic_dollar, "Préstamo", "activeloans")
+    data object ActiveLoans : Screens(icon = Res.drawable.ic_dollar, "Prést..", "activeLoans")
     data object Clients : Screens(icon = Res.drawable.ic_clients, "Clientes", "clients")
     data object User : Screens(icon = Res.drawable.ic_user, "Usuario", "user")
     //New Tab
     data object NewClient : Screens(icon = Res.drawable.ic_home, "NewClient", "newClient")
     data object NewLoan : Screens(icon = Res.drawable.ic_home, "NewLoan", "newLoan")
     data object ListQuotes : Screens(icon = Res.drawable.ic_home, "ListQuotes", "listQuotes")
-    data object PaidLoans : Screens(icon = Res.drawable.ic_loans, "P. Cob.", "paidloans")
+    data object PaidLoans : Screens(icon = Res.drawable.ic_loans, "P. Cob.", "paidLoans")
 }
 
 val listOfTabScreens = listOf(
