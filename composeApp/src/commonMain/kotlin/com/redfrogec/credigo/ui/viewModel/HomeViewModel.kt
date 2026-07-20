@@ -74,19 +74,23 @@ class HomeViewModel(private val loanSDK: LoanSDK, private val chargeSDK: ChargeS
             activeLoans.forEach { loan ->
                 val creationDate = LocalDateTime.parse(loan.creationDate).date
                 if(loan.active && creationDate.year == currentYear.year){
-                    when (creationDate.month.number) {
-                        1 -> loadMonthlyLoans[0].value += loan.value.toFloat()
-                        2 -> loadMonthlyLoans[1].value += loan.value.toFloat()
-                        3 -> loadMonthlyLoans[2].value += loan.value.toFloat()
-                        4 -> loadMonthlyLoans[3].value += loan.value.toFloat()
-                        5 -> loadMonthlyLoans[4].value += loan.value.toFloat()
-                        6 -> loadMonthlyLoans[5].value += loan.value.toFloat()
-                        7 -> loadMonthlyLoans[6].value += loan.value.toFloat()
-                        8 -> loadMonthlyLoans[7].value += loan.value.toFloat()
-                        9 -> loadMonthlyLoans[8].value += loan.value.toFloat()
-                        10 -> loadMonthlyLoans[9].value += loan.value.toFloat()
-                        11 -> loadMonthlyLoans[10].value += loan.value.toFloat()
-                        12 -> loadMonthlyLoans[11].value += loan.value.toFloat()
+                    val totalCharges = chargeSDK.selectChargesTotals(loan.id)
+                    if(totalCharges != null){
+                        println("Total de cobros del id de loan: ${loan.id}, el valor del préstamo total es ${totalCharges.totalAmountQuota} y el total pagado es ${totalCharges.totalAmountCharged}, además del total de remanente: ${totalCharges.totalAmountRemaining}")
+                        when (creationDate.month.number) {
+                            1 -> loadMonthlyLoans[0].value += totalCharges.totalAmountQuota.toFloat()
+                            2 -> loadMonthlyLoans[1].value += totalCharges.totalAmountQuota.toFloat()
+                            3 -> loadMonthlyLoans[2].value += totalCharges.totalAmountQuota.toFloat()
+                            4 -> loadMonthlyLoans[3].value += totalCharges.totalAmountQuota.toFloat()
+                            5 -> loadMonthlyLoans[4].value += totalCharges.totalAmountQuota.toFloat()
+                            6 -> loadMonthlyLoans[5].value += totalCharges.totalAmountQuota.toFloat()
+                            7 -> loadMonthlyLoans[6].value += totalCharges.totalAmountQuota.toFloat()
+                            8 -> loadMonthlyLoans[7].value += totalCharges.totalAmountQuota.toFloat()
+                            9 -> loadMonthlyLoans[8].value += totalCharges.totalAmountQuota.toFloat()
+                            10 -> loadMonthlyLoans[9].value += totalCharges.totalAmountQuota.toFloat()
+                            11 -> loadMonthlyLoans[10].value += totalCharges.totalAmountQuota.toFloat()
+                            12 -> loadMonthlyLoans[11].value += totalCharges.totalAmountQuota.toFloat()
+                        }
                     }
                 }
             }

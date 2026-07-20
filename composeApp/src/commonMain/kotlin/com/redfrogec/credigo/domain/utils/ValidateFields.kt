@@ -25,7 +25,7 @@ fun isValidIdentification(identification: String): Boolean {
     return identificationRegex.matches(identification)
 }
 
-fun isValid2Decimal(numberDecimal: String): Boolean {
-    val doubleRegex = "^\\d*(\\.\\d{0,2})?$".toRegex()
-    return doubleRegex.matches(numberDecimal)
+fun isValid2Number(number: String): Boolean {
+    val doubleRegex = "^\\d+\$".toRegex()
+    return doubleRegex.matches(number)
 }

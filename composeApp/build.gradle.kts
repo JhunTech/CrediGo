@@ -71,6 +71,7 @@ kotlin {
             implementation(libs.multiplatform.settings.no.arg)
 
             implementation(libs.navigationevent.compose) // Or latest
+            implementation(libs.bignum)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

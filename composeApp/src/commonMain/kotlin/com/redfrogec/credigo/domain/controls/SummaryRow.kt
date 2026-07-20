@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.redfrogec.credigo.domain.utils.roundBigDecimalToTwoDecimals
+import com.redfrogec.credigo.domain.utils.formatTwoDecimals
 
 @Composable
 fun SummaryRow(
@@ -30,7 +30,7 @@ fun SummaryRow(
         )
 
         Text(
-            text = "$${roundBigDecimalToTwoDecimals(value)}",
+            text = "$${value.formatTwoDecimals()}",
             fontWeight = if (bold) FontWeight.Bold else FontWeight.Normal
         )
     }

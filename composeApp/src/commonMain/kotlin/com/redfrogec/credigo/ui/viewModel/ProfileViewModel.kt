@@ -93,10 +93,4 @@ class ProfileViewModel(private val sdk: UserSDK) : ViewModel() {
             }
         }
     }
-
-    /** * Ejemplo de método que en una implementación real llamaría a un repositorio/API. * En commonMain puedes exponer la firma y hacer la implementación por plataforma si lo necesitas. */
-    /*suspend fun refreshFromRepository(fetcher: suspend () -> ProfileUiState) {
-        val remote = fetcher()
-        _uiState.value = remote
-    }*/
 }

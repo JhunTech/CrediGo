@@ -78,7 +78,7 @@ fun ProfileScreen(onLogout: () -> Unit, modifier: Modifier = Modifier) {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(16.dp, 0.dp, 16.dp, 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
@@ -94,7 +94,7 @@ fun ProfileScreen(onLogout: () -> Unit, modifier: Modifier = Modifier) {
                 Text(
                     text = "Usuario",
                     color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(2f).wrapContentWidth(Alignment.CenterHorizontally)
                 )
                 // Espaciador flexible después del título (mantiene el centro visual)
@@ -115,19 +115,10 @@ fun ProfileScreen(onLogout: () -> Unit, modifier: Modifier = Modifier) {
             ProfileField("NOMBRE COMPLETO", state.fullName)
             ProfileField("CORREO ELECTRÓNICO", state.email)
 
-            /*PasswordField(
-                onChangeClick = viewModel::onChangePassword
-            )*/
-
             ProfileField("PASSWORD", "••••••••")
 
             ProfileField(state.securityQuestion, state.responseQuestion)
             ProfileField("TELÉFONO MÓVIL", state.phone)
-
-            /*OfficialIdField(
-                officialId = state.officialId,
-                verified = state.isVerified
-            )*/
 
             Spacer(modifier = Modifier.height(32.dp))
 

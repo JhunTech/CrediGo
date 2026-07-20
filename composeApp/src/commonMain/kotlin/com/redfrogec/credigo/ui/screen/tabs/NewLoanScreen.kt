@@ -19,8 +19,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -44,30 +42,24 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.redfrogec.credigo.data.model.Charge
 import com.redfrogec.credigo.domain.controls.ChargeCard
-import com.redfrogec.credigo.domain.controls.ClientSelectorDialog
 import com.redfrogec.credigo.domain.controls.LoadingPopup
 import com.redfrogec.credigo.domain.controls.confirmDialog
 import com.redfrogec.credigo.domain.controls.dateTimeDialog
 import com.redfrogec.credigo.domain.controls.simpleDialog
-import com.redfrogec.credigo.domain.utils.isValid2Decimal
-import com.redfrogec.credigo.domain.utils.roundBigDecimalToTwoDecimals
-import com.redfrogec.credigo.ui.viewModel.ClientSelectorViewModel
+import com.redfrogec.credigo.domain.utils.isValid2Number
 import com.redfrogec.credigo.ui.viewModel.NewLoanViewModel
 import com.redfrogec.credigo.ui.viewModel.SharedViewModel
 import credigo.composeapp.generated.resources.Res
 import credigo.composeapp.generated.resources.ic_arrow_left
 import credigo.composeapp.generated.resources.ic_date_range
 import credigo.composeapp.generated.resources.ic_user
-import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
 fun NewLoanScreen(navController: NavController, modifier: Modifier) {
 
     val viewModel = koinViewModel<NewLoanViewModel>()
@@ -185,20 +177,18 @@ fun NewLoanScreen(navController: NavController, modifier: Modifier) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top
             ) {
-
                 // Loan Value
                 OutlinedTextField(
-                    value = if (loanValue > 0) loanValue.toString() else "0",
+                    value = loanValue.toString(),
                     onValueChange = {
-                        it ->
-                        if (!it.isEmpty() && isValid2Decimal(it)) {
-                            viewModel.onLoanValueChange(it.toDouble())
+                        if (!it.isEmpty() && isValid2Number(it)) {
+                            viewModel.onLoanValueChange(it.toInt())
                         }
                     },
                     placeholder = { Text("Valor del préstamo") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     shape = RoundedCornerShape(10.dp)
                 )
 

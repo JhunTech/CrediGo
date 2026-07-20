@@ -106,10 +106,10 @@ fun ClientsScreen(navController: NavController, modifier: Modifier = Modifier) {
             ) {
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = if(externalSearchClient) {"Selecciona"} else {"Listado Clientes"},
+                    text = if(externalSearchClient) {"Selecciona"} else {"List. Clientes"},
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.weight(2f).wrapContentWidth(Alignment.CenterHorizontally)
+                    modifier = Modifier.weight(2.5f).wrapContentWidth(Alignment.CenterHorizontally)
                 )
                 IconButton(
                     onClick = { if(externalSearchClient) {viewModel.onCLoseClick()} else {viewModel.onAddClick()}},

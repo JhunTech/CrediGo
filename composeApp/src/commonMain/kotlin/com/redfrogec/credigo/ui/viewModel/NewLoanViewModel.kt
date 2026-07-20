@@ -49,8 +49,8 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
     private val _loanId= MutableStateFlow(0L)
     val loanId: StateFlow<Long> = _loanId.asStateFlow()
 
-    private val _loanValue = MutableStateFlow(0.0)
-    val loanValue: StateFlow<Double> = _loanValue
+    private val _loanValue = MutableStateFlow(0)
+    val loanValue: StateFlow<Int> = _loanValue
 
     private val _selectedClientId = MutableStateFlow(0L)
     val selectedClientId: StateFlow<Long> = _selectedClientId.asStateFlow()
@@ -143,7 +143,7 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
         }
     }
 
-    fun onLoanValueChange(value: Double) {
+    fun onLoanValueChange(value: Int) {
         _loanValue.value = value
         validateHeaderForm()
     }
@@ -219,10 +219,9 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
         val totalQuotesNormal = quotes.value
         val days = _paymentTypeDays.value
         _totalQuotes.value = totalQuotesGrace + totalQuotesNormal
-        val interestQuote = principal * rateDecimal
+        val interestQuote = (principal * rateDecimal)/_totalQuotes.value
         val quoteValue = (principal/totalQuotesNormal) + interestQuote
 
-        val today = currentDateDisplay()
         var paymentDate = LocalDateTime.parse(registerDate.value).date
         paymentDate = paymentDate.plus(DatePeriod(days = days))
         val newPlan = MutableStateFlow<List<Charge>>(emptyList())
@@ -293,7 +292,7 @@ class NewLoanViewModel(private val loanSDK: LoanSDK, private val clientSDK: Clie
 
         val insertLoan = loanSDK.insertLoan(
             _selectedClientId.value,
-            _loanValue.value,
+            _loanValue.value.toDouble(),
             _paymentTypeId.value.toLong(),
             _interestId.value.toLong(),
             totalQuotes.value.toLong(),
