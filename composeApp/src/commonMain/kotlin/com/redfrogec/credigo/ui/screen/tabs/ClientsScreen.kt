@@ -94,7 +94,8 @@ fun ClientsScreen(navController: NavController, modifier: Modifier = Modifier) {
     ) {
         Column(
             modifier = modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(16.dp, 0.dp, 16.dp, 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
@@ -165,7 +166,7 @@ fun ClientList(viewModel: ClientsViewModel) {
     val externalSearchClient by viewModel.externalSearchClient.collectAsState()
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier.fillMaxSize().padding(0.dp, 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(vertical = 12.dp)
     ) {

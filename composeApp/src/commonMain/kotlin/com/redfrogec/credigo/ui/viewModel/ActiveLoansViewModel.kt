@@ -12,6 +12,7 @@ import com.russhwolf.settings.Settings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ActiveLoansViewModel(
@@ -23,8 +24,14 @@ class ActiveLoansViewModel(
     lateinit var navigation: NavController
     private val settings: Settings = Settings()
 
+    private val _defaultActiveLoansUI = MutableStateFlow<List<LoanUI>>(emptyList())
+    val defaultActiveLoansUI: StateFlow<List<LoanUI>> = _defaultActiveLoansUI.asStateFlow()
+
     private val _activeLoansUI = MutableStateFlow<List<LoanUI>>(emptyList())
-    val activeLoansUI: StateFlow<List<LoanUI>?> = _activeLoansUI.asStateFlow()
+    val activeLoansUI: StateFlow<List<LoanUI>> = _activeLoansUI.asStateFlow()
+
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery
 
     private val _showConfirmDelete = MutableStateFlow(false)
     val showConfirmDelete: StateFlow<Boolean> = _showConfirmDelete.asStateFlow()
@@ -40,7 +47,18 @@ class ActiveLoansViewModel(
 
     fun loadLoans() {
         val loans = loanUtils.loadLoansInfo(false)
-        _activeLoansUI.value = loans
+        if(loans.isNotEmpty()){
+            _activeLoansUI.value = loans
+            _defaultActiveLoansUI.value = loans
+        }
+    }
+
+    fun onSearchQueryChange(query: String) {
+        _searchQuery.value = query
+        _activeLoansUI.update { list ->
+            if (query.isBlank()) _defaultActiveLoansUI.value
+            else _defaultActiveLoansUI.value.filter { it.clientName.contains(query, ignoreCase = true) }
+        }
     }
 
     fun onAddClick() {
