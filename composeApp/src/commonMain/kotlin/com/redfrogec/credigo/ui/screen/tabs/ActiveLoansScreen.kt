@@ -150,7 +150,7 @@ fun ActiveLoansScreen(navController: NavController, modifier: Modifier) {
                         keyboardActions = KeyboardActions.Default,
                         decorationBox = { innerTextField ->
                             if (query.isEmpty()) {
-                                Text("Buscar prest. por clientes", color = Color.Gray)
+                                Text("Buscar préstamos por cliente", color = Color.Gray)
                             }
                             innerTextField()
                         }

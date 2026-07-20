@@ -50,7 +50,7 @@ fun LoanItem(loan: LoanUI) {
         Spacer(Modifier.width(12.dp))
 
         Column(modifier = Modifier.weight(1f)) {
-            Text(loan.clientName, style = MaterialTheme.typography.bodyLarge)
+            Text(loan.clientName, style = MaterialTheme.typography.bodyMedium)
             Text(
                 loan.loanNumber,
                 color = MaterialTheme.colorScheme.primary,
