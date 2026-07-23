@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "description": "Diario",
+    "days": 1,
+    "active": true
+  },
+  {
+    "id": 2,
+    "description": "Semanal",
+    "days": 7,
+    "active": true
+  },
+  {
+    "id": 3,
+    "description": "Quincenal",
+    "days": 15,
+    "active": true
+  },
+  {
+    "id": 4,
+    "description": "Mensual",
+    "days": 30,
+    "active": true
+  }
+]

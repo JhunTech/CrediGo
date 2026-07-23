@@ -1,49 +1,34 @@
 package com.redfrogec.credigo
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import org.jetbrains.compose.resources.painterResource
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import com.redfrogec.credigo.data.model.Constants
+import com.redfrogec.credigo.ui.navigation.AppNavigation
+import com.redfrogec.credigo.ui.theme.colorCompose
+import com.redfrogec.credigo.ui.theme.typography
+import com.redfrogec.credigo.ui.viewModel.NotificationViewModel
+import com.russhwolf.settings.Settings
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.koinInject
 
-import credigo.composeapp.generated.resources.Res
-import credigo.composeapp.generated.resources.compose_multiplatform
+private val settings: Settings = Settings()
 
 @Composable
 @Preview
-fun App() {
-    MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
-                }
-            }
-        }
+fun App(
+    //notificationVm : NotificationViewModel = koinInject() //Inyeccion para notificacion
+) {
+    LaunchedEffect(Unit) {
+        settings.putString(Constants.ERROR_CODE,"")
+        settings.putString(Constants.ERROR_MESSAGE,"")
+    }
+
+    MaterialTheme (
+        typography = typography(),
+        colorScheme = colorCompose()
+    ){
+        //notificationVm.onEnableNotificationsClicked() //Codigo para llamar la notificacion
+        AppNavigation()
     }
 }
