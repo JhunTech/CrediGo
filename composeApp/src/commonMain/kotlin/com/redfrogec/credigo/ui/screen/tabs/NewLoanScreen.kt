@@ -231,7 +231,7 @@ fun NewLoanScreen(navController: NavController, modifier: Modifier) {
                         Box(
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = 6.dp)
+                                .padding(horizontal = 3.dp)
                                 .background(
                                     if (selectedInterest.id == interestId)
                                         greenColor
@@ -245,7 +245,7 @@ fun NewLoanScreen(navController: NavController, modifier: Modifier) {
                             Text(
                                 text = selectedInterest.description,
                                 color = if (selectedInterest.id == interestId) Color.White else Color.DarkGray,
-                                fontWeight = FontWeight.SemiBold
+                                style = MaterialTheme.typography.bodyMedium
                             )
                         }
                     }
