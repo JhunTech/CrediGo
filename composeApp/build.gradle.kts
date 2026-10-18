@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -16,6 +18,8 @@ kotlin {
         }
     }
     
+    val xcf = XCFramework("ComposeApp")
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -24,6 +28,14 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+            xcf.add(this)
+
+            if (buildType == NativeBuildType.RELEASE) {
+                freeCompilerArgs += listOf(
+                    "-Xg0",                  // Eliminate debug information / symbols
+                    "-Xbinary=strip=true"   // Strip debug symbols from final binary
+                )
+            }
         }
     }
 
@@ -98,7 +110,12 @@ android {
     }
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
