@@ -72,6 +72,7 @@ kotlin {
 
             implementation(libs.navigationevent.compose) // Or latest
             implementation(libs.bignum)
+            implementation(libs.kotlincrypto.hash.sha2)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

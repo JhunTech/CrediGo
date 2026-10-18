@@ -14,6 +14,7 @@ import com.redfrogec.credigo.data.model.ChargePending
 import com.redfrogec.credigo.data.model.Client
 import com.redfrogec.credigo.data.model.Loan
 import com.redfrogec.credigo.data.model.User
+import com.redfrogec.credigo.domain.utils.PasswordUtils
 import kotlinx.datetime.LocalDateTime
 
 interface DatabaseDriverFactory{
@@ -30,8 +31,9 @@ class LocalDatabase(
 
     fun findUserByEmailAndPassword(email: String, password: String): User? {
         println("INFO: Reading the cached user from the local database...")
-        val userTbl = query.findUserByEmailAndPassword(email, password).executeAsOneOrNull()
-        if (userTbl != null) {
+        val hashedPassword = PasswordUtils.hashPassword(password)
+        val userTbl = query.findUserByEmailAndPassword(email, hashedPassword).executeAsOneOrNull()
+        if (userTbl != null && PasswordUtils.verifyPassword(password, userTbl.PasswordHash)) {
             return User(
                 id = userTbl.Id,
                 image = userTbl.Image,
@@ -95,12 +97,13 @@ class LocalDatabase(
     }
 
     fun insertUser(image: String?, email: String, name: String, passwordHash: String, questionId: Long, response: String, registerDate: LocalDateTime, updateDate: LocalDateTime?, tokenId: Long?, token: String?, tokenExpire: LocalDateTime?): QueryResult<Long> {
+        val hashed = PasswordUtils.hashPassword(passwordHash)
         val user = UserTbl(
             0,
             image,
             email,
             name,
-            passwordHash,
+            hashed,
             questionId,
             response,
             registerDate.toString(),
@@ -113,15 +116,18 @@ class LocalDatabase(
     }
 
     fun updateUser(image: String?, email: String, name: String, passwordHash: String, questionId: Long, response: String, registerDate: LocalDateTime, updateDate: LocalDateTime?, tokenId: Long?, token: String?, tokenExpire: LocalDateTime?, id: Long): QueryResult<Long>  {
-        return query.updateUser(image, email, name, passwordHash, questionId, response, registerDate.toString(), updateDate.toString(), tokenId, token, tokenExpire.toString(), id)
+        val hashed = PasswordUtils.hashPassword(passwordHash)
+        return query.updateUser(image, email, name, hashed, questionId, response, registerDate.toString(), updateDate.toString(), tokenId, token, tokenExpire.toString(), id)
     }
 
     fun updatePassword(passwordHash: String, id: Long): QueryResult<Long>  {
-        return query.updatePassword(passwordHash, id)
+        val hashed = PasswordUtils.hashPassword(passwordHash)
+        return query.updatePassword(hashed, id)
     }
 
     fun recoveryPasswordUserByEmailAndQuestion(passwordHash: String, email: String, questionId: Long, response: String): QueryResult<Long>  {
-        return query.recoveryPasswordUserByEmailAndQuestion(passwordHash, email, questionId, response)
+        val hashed = PasswordUtils.hashPassword(passwordHash)
+        return query.recoveryPasswordUserByEmailAndQuestion(hashed, email, questionId, response)
     }
 
     fun deleteUser(id: Long): QueryResult<Long> {

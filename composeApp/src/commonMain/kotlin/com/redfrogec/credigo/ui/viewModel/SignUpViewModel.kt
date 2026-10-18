@@ -24,9 +24,6 @@ class SignUpViewModel(private val sdk: UserSDK) : ViewModel() {
             securityQuestions = loadSecurityQuestions()
         }
     }
-    /*val securityQuestions : List<PreguntaSeguridad> = runBlocking {
-        cargarPreguntaSeguridad()
-    }*/
 
     lateinit var navigation: NavController
 
@@ -155,10 +152,5 @@ class SignUpViewModel(private val sdk: UserSDK) : ViewModel() {
     fun onSignInClicked() {
         println("Navegar a pantalla de Login")
         navigation.popBackStack("login", inclusive = false)
-    }
-
-    fun goDashBoard()
-    {
-        navigation.navigate("dashboard")
     }
 }

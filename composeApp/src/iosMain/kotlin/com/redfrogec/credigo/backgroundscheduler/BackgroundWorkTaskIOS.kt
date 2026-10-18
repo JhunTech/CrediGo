@@ -7,7 +7,7 @@ import platform.Foundation.*
 import kotlinx.coroutines.*
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-actual fun initializeBackgroundScheduler() {
+fun initializeBackgroundScheduler() {
     val taskId = "com.redfrogec.credigo.backgroundscheduler"
     
     BGTaskScheduler.sharedScheduler.registerForTaskWithIdentifier(taskId, null) { task ->

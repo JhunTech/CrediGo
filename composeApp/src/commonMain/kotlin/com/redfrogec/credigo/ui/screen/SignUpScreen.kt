@@ -74,9 +74,9 @@ fun SignUpScreen(navController: NavController, modifier: Modifier) {
 
     if(signUpOk)
     {
-        if(simpleDialog("Alerta", "Registro exitoso"))
+        if(simpleDialog("Alerta", "Registro exitoso, ingresa al app con tus credenciales."))
         {
-            viewModel.goDashBoard()
+            viewModel.onSignInClicked()
         }
     }
 
