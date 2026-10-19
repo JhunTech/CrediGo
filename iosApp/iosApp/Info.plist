@@ -13,5 +13,9 @@
 	<array>
 		<string>com.redfrogec.credigo.backgroundscheduler</string>
 	</array>
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+    </array>
 </dict>
 </plist>
