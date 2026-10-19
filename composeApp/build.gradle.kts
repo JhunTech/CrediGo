@@ -1,11 +1,14 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlinxSerialization)
+    alias(libs.plugins.sqlDelight)
 }
 
 kotlin {
@@ -15,20 +18,42 @@ kotlin {
         }
     }
     
+    val xcf = XCFramework("ComposeApp")
+
     listOf(
+        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+            xcf.add(this)
+
+            if (buildType == NativeBuildType.RELEASE) {
+                freeCompilerArgs += listOf(
+                    "-Xg0",                  // Eliminate debug information / symbols
+                    "-Xbinary=strip=true"   // Strip debug symbols from final binary
+                )
+            }
         }
     }
+
     
     sourceSets {
+        iosMain.dependencies {
+            //SQLDELIGHT
+            implementation(libs.sqldelight.ios)
+            implementation(libs.ktor.client.darwin)
+        }
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            //SQLDELIGHT
+            implementation(libs.sqldelight.android)
+            implementation(libs.ktor.client.android)
+            implementation(libs.koin.android)
+            implementation(libs.koin.workmanager)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -39,6 +64,27 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.ui.backhandler)
+
+            //NAVIGATION3
+            implementation(libs.navigation.compose)
+            //SQLDELIGHT
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+
+            implementation(libs.kotlinx.datetime)
+
+            implementation(libs.multiplatform.settings)
+            implementation(libs.multiplatform.settings.no.arg)
+
+            implementation(libs.navigationevent.compose) // Or latest
+            implementation(libs.bignum)
+            implementation(libs.kotlincrypto.hash.sha2)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -55,7 +101,7 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
     }
     packaging {
         resources {
@@ -64,7 +110,12 @@ android {
     }
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -77,3 +128,10 @@ dependencies {
     debugImplementation(compose.uiTooling)
 }
 
+sqldelight {
+    databases {
+        create("CrediBase") {
+            packageName.set("com.redfrogec")
+        }
+    }
+}

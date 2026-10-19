@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "description": "¿Cuál es el nombre de tu primera mascota?",
+    "creationDate": "2025-10-06T00:00:00",
+    "active": true
+  },
+  {
+    "id": 2,
+    "description": "¿Cuál es tu comida favorita?",
+    "creationDate": "2025-10-06T00:00:00",
+    "active": true
+  },
+  {
+    "id": 3,
+    "description": "¿En qué ciudad naciste?",
+    "creationDate": "2025-10-06T00:00:00",
+    "active": true
+  },
+  {
+    "id": 4,
+    "description": "¿Cuál fue el nombre de tu primera escuela?",
+    "creationDate": "2025-10-06T00:00:00",
+    "active": true
+  },
+  {
+    "id": 5,
+    "description": "¿Cuál es el segundo nombre de tu madre?",
+    "creationDate": "2025-10-06T00:00:00",
+    "active": true
+  },
+  {
+    "id": 6,
+    "description": "¿Cuál fue la marca de tu primer vehículo?",
+    "creationDate": "2025-10-06T00:00:00",
+    "active": true
+  },
+  {
+    "id": 7,
+    "description": "¿Cuál es el nombre de tu mejor amigo de la infancia?",
+    "creationDate": "2025-10-06T00:00:00",
+    "active": true
+  },
+  {
+    "id": 8,
+    "description": "¿Cuál es tu película favorita?",
+    "creationDate": "2025-10-06T00:00:00",
+    "active": true
+  },
+  {
+    "id": 9,
+    "description": "¿Cuál fue el nombre de tu profesor favorito?",
+    "creationDate": "2025-10-06T00:00:00",
+    "active": true
+  },
+  {
+    "id": 10,
+    "description": "¿En qué calle creciste?",
+    "creationDate": "2025-10-06T00:00:00",
+    "active": true
+  }
+]

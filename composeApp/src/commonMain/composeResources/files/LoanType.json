@@ -1,0 +1,80 @@
+[
+  {
+    "id": 1,
+    "description": "Préstamo normal",
+    "graceQuotes": 0,
+    "creationDate": "2025-10-06T00:00:00"
+  },
+  {
+    "id": 2,
+    "description": "Prést. 1 cuota de solo interés",
+    "graceQuotes": 1,
+    "creationDate": "2025-10-06T00:00:00"
+  },
+  {
+    "id": 3,
+    "description": "Prést. 2 cuotas de solo interés",
+    "graceQuotes": 2,
+    "creationDate": "2025-10-06T00:00:00"
+  },
+  {
+    "id": 4,
+    "description": "Prést. 3 cuotas de solo interés",
+    "graceQuotes": 3,
+    "creationDate": "2025-10-06T00:00:00"
+  },
+  {
+    "id": 5,
+    "description": "Prést. 4 cuotas de solo interés",
+    "graceQuotes": 4,
+    "creationDate": "2025-10-06T00:00:00"
+  },
+  {
+    "id": 6,
+    "description": "Prést. 5 cuotas de solo interés",
+    "graceQuotes": 5,
+    "creationDate": "2025-10-06T00:00:00"
+  },
+  {
+    "id": 7,
+    "description": "Prést. 6 cuotas de solo interés",
+    "graceQuotes": 6,
+    "creationDate": "2025-10-06T00:00:00"
+  },
+  {
+    "id": 8,
+    "description": "Prést. 7 cuotas de solo interés",
+    "graceQuotes": 7,
+    "creationDate": "2025-10-06T00:00:00"
+  },
+  {
+    "id": 9,
+    "description": "Prést. 8 cuotas de solo interés",
+    "graceQuotes": 8,
+    "creationDate": "2025-10-06T00:00:00"
+  },
+  {
+    "id": 10,
+    "description": "Prést. 9 cuotas de solo interés",
+    "graceQuotes": 9,
+    "creationDate": "2025-10-06T00:00:00"
+  },
+  {
+    "id": 11,
+    "description": "Prést. 10 cuotas de solo interés",
+    "graceQuotes": 10,
+    "creationDate": "2025-10-06T00:00:00"
+  },
+  {
+    "id": 12,
+    "description": "Prést. 11 cuotas de solo interés",
+    "graceQuotes": 11,
+    "creationDate": "2025-10-06T00:00:00"
+  },
+  {
+    "id": 12,
+    "description": "Prést. 12 cuotas de solo interés",
+    "graceQuotes": 12,
+    "creationDate": "2025-10-06T00:00:00"
+  }
+]

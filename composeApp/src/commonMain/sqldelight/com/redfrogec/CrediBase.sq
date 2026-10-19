@@ -1,0 +1,258 @@
+CREATE TABLE  UserTbl(
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Image TEXT,
+    Email TEXT NOT NULL UNIQUE,
+    Name TEXT NOT NULL,
+    PasswordHash TEXT NOT NULL,
+    QuestionId INTEGER NOT NULL,
+    Response TEXT NOT NULL,
+    RegisterDate TEXT NOT NULL,
+    UpdateDate TEXT,
+    TokenId INTEGER,
+    Token TEXT,
+    TokenExpire TEXT
+);
+
+CREATE TABLE KeyTbl(
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    PublicKey TEXT NOT NULL
+);
+
+CREATE TABLE ClientTbl (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    UserId INTEGER NOT NULL,
+    Image TEXT,
+    Identification TEXT NOT NULL UNIQUE,
+    Name TEXT NOT NULL,
+    Email TEXT,
+    Phone TEXT,
+    Address TEXT,
+    Blocked INTEGER NOT NULL DEFAULT 0,
+    RegisterDate TEXT,
+    FOREIGN KEY(UserId) REFERENCES UserTbl(Id)
+);
+
+CREATE TABLE LoanTbl (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ClientId INTEGER NOT NULL,
+    Value REAL NOT NULL,
+    PaymentTypeId INTEGER NOT NULL,
+    InterestId INTEGER NOT NULL,
+    QuotaNumbers INTEGER NOT NULL,
+    Active INTEGER NOT NULL DEFAULT 1,
+    CreationDate TEXT NOT NULL,
+    DeliveryDate TEXT NOT NULL,
+    LoanTypeId INTEGER NOT NULL,
+    FOREIGN KEY(ClientId) REFERENCES ClientTbl(Id)
+);
+
+CREATE TABLE ChargeTbl (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    LoanId INTEGER NOT NULL,
+    QuotaNumber INTEGER NOT NULL,
+    ChargeDate TEXT NOT NULL,
+    CustomerPaymentDate TEXT,
+    QuotaValue REAL NOT NULL,
+    ChargeValue REAL NOT NULL,
+    RemainingValue REAL NOT NULL,
+    ChargeTypeId INTEGER NOT NULL,
+    FOREIGN KEY(LoanId) REFERENCES LoanTbl(Id)
+);
+
+--Usuario--
+findUserByEmailAndPassword:
+SELECT * FROM UserTbl WHERE Email = ? AND PasswordHash = ?;
+
+selectDataUser:
+SELECT * FROM UserTbl WHERE Id = ?;
+
+selectActiveUser:
+SELECT * FROM UserTbl
+ORDER BY Id DESC
+LIMIT 1;
+
+insertUser:
+INSERT INTO UserTbl(Image, Email, Name, PasswordHash, QuestionId, Response, RegisterDate, UpdateDate, TokenId, Token, TokenExpire)
+VALUES ?;
+
+updateUser:
+UPDATE UserTbl SET
+    Image = ?, Email = ?, Name = ?, PasswordHash = ?, QuestionId = ?,
+    Response = ?, RegisterDate = ?, UpdateDate = ?, TokenId = ?,
+    Token = ?, TokenExpire = ?
+WHERE Id = ?;
+
+updatePassword:
+UPDATE UserTbl SET
+    PasswordHash = ?
+WHERE Id = ?;
+
+recoveryPasswordUserByEmailAndQuestion:
+UPDATE UserTbl SET
+    PasswordHash = ?
+WHERE Email = ? AND QuestionId = ? AND Response = ?;
+
+deleteUser:
+DELETE FROM UserTbl WHERE Id = ?;
+
+deleteUserData:
+DELETE FROM ChargeTbl WHERE LoanId IN (SELECT Id FROM LoanTbl WHERE ClientId IN (SELECT Id FROM ClientTbl WHERE UserId = :userId));
+DELETE FROM LoanTbl WHERE ClientId IN (SELECT Id FROM ClientTbl WHERE UserId = :userId);
+DELETE FROM ClientTbl WHERE UserId = :userId;
+DELETE FROM UserTbl WHERE Id = :userId;
+
+--lLaves--
+selectAllKey:
+SELECT * FROM KeyTbl;
+
+insertKey:
+INSERT INTO KeyTbl(PublicKey)
+VALUES ?;
+
+deleteKey:
+DELETE FROM KeyTbl;
+
+--Clientes--
+selectAllClients:
+SELECT * FROM ClientTbl WHERE UserId = ?;
+
+selectActiveClients:
+SELECT * FROM ClientTbl WHERE UserId = ? AND Blocked = 0;
+
+selectClientById:
+SELECT * FROM ClientTbl WHERE Id = ?;
+
+insertClient:
+INSERT INTO ClientTbl(UserId, Image , Identification, Name, Email, Phone, Address, Blocked, RegisterDate)
+VALUES ?;
+
+updateDataClient:
+UPDATE ClientTbl SET
+    UserId = ?, Image = ?, Identification = ?, Name = ?, Email = ?,
+    Phone = ?, Address = ?, Blocked = ?, RegisterDate = ?
+WHERE Id = ?;
+
+deleteClient:
+DELETE FROM ClientTbl WHERE Id = ?;
+
+--Prestamos--
+selectAllLoansByClientId:
+SELECT * FROM LoanTbl WHERE ClientId = ? AND Active = ?;
+
+selectAllLoansByUserId:
+SELECT
+    l.Id,
+    l.ClientId,
+    c.Name AS ClientName,
+    l.Value,
+    l.PaymentTypeId,
+    l.InterestId,
+    l.QuotaNumbers,
+    l.Active,
+    l.CreationDate,
+    l.DeliveryDate,
+    l.LoanTypeId
+FROM
+  LoanTbl AS l
+INNER JOIN
+  ClientTbl AS c ON l.ClientId = c.Id
+INNER JOIN
+  UserTbl AS u ON c.UserId = u.Id
+WHERE u.Id = ? AND l.Active = ?;
+
+selectLoanById:
+SELECT * FROM LoanTbl WHERE Id = ?;
+
+insertLoan:
+INSERT INTO LoanTbl(ClientId, Value, PaymentTypeId, InterestId, QuotaNumbers, Active, CreationDate, DeliveryDate, LoanTypeId)
+VALUES ?;
+
+updateLoan:
+UPDATE LoanTbl SET
+    ClientId = ?, Value = ?, PaymentTypeId = ?, InterestId = ?, QuotaNumbers = ?,
+    Active = ?, CreationDate = ?, DeliveryDate = ?, LoanTypeId = ?
+WHERE Id = ?;
+
+updateLoanState:
+UPDATE LoanTbl SET
+    Active = ?
+WHERE Id = ?;
+
+deleteLoan:
+DELETE FROM LoanTbl WHERE Id = ?;
+
+--Cobros--
+selectAllChargeByLoanId:
+SELECT * FROM ChargeTbl WHERE LoanId = ?;
+
+selectChargesTotals:
+SELECT
+    LoanId,
+    COUNT(QuotaNumber) AS TotalFeesPaid,
+    SUM(ChargeValue) AS TotalAmountCharged,
+    SUM(RemainingValue) AS TotalAmountRemaining,
+    SUM(QuotaValue) AS TotalAmountQuota
+FROM
+    ChargeTbl
+WHERE
+    LoanId = ?
+GROUP BY
+    LoanId;
+
+selectChargesPaid:
+SELECT
+    LoanId,
+    COUNT(QuotaNumber) AS TotalFeesPaid,
+    SUM(ChargeValue) AS TotalAmountCharged,
+    SUM(RemainingValue) AS TotalAmountRemaining,
+    SUM(QuotaValue) AS TotalAmountQuota
+FROM
+    ChargeTbl
+WHERE
+    QuotaValue = ChargeValue AND
+    RemainingValue = 0 AND
+    LoanId = ?
+GROUP BY
+    LoanId;
+
+selectChargesNoPaid:
+SELECT
+    LoanId,
+    COUNT(QuotaNumber) AS TotalFeesPaid,
+    SUM(ChargeValue) AS TotalAmountCharged,
+    SUM(RemainingValue) AS TotalAmountRemaining,
+    SUM(QuotaValue) AS TotalAmountQuota
+FROM
+    ChargeTbl
+WHERE
+    QuotaValue > ChargeValue AND
+    RemainingValue > 0 AND
+    LoanId = ?
+GROUP BY
+    LoanId;
+
+nextPendingQuotaByLoan:
+SELECT Id, ChargeDate, QuotaValue, ChargeValue, RemainingValue
+FROM ChargeTbl
+WHERE LoanId = ? AND RemainingValue > 0
+ORDER BY ChargeDate ASC
+LIMIT 1;
+
+insertCharge:
+INSERT INTO ChargeTbl(LoanId, QuotaNumber, ChargeDate, CustomerPaymentDate, QuotaValue, ChargeValue, RemainingValue, ChargeTypeId)
+VALUES ?;
+
+lastInsertId:
+SELECT last_insert_rowid();
+
+updateDataCharge:
+UPDATE ChargeTbl SET
+    LoanId = ?, CustomerPaymentDate = ?, QuotaValue = ?,
+    ChargeValue = ?, RemainingValue = ?
+WHERE Id = ?;
+
+deleteCharge:
+DELETE FROM ChargeTbl WHERE Id = ?;
+
+deleteAllCharges:
+DELETE FROM ChargeTbl WHERE LoanId = ?;
